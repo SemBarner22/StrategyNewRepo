@@ -320,17 +320,4 @@ public class World {
         Market();
     }
 
-    public void Main() {
-        int i = -1;
-        while (!endGame){
-            i++;
-            if (i == country.size()){
-                AfterGlobalTurn();
-            }
-            preTurn(i);
-            // тут как раз начинается ход игрока
-            //тут он кончается
-            afterTurn(i);
-        }
-    }
 }
