@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 public class PlayScreen implements Screen {
 
-    public boolean isMoveEnded;
+    //public boolean isMoveEnded;
     private ArrayList<Player> players;
     public static World world;
     public ArrayList<Label> labels;
@@ -68,6 +68,7 @@ public class PlayScreen implements Screen {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        world.preTurn(0);
         TmxMapLoader loader = new TmxMapLoader();
         map = loader.load("res\\map\\grass_tileset_map1.tmx");
         renderer = new OrthogonalTiledMapRendererWithSprites(map);
@@ -111,7 +112,12 @@ public class PlayScreen implements Screen {
         bottomTable.add(moveEndButton);
         moveEndButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                world.afterTurn(curPlayer);
                 curPlayer = (curPlayer + 1) % players.size();
+                if (curPlayer == 0) {
+                    world.AfterGlobalTurn();
+                }
+                world.preTurn(curPlayer);
             }
         });
     }
@@ -125,6 +131,7 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Free Advisors: " + world.getPlayerGov(curPlayer).getUnasignAdvisors().length);
+
         im = new InputMultiplexer(stage, players.get(curPlayer));
         Gdx.input.setInputProcessor(im);
         Gdx.gl.glClearColor(1, 0, 0, 1);

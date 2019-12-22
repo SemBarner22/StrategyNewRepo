@@ -316,21 +316,21 @@ public class World {
         country.get(i).UpdatePD();
     }
     //после хода всех игроков. Сюдаже пихается дата и прочее
-    private void AfterGlobalTurn(){
+    public void AfterGlobalTurn(){
         Market();
     }
 
-    public void Main() {
-        int i = -1;
-        while (!endGame){
-            i++;
-            if (i == country.size()){
-                AfterGlobalTurn();
-            }
-            preTurn(i);
-            // тут как раз начинается ход игрока
-            //тут он кончается
-            afterTurn(i);
-        }
-    }
+//    public void Main() {
+//        int i = -1;
+//        while (!endGame){
+//            i++;
+//            if (i == country.size()){
+//                AfterGlobalTurn();
+//            }
+//            preTurn(i);
+//            // тут как раз начинается ход игрока
+//            //тут он кончается
+//            afterTurn(i);
+//        }
+//    }
 }
