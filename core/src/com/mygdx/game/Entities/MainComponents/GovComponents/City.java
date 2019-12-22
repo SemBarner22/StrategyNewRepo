@@ -6,7 +6,10 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.World;
 
 import java.util.ArrayList;
-
+/* текщая позиция по экономике такова - есть класс экономика и он принадлежит для каждого города. К региону эта штука не
+применима, там используется такая же, только с фиксированным капиталом. Соответственно пока чтов се взаимодействие с
+городом и регионом это установка налоговой ставки. Потом надо будет добавить различные эдикты
+*/
 
 public class City {
     public City(int population, int infrastructure, int prosperity, int religion, Position pos) {
@@ -37,6 +40,8 @@ public class City {
 
     private Position posArmy;
 
+
+    //АРМИЯ
     public boolean CheckPosition(){
         for (int i = -1; i <2; i++) {
             for (int j = -1; j < 2; j++) {
@@ -48,7 +53,6 @@ public class City {
         }
         return false;
     }
-
     public Position getPosArmy() {
         return posArmy;
     }
@@ -66,10 +70,13 @@ public class City {
         }
         return armyMan;
     }
-    // тут надо прописать бонусы от домов
+
+
+    //Домики остаются. Пока я не знаю в каком виде, но
     public void UpdateModBuild(){
     }
 
+    //переходим к нормальной экономике. Все
     private void Prosperity(){
         int i = (int) (Math.random() * 100);
         if (i < 10 - prosperity){
