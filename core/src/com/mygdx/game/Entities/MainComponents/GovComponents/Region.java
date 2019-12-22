@@ -7,25 +7,42 @@ import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.World;
 
 public class Region {
-    public Region(City[] city, int population, int prosperity, int squareOfGround) {
+
+    public Region(City[] city, int population, int resource, int capRes, int mineral, int capMin,
+                  int religion, int culture, int owner) {
         this.city = city;
+        position = city[1].getPosition();
         this.population = population;
-        this.prosperity = prosperity;
+        this.resource = resource;
+        this.capRes = capRes;
+        this.mineral = mineral;
+        this.capMin = capMin;
+        this.religion = religion;
+        this.culture = culture;
+        this.owner = owner;
     }
-    //
-    private int squareOfGround = 10;
+
     private Position position;
     private City[] city;
     private int population;
-    private int prosperity;
-    private int resource;
+    private int prosperity = 0;
     private int infrastructure = 1;
     private int autonomy;
-    private int mineral;
-    private int baseMineralProduction = 1;
-    private int effectivity = 1;
+
+    private int resource;
+    private int capRes;
+    private int productionRR;
     private int profitRR;
+    private int RRTPF = 1000;
+    private int mineral;
+    private int capMin;
+    private int productionMin;
     private int profitMineral;
+    private int MinTPF = 1000;
+    private int prodResRate = 5;
+    private int prodMinRate = 5;
+    private int owner;
+
     private int religion;
     private int rebelLevel;
     private int culture;
@@ -34,9 +51,13 @@ public class Region {
     private int numberOfModificators = 0;
     private Modificator[] modificator = new Modificator[numberOfModificators];
 
-    public void Prosperity(){
+    public void updateRegion(){
+        Prosperity();
+    }
+
+    private void Prosperity(){
         int i = (int) (Math.random() * 100);
-        if (i < 6 - prosperity){
+        if (i < 10 - prosperity){
             prosperity++;
         }
     }
@@ -45,7 +66,9 @@ public class Region {
     }
     public void UpgradeInfrastructure(){
         infrastructure++;
-        Prosperity();
+        for (int i = 0; i <10; i++){
+            Prosperity();
+        }
     }
 
     public boolean ExchangeReligion(int prob){
@@ -81,107 +104,70 @@ public class Region {
     }
 
     // обновление населения
-    public void updatePopulation(int rate){
+    private void updatePopulation(int rate){
         population *= 1000 + rate + BS.populationRate;
         population /= 1000;
     }
 
-    // эти два метода сделаны для вывода в окно региона
-    public void UpdateProfitRR() {
-        profitRR = Math.min(population, squareOfGround * effectivity) * World.valueRR[resource] * infrastructure * (100 - autonomy) * BS.baseProfitFromRegion / 100;
+    // ЭКОНОМИКА. Обычная экономика с убывающей отдачей
+    public int regionProfit(int tax){
+        updateProfitMineral(tax);
+        updateProfitRR(tax);
+        if (occupation){
+            return (profitMineral+profitRR)/2;
+        } else {
+            return profitMineral + profitRR;
+        }
     }
-
-    public void UpdateProfitMineral() {
-        profitMineral = (5 + infrastructure) * World.valueMineral[mineral] * (100 - autonomy) * baseMineralProduction * BS.baseProfitFromMineral / 100;
+    private void updateProfitRR(int tax) {
+        productionRR = (int) (RRTPF*capRes* Math.pow(1.0*population*prodResRate/10, 0.6));
+        profitRR = productionRR * World.valueRR[mineral] *tax *autonomy/10000;
     }
-
-
-    public int getSquareOfGround() {
-        return (squareOfGround);
+    private void updateProfitMineral(int tax) {
+        productionMin = (int) (MinTPF* capMin*Math.pow(1.0*population*prodMinRate/10, 0.4));
+        profitMineral = productionMin*World.valueMineral[mineral]*tax/100;
     }
-
-    public int getPopulation() {
-        return (population);
-    }
-
-    public int getProsperity() {
-        return (prosperity);
-    }
-
-    public int getResource() {
-        return (resource);
-    }
-
-    public int getInfrastructure() {
-        return infrastructure;
-    }
-
-    public int getAutonomy() {
-        return autonomy;
-    }
-
-    public int getMineral() {
-        return mineral;
-    }
-
-    public int getBaseMineralProduction() {
-        return baseMineralProduction;
-    }
-
-    public City[] getCity() {
-        return city;
-    }
-
-    public int getEffectivity() {
-        return effectivity;
-    }
-
-    public int getProfitRR() {
-        return profitRR;
-    }
-
-    public int getProfitMineral() {
-        return profitMineral;
+    public void updatePD(){
+        World.totalRegionProduction[resource] += productionRR;
+        World.totalMineralProduction[mineral] += productionMin;
     }
 
     public void setAutonomy(int autonomy) {
         this.autonomy = autonomy;
+        for (City city: city) {
+            city.setAutonomy(autonomy);
+        }
     }
 
     public Position getPosition() {
         return position;
     }
-
     public int getReligion() {
         return religion;
     }
-
     public void setReligion(int religion) {
         this.religion = religion;
     }
-
-    public int getRebelLevel() {
-        return rebelLevel;
-    }
-
     public int getCulture() {
         return culture;
     }
-
     public void setCulture(int culture) {
         this.culture = culture;
     }
-
     public void ActivateModificator(int i){
         modificator[i].Activate();
     }
-
     public boolean isOccupation() {
         return occupation;
     }
-
     public void setOccupation(boolean occupation) {
         this.occupation = occupation;
+    }
+    public City[] getCity() {
+        return city;
+    }
+    public int getOwner() {
+        return owner;
     }
 }
 

@@ -12,28 +12,30 @@ import java.util.ArrayList;
 */
 
 public class City {
-    public City(int population, int infrastructure, int prosperity, int religion, Position pos) {
+    public City(Position position, int population, int owner, int[] res) {
+        this.position = position;
         this.population = population;
-        this.infrastructure = infrastructure;
-        this.prosperity = prosperity;
-        this.religion = religion;
-        position = pos;
+        this.owner = owner;
+        this.res = res;
+        economy = new Economy(population, 1000, 1000);
     }
 
     private Position position;
     private Building[] building = new Building[BS.numberOfBuildings];
     private ArrayList<Plant> plant = new ArrayList<>();
     private int population;
-    private int infrastructure;
+    private int infrastructure = 1;
     private int owner;
-    private int prosperity;
-    private int autonomy;
-    private int profit;
-    private int tax;
-    private int religion;
-    private int rebelLevel;
+    private int prosperity = 1;
+    private int autonomy=0;
+    private int rebelLevel=0;
     private int[] partArmy;
-    private boolean mobilisation;
+    private boolean mobilisation = false;
+    private Economy economy;
+
+    //новое производство
+    private int production = 1;
+    private int[] res;
 
     private int numberOfModificators = 0;
     private Modificator[] modificator = new Modificator[numberOfModificators];
@@ -76,15 +78,40 @@ public class City {
     public void UpdateModBuild(){
     }
 
-    /*переходим к нормальной экономике. Автономия, просперити остаются. Фактически у нас есть общий выпуск, который ра
-    спределяется между товарами в данном регионе.
+    /*переходим к нормальной экономике. Автономия, просперити, здания, религия остаются. Фактически у нас есть общий выпуск, который ра
+    спределяется между товарами в данном регионе. Однако никаких заводов у нас не будет. Вообще план такой, создаем экономику,
+    радуемся жизни, проверяем
+    Итак, есть содель ромера-Солоу, она нормально работает, учитывая, что один ход это четверть года. Теперь правда надо
+    улучшить формуллу для выпуска, добавив туда инфраструтктуру (как чать микроменеджмента)
+    Итак, ЭКОНОМИКА
     */
+    public int updateEconomy(int taxes, int education, int popGrRate){
+        production = economy.ReCount(taxes, prosperity, infrastructure, rebelLevel, education, population);
+        Prosperity();
+        updatePopulation(popGrRate);
+        int profit = economy.getGdp() * (World.valueCR[res[0]] + World.valueCR[res[1]] + World.valueCR[res[2]]) /3;
+        return taxes * profit*autonomy/10000;
+    }
     private void Prosperity(){
         int i = (int) (Math.random() * 100);
         if (i < 10 - prosperity){
             prosperity++;
         }
     }
+    //сейчас добавляем к общему производству мира
+    public void updatePD(){
+        for (int i = 0; i < res.length; i++){
+            World.totalCityProduction[i] +=production/3;
+        }
+    }
+    // обновление населения
+    public void updatePopulation(int rate){
+        population = (int) (population*(1000+BS.populationRate+1.0*prosperity/3+rate)/1000);
+        economy.setLabor(population);
+    }
+
+
+
 
     public boolean ExchangeReligion(int prob){
         int i = (int) (Math.random() * 100);
@@ -115,6 +142,16 @@ public class City {
         building[number].StartUpgrading();
         Prosperity();
     }
+    public void BuildingTurn(){
+        for (Building value : building) {
+            if (value.getTime() == 1){
+                value.Upgrage();
+                UpdateModBuild();
+            }
+            value.Turn();
+        }
+    }
+
     // возвращает стоимость постройки завода
     public int CostOfPlant(int number){
         if (plant.size() > number || plant.get(number) == null){
@@ -136,6 +173,7 @@ public class City {
         Prosperity();
     }
 
+/*  Старая экономика
     // методы для вывода общего дохода от производства
     public void UpdateProfitFromProduction(){
         profit = 0;
@@ -145,71 +183,28 @@ public class City {
         }
         profit *= BS.baseProfitFromProduction;
     }
-    public void BuildingTurn(){
-        for (Building value : building) {
-            if (value.getTime() == 1){
-                value.Upgrage();
-                UpdateModBuild();
-            }
-            value.Turn();
-        }
-    }
     // метод для вывода дохода от налогов
     public void UpdateTax(int mod){
         tax = population * prosperity * (600 + infrastructure * (100+ mod)) / 700 * (100 - autonomy) * BS.baseProfitFromCity / 300000;
     }
-    // обновление населения
-    public void updatePopulation(int rate){
-        population *= 1000 + rate + BS.populationRate;
-        population /= 1000;
-    }
-    // обновление автономии
+*/
+
+
 
     public Position getPosition() {
         return position;
-    }
-    public int getPopulation() {
-        return population;
-    }
-
-    public int getInfrastructure() {
-        return infrastructure;
     }
 
     public int getOwner() {
         return owner;
     }
 
-    public int getProsperity() {
-        return prosperity;
-    }
-
-    public int getAutonomy() {
-        return autonomy;
-    }
-
     public ArrayList<Plant> getPlant() {
         return plant;
     }
 
-    public int getProfit() {
-        return profit;
-    }
-
-    public int getTax() {
-        return tax;
-    }
-
     public void setAutonomy(int autonomy) {
         this.autonomy = autonomy;
-    }
-
-    public int getReligion() {
-        return religion;
-    }
-
-    public void setReligion(int religion) {
-        this.religion = religion;
     }
 
     public void ActivateModificator(int i){

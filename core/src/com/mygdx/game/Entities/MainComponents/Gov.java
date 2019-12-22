@@ -16,14 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Gov {
-    public Gov(){
-        region = new ArrayList<>();
-        regionControl = region;
-        //Создаем сословия
-        estate[0] = new Generals();
-        estate[1] = new Manufactor();
-
-        // создаем модификторы из файла
+    private void constructMod(){
         int i =1;
         int k;
         int j = 0;
@@ -45,7 +38,8 @@ public class Gov {
             j++;
             i++;
         }
-
+    }
+    private void constructAdv(){
         for (int t = 0; t < 5; t++) {
             CreateAdvisor("Cleric");
             AssignAdvisor(t, t);
@@ -53,6 +47,19 @@ public class Gov {
         for (int t = 0; t < 10; t++) {
             CreateAdvisor("Diplomat");
         }
+    }
+    private void constructEstate(){
+        //Создаем сословия
+        estate[0] = new Generals();
+        estate[1] = new Manufactor();
+    }
+    public Gov(ArrayList<Region> region){
+        this.region = region;
+        regionControl = region;
+        constructMod();
+        constructAdv();
+
+
     }
     private boolean isPlayer = true;
 
@@ -64,7 +71,7 @@ public class Gov {
     private int modRebel = 0;
     private int modInterest = 0;
     private int modPrestige = 0; // из 10000
-    private int modLegecimacy = 0; // из 10000
+    private int modLegecimacy = 10000; // из 10000
     private int modAdm = 0;
     private int modAutonomy = 0;
     private int profitFromEstates = 10;
@@ -85,6 +92,7 @@ public class Gov {
     private int modProfitFromMineral;
     private int modProfitFromCity;
     private int modCityInfrastructure = 0;
+    private int modPopGrRate = 0;
 
     private int modCostAdm = 1;
     private int modCostArmy = 1;
@@ -185,6 +193,7 @@ public class Gov {
 
     //доходы
     private int money;
+    private int taxRate = 10;
     private int profitFromProduction;
     private int profitFromRegion;
     private int profitFromMineral;
@@ -192,6 +201,7 @@ public class Gov {
     private int profit;
 
     // расходы
+    private int sciSub = 0;
     private int cost;
     private int costArmy;
     private int costAdm;
@@ -354,132 +364,75 @@ public class Gov {
     }
 
     //обновляем производство и спрос на все ресурсы. Заодно обновляем религию, культуру и восстания
+    private int updateCultureReg(Region region){
+        int mod=0;
+        if (culture != region.getCulture()) {
+            mod += 2;
+        }
+        if (region.getReligion() != religion) {
+            mod += 4;
+        }
+        region.UpdateRebelLevel(modRebel + mod);
+        if (region.ExchangeReligion(BS.baseChanceOfChangingReligion + modExchangeReligion) && region.getReligion() != religion) {
+            region.setReligion(religion);
+        }
+        if (region.ExchangeCulture(BS.baseChanceOfChangingCulture + modExchangeCulture) && region.getCulture() != culture) {
+            region.setCulture(culture);
+        }
+        return mod;
+    }
     public void UpdatePD() {
         for (Region value : regionControl) {
-            World.totalRegionProduction[value.getResource()] += Math.min(value.getPopulation(), value.getSquareOfGround() * value.getEffectivity()) * BS.baseProfitFromRegion;
-            World.totalMineralProduction[value.getMineral()] += (5 + value.getInfrastructure()) * value.getBaseMineralProduction() * (50 + value.getProsperity()) * BS.baseProfitFromMineral;
-            int mod = 0; // модификатор восстания из-за культуры и религии
-            if (culture != value.getCulture()) {
-                mod += 2;
-            }
-            if (value.getReligion() != religion) {
-                mod += 4;
-            }
-            value.UpdateRebelLevel(modRebel + mod);
-            if (value.ExchangeReligion(BS.baseChanceOfChangingReligion + modExchangeReligion) && value.getReligion() != religion) {
-                value.setReligion(religion);
-            }
-            if (value.ExchangeCulture(BS.baseChanceOfChangingCulture + modExchangeCulture) && value.getCulture() != culture) {
-                value.setCulture(culture);
-            }
+            value.updatePD();
+            int mod = updateCultureReg(value);
+            //переходим к городам
             for (int j = 0; j < value.getCity().length; j++) {
-                mod = 0;
-                if (culture != value.getCulture()) {
-                    mod += 2;
-                }
-                if (value.getCity()[j].getReligion() != religion) {
-                    mod += 4;
-                }
                 value.getCity()[j].UpdateRebelLevel(modRebel + mod);
                 value.getCity()[j].BuildingTurn();
-                if (value.getCity()[j].ExchangeReligion(BS.baseChanceOfChangingReligion + modExchangeReligion) && value.getCity()[j].getReligion() != religion) {
-                    value.setReligion(religion);
-                }
-                for (int k = 0; k < value.getCity()[j].getPlant().size(); k++) {
-                    World.totalCityProduction[value.getCity()[j].getPlant().get(k).getResourceOfPlant()] += value.getCity()[j].getPlant().get(k).getLevelOfPlant() * BS.baseProfitFromProduction;
-                    for (int l = 0; l < BS.numberOfRR; l++) {
-                        World.totalPlantRRDemand[l] += value.getCity()[j].getPlant().get(k).getDemand("RR", l);
-                    }
-                    for (int l = 0; l < BS.numberOfMineral; l++) {
-                        World.totalPlantMineralDemand[l] += value.getCity()[j].getPlant().get(k).getDemand("Mineral", l);
-                    }
-                    for (int l = 0; l < BS.numberOfCR; l++) {
-                        World.totalPlantCRDemand[l] += value.getCity()[j].getPlant().get(k).getDemand("CR", l);
-
-                    }
-                }
+                value.getCity()[j].updatePD();
             }
         }
     }
     // обновляем базовый доход всего государства и максимальный заем. Обновляем автономию. Обновляем суммарную экипированность
+    private int profitMod(Region region){
+        int mod = 0; // модификатор автономии из-за культуры и религии
+        if (culture != region.getCulture()){
+            mod +=10;
+        }
+        if (region.getReligion() != religion){
+            mod +=20;
+        }
+        return mod;
+    }
+    private int newAut(Region value, int mod){
+        int aut;
+        aut = (int) (Math.tan((Math.pow(capital.GetX() - value.getPosition().GetX(), 2) +
+                Math.pow(value.getPosition().GetY() - capital.GetY(), 2)))
+                / Math.sqrt(Math.pow(World.heigthOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
+        if (aut > 100) {
+            aut = 100;
+        }
+        if (aut < 0) {
+            aut = 0;
+        }
+        return aut;
+    }
     private void UpdateProfit () {
         profitFromRegion = 0;
         profitFromCity = 0;
-        profitFromProduction = 0;
         maxEquipment = 0;
-        profitFromCity = 0;
-        for (int i = 0; i < regionControl.size(); i++){
+        for (Region value : regionControl) {
             // обновляем доход от регионов
-            int mod = 0; // модификатор автономии из-за культуры и религии
-            if (culture != regionControl.get(i).getCulture()){
-                mod +=10;
-            }
-            if (regionControl.get(i).getReligion() != religion){
-                mod +=20;
-            }
-            int aut;
-            aut = (int) (Math.tan((Math.pow(capital.GetX()- regionControl.get(i).getPosition().GetX(), 2) +
-                    Math.pow(regionControl.get(i).getPosition().GetY() - capital.GetY(), 2)))
-                    / Math.sqrt(Math.pow(World.heigthOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy)+mod + modAutonomy;
-            if (aut > 100){
-                aut =100;
-            }
-            if (aut < 0 ){
-                aut = 0;
-            }
-            regionControl.get(i).setAutonomy(aut);
-            regionControl.get(i).UpdateProfitRR();
-            regionControl.get(i).UpdateProfitMineral();
-            if (regionControl.get(i).isOccupation()) {
-                profitFromRegion += regionControl.get(i).getProfitRR() / 2;
-                profitFromMineral += regionControl.get(i).getProfitMineral()/2;
-            } else {
-                profitFromRegion += regionControl.get(i).getProfitRR();
-                profitFromMineral += regionControl.get(i).getProfitMineral();
-            }
-            for (int j = 0; j < regionControl.get(i).getCity().length; j++){
-                maxEquipment += regionControl.get(i).getCity()[j].GetEquipment();
-                mod = 0;
-                if (culture != regionControl.get(i).getCulture()){
-                    mod +=10;
-                }
-                if (regionControl.get(i).getCity()[j].getReligion() != religion){
-                    mod +=20;
-                }
-                aut = (int) (Math.tan((Math.pow(capital.GetX()- regionControl.get(i).getCity()[j].getPosition().GetX(), 2) +
-                        Math.pow(regionControl.get(i).getCity()[j].getPosition().GetY() - capital.GetY(), 2)))
-                        / (Math.pow(World.heigthOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
-                if (aut > 100){
-                    aut =100;
-                }
-                if (aut < 0 ){
-                    aut = 0;
-                }
-                regionControl.get(i).getCity()[j].setAutonomy(aut);
-                //обновляем доход от городов
-                regionControl.get(i).getCity()[j].UpdateProfitFromProduction();
-                regionControl.get(i).getCity()[j].UpdateTax(modCityInfrastructure);
-                if (regionControl.get(i).isOccupation()) {
-                    profitFromProduction +=  regionControl.get(i).getCity()[j].getProfit() / 2;
-                    profitFromCity += regionControl.get(i).getCity()[j].getTax() / 2;
-                } else {
-                    profitFromProduction +=  regionControl.get(i).getCity()[j].getProfit();
-                    profitFromCity += regionControl.get(i).getCity()[j].getTax();
-                }
+            int mod = profitMod(value);
+            value.setAutonomy(newAut(value, mod));
+            profitFromRegion += value.regionProfit(taxRate);
+            for (int j = 0; j < value.getCity().length; j++) {
+                //Это надо для создания призывной армии
+                maxEquipment += value.getCity()[j].GetEquipment();
+                profitFromCity += value.getCity()[j].updateEconomy(taxRate, sciSub, modPopGrRate);
             }
         }
-
-        profitFromRegion *= 100 + modProfitFromRegion;
-        profitFromCity *= 100 + modProfitFromCity;
-        profitFromMineral *= 100 + modProfitFromMineral;
-        profitFromProduction *= 100 + modProfitFromProduction;
-        profitFromRegion /= 100;
-        profitFromCity /= 100;
-        profitFromMineral /= 100;
-        profitFromProduction /= 100;
-
-        profit = profitFromProduction + profitFromRegion + profitFromMineral + profitFromCity;
-        maxDebt = 4 * profit;
+        profit = profitFromCity+profitFromRegion;
     }
 
     //расходы - армия, бюрократия, долги
@@ -600,7 +553,7 @@ public class Gov {
         }
     }
 
-    // строительство
+    // СТРОИТЕЛЬСТВО
     // проверяем воможно ли построть
     public boolean posBuild(int numberOfRegion, int numberOfCity, int numberOfBuilding){
         if (CheckMoney(regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfBuilding(numberOfBuilding) * modBuildingCost / 100)){
@@ -642,11 +595,14 @@ public class Gov {
             PlusMoney(-costInf(numberOfRegion));
         }
     }
-    // проверяем можем ли построить/улучшить завод
+
+
+    // Заводы проверяем можем ли построить/улучшить завод
+    /*
     public int costUpgradePlant(int numberOfRegion, int numberOfCity, int numberPlant){
         return regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfPlant(numberPlant) * modBuildingCost / 100;
     }
-    public boolean posBuildPlant(int numberOfRegion, int numberOfCity, int numberPlant /*номер клетки*/){
+    public boolean posBuildPlant(int numberOfRegion, int numberOfCity, int numberPlant /*номер клетки){
         return CheckMoney(costUpgradePlant(numberOfRegion, numberOfCity, numberPlant));
     }
     // строим завод
@@ -661,7 +617,7 @@ public class Gov {
             regionControl.get(numberOfRegion).getCity()[numberOfCity].newPlant(resource);
             PlusMoney(-costUpgradePlant(numberOfRegion, numberOfCity, numberPlant));
         }
-    }
+    }*/
 
     //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ
     // Эта штука принимает позицию, но в целом можно переделать и под саму армию, убрав первую часть. В целом потребуется

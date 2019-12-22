@@ -22,7 +22,7 @@ public class BS {
     public static int numberOfEvent = 1;
     public static int numberOfModificators = 1;
 
-    public static int baseNumberOfEstates;
+    public static int baseNumberOfEstates = 7;
     public static int baseLoyalityIncrease = 1;
 
     public static int baseAdm = 5;

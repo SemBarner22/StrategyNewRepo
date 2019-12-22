@@ -6,6 +6,7 @@ import com.mygdx.game.Entities.Functional.Maps.CityCoordinate;
 import com.mygdx.game.Entities.Functional.Maps.MapOfArmies;
 import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
+import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -20,8 +21,33 @@ import static java.nio.file.Files.readAllLines;
 public class World {
 
     public World(int currentPlayers) throws IOException {
-
         //создаем карту для аттак городов
+        moFConstructor();
+        /*TODO Тут надо создать конструктор городов и регионов. В инитах есть все необходимые данные. Я думаю
+            что надо создать большой массив всех городов, а потом регионам просто давать передавать соответсвующий номер
+            Имхо будет проще так. Но в общем файлы есть, ты говорил, что сможешь создать инициализатор регионов из файла
+            оотвественно все регионы надо запихать в переменную allRegions
+            Позиция региона задается кстати по первому городу, которй в нем содержится.
+            В гов соответсвенно надо запихать те регионы, владельцем которых является эта страна
+             */
+        for (int i = 0; i < currentPlayers; ++i) {
+            ArrayList<Region> regions = new ArrayList<>();
+            for (Region reg: allRegions
+                 ) {
+                if (reg.getOwner() == i){
+                    regions.add(reg);
+                }
+            }
+            //TODO тут я сделал это слишком долгим, но чет я хз, как сделать это в один пробег. Наверное надо создать
+            // массив массивов, тогда будет норм. В общем если будет не лень, то исправь, но вообще это не критично
+            // (если конечно ты не будешь считать, что не зря тебя учили оптимизироват целых полтора года в итмо)
+            // В итоге я получаю массив регионов, которые относятся к i ому игроку и просто кидаю их в гов. Там только
+            // одна вещь для конструктора нужна пока что. Фактически, если написать инициалтизатор для городов и
+            // регионов, то все готово
+            country.add(new Gov(regions));
+        }
+    }
+    private void moFConstructor(){
         ArrayList<Position> pos = new ArrayList<>();
         ArrayList<CityCoordinate> coord = new ArrayList<>();
         for (int i = 0; i < country.size(); i++){
@@ -38,21 +64,15 @@ public class World {
             positions[i] = pos.get(i);
             cityCoordinates[i] = coord.get(i);
         }
-        CityAttack cityAttack = new CityAttack(positions, cityCoordinates);
-
-
-        //TODO
-        for (int i = 0; i < currentPlayers; ++i) {
-            country.add(new Gov());
-        }
+        cityAttack = new CityAttack(positions, cityCoordinates);
     }
-
 
     // компонены мира
     private boolean endGame = false;
     private ArrayList<Gov> country = new ArrayList<>();
     private int totalPopulation;
     private CityAttack cityAttack;
+    private ArrayList<Region> allRegions;
 
     public static int heigthOfMap = 5;
     public static int wideOfMap = 5;
