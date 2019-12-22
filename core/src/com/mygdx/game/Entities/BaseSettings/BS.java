@@ -4,7 +4,7 @@ import com.mygdx.game.Entities.Technology.Inv;
 import com.mygdx.game.Entities.Technology.SubTech;
 
 public class BS {
-    public static int numMod = 22;
+    public static int numMod = 23;
     public static String[] nameMod;
     //TODO Считать из файла эти штуки
 

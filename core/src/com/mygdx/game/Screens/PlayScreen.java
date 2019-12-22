@@ -68,7 +68,6 @@ public class PlayScreen implements Screen {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        world.preTurn(0);
         TmxMapLoader loader = new TmxMapLoader();
         map = loader.load("res\\map\\grass_tileset_map1.tmx");
         renderer = new OrthogonalTiledMapRendererWithSprites(map);
@@ -110,14 +109,15 @@ public class PlayScreen implements Screen {
         });
         TextButton moveEndButton = new TextButton("End of the move", skin);
         bottomTable.add(moveEndButton);
+        //world.preTurn(0);
         moveEndButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                world.afterTurn(curPlayer);
+                //world.afterTurn(curPlayer);
                 curPlayer = (curPlayer + 1) % players.size();
                 if (curPlayer == 0) {
-                    world.AfterGlobalTurn();
+                    //world.AfterGlobalTurn();
                 }
-                world.preTurn(curPlayer);
+                //world.preTurn(curPlayer);
             }
         });
     }

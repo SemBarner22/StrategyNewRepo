@@ -17,6 +17,8 @@ import java.util.List;
 
 public class Gov {
     public Gov(){
+        region = new ArrayList<>();
+        regionControl = region;
         //Создаем сословия
         estate[0] = new Generals();
         estate[1] = new Manufactor();
@@ -89,7 +91,7 @@ public class Gov {
 
     private Modificator[] modificator = new Modificator[1];
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
-    private void AddToMod(int[] array){
+    private void AddToMod(int[] array) {
         modAdvisorCost += array[0];
         modBuildingCost += array[1];
         modArmyCreation += array[2];
