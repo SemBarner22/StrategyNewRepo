@@ -34,6 +34,7 @@ public class PlayScreen implements Screen {
     public boolean isMoveEnded;
     private ArrayList<Player> players;
     public static World world;
+    public ArrayList<Label> labels;
     //private Player player;
     //private Player player2;
     //private Player player3;
@@ -52,6 +53,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(final Strategy strategy) {
         this.strategy = strategy;
+        labels = new ArrayList<>();
         players = new ArrayList<>();
         curPlayer = 0;
         players.add(new Player(200, -10));
@@ -74,10 +76,6 @@ public class PlayScreen implements Screen {
         sr.setColor(Color.CYAN);
         Gdx.gl.glLineWidth(3);
         gameCam.translate(300, 300);
-    }
-
-    @Override
-    public void show() {
         im = new InputMultiplexer(stage, players.get(curPlayer));
         Gdx.input.setInputProcessor(im);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -89,8 +87,11 @@ public class PlayScreen implements Screen {
         for (int i = 0; i < 2; i++) {
             table.row();
             for (int j = 0; j < 5; j++) {
-                Label label = new Label(j + i + "dos", skin);
-                table.add(label);
+                labels.add(new Label(j + i + "dos", skin));
+                Label a = labels.get(labels.size() - 1);
+                //table.add(labels.get(labels.size() - 1));
+                table.add(a);
+                //table.add(new Label(j + i + "dos", skin));
             }
         }
         Table bottomTable = new Table();
@@ -116,7 +117,14 @@ public class PlayScreen implements Screen {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
     public void render(float delta) {
+        labels.get(0).setText("Player: " + (curPlayer + 1));
+        labels.get(1).setText("Free Advisors: " + world.getPlayerGov(curPlayer).getUnasignAdvisors().length);
         im = new InputMultiplexer(stage, players.get(curPlayer));
         Gdx.input.setInputProcessor(im);
         Gdx.gl.glClearColor(1, 0, 0, 1);

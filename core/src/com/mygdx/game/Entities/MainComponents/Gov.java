@@ -139,6 +139,7 @@ public class Gov {
         modProfitFromMineral =0;
         modProfitFromCity =0;
     }
+
     public void UpdateMod(){
         NullMod();
         for (int i = 0; i < modificator.length; i++){
@@ -148,7 +149,7 @@ public class Gov {
 
         }
         for (int i = 0; i < advList.size(); i++){
-            if (advList.get(i).getHaveJob() > 0) {
+            if (advList.get(i).getHaveJob() >= 0) {
                 AddToMod(advList.get(i).getMod());
             }
         }
@@ -279,8 +280,8 @@ public class Gov {
     // выдаем список незанятых советников
 
     //TODO
-    public Integer[] getUnasignAdvisors(){
-        ArrayList<Integer> ar = new ArrayList<Integer>();
+    public Integer[] getUnasignAdvisors() {
+        ArrayList<Integer> ar = new ArrayList<>();
         for (int i = 0; i < advList.size(); i++){
             if (advList.get(i).getHaveJob() == -1){
                 ar.add(i);
@@ -294,7 +295,7 @@ public class Gov {
         //return ar.toArray(new Integer[0]);
     }
     // выдаем советника стоящего на месте number
-    public int AdvisorNumber(int number){
+    public int AdvisorNumber(int number) {
         for (int i = 0; i < advList.size(); i++){
             if (advList.get(i).getHaveJob() == number){
                 return i;
