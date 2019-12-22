@@ -1,0 +1,17 @@
+{
+  resources: {
+    com.badlogic.gdx.graphics.Color: {
+      black: { r: 0, g: 0, b: 0, a: 1 }
+    },
+    com.badlogic.gdx.graphics.g2d.BitmapFont: {
+      default-font: { file: default.fnt }
+    }
+  },
+  styles: {
+    com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+      default: {
+        font: default-font, fontColor: black
+      }
+    }
+  }
+}
