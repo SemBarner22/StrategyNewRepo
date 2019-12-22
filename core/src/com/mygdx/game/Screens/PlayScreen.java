@@ -109,7 +109,7 @@ public class PlayScreen implements Screen {
         });
         TextButton moveEndButton = new TextButton("End of the move", skin);
         bottomTable.add(moveEndButton);
-        //world.preTurn(0);aa
+        world.preTurn(0);
         moveEndButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 //world.afterTurn(curPlayer);
