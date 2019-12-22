@@ -18,7 +18,8 @@ import static java.nio.file.Files.readAllLines;
 
 //* Название ресурсов mineral RR CR
 public class World {
-    public World() throws IOException {
+
+    public World(int currentPlayers) throws IOException {
 
         //создаем карту для аттак городов
         ArrayList<Position> pos = new ArrayList<>();
@@ -41,7 +42,9 @@ public class World {
 
 
         //TODO
-        country.add(new Gov());
+        for (int i = 0; i < currentPlayers; ++i) {
+            country.add(new Gov());
+        }
     }
 
 
@@ -83,8 +86,8 @@ public class World {
         }
     }
 
-    public Gov getPlayerGov() {
-        return country.get(0);
+    public Gov getPlayerGov(int index) {
+        return country.get(index);
     }
     // цены на ресурсы
 

@@ -15,8 +15,8 @@ public class AdvisorScreen extends AbstractMechanicsScreen {
 
     private ArrayList<Label> labels;
     private final int AdvisorMaxAmount = 5;
-    public AdvisorScreen(Strategy strategy, MechanicsMenu mechanicsMenu) {
-        super(strategy, mechanicsMenu);
+    public AdvisorScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
+        super(strategy, curPlayer, mechanicsMenu);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class AdvisorScreen extends AbstractMechanicsScreen {
         for (int i = 0; i < AdvisorMaxAmount; i++) {
             final int place = i;
             table.row();
-            Advisor advisor = PlayScreen.world.getPlayerGov().getAdv(i);
+            Advisor advisor = PlayScreen.world.getPlayerGov(curPlayer).getAdv(i);
             String advisorAbilities = (advisor != null ? advisor.getAbilityName() : "No advisor");
             Label label = new Label(advisorAbilities, skin);
             labels.add(label);
@@ -39,7 +39,7 @@ public class AdvisorScreen extends AbstractMechanicsScreen {
             table.add(button);
             button.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
-                    strategy.setScreen(new AdvisorFirstScreen(strategy, AdvisorScreen.this, place));
+                    strategy.setScreen(new AdvisorFirstScreen(strategy, curPlayer, AdvisorScreen.this, place));
                 }
             });
         }
@@ -52,8 +52,8 @@ public class AdvisorScreen extends AbstractMechanicsScreen {
     public void render(float delta) {
         super.render(delta);
         for (int i = 0; i < labels.size(); i++) {
-            labels.get(i).setText(PlayScreen.world.getPlayerGov().getAdv(i) != null ?
-                    PlayScreen.world.getPlayerGov().getAdv(i).getAbilityName() : "No advisor");
+            labels.get(i).setText(PlayScreen.world.getPlayerGov(curPlayer).getAdv(i) != null ?
+                    PlayScreen.world.getPlayerGov(curPlayer).getAdv(i).getAbilityName() : "No advisor");
         }
     }
 

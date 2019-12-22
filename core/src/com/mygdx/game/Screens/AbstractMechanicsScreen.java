@@ -14,13 +14,15 @@ import com.mygdx.game.Strategy;
 public class AbstractMechanicsScreen implements Screen {
     Strategy strategy;
     protected Screen previousScreen;
+    int curPlayer;
     protected Stage stage;
     protected Table container;
     protected Skin skin;
     protected Button backButton;
 
-    public AbstractMechanicsScreen(final Strategy strategy, final Screen previousScreen) {
+    public AbstractMechanicsScreen(final Strategy strategy, final int curPlayer, final Screen previousScreen) {
         this.strategy = strategy;
+        this.curPlayer = curPlayer;
         this.previousScreen = previousScreen;
     }
 

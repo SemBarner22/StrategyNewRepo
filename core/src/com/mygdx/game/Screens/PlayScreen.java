@@ -62,7 +62,7 @@ public class PlayScreen implements Screen {
         gamePort = new FillViewport(Strategy.V_WIDTH, Strategy.V_HEIGHT, gameCam);
         stage = new Stage();
         try {
-            world = new World();
+            world = new World(players.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,7 +101,7 @@ public class PlayScreen implements Screen {
         bottomTable.add(mechanicsButton);
         mechanicsButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                strategy.setScreen(new MechanicsMenu(strategy, PlayScreen.this));
+                strategy.setScreen(new MechanicsMenu(strategy, curPlayer, PlayScreen.this));
                 players.get(curPlayer).setX(0);
                 players.get(curPlayer).setY(0);
             }
@@ -178,7 +178,7 @@ public class PlayScreen implements Screen {
                     renderer.render(new int[]{map.getLayers().getIndex("ProvReg" +
                             object.getProperties().get("RegIndex", Integer.class))});
                     strategy.batch.end();
-                    strategy.setScreen(new CityScreen(strategy, PlayScreen.this));
+                    strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
                     players.get(curPlayer).setX(0);
                     players.get(curPlayer).setY(0);
                 }

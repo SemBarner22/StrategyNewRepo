@@ -4,8 +4,8 @@ import com.mygdx.game.Strategy;
 
 public class EstateScreen extends AbstractMechanicsScreen {
 
-    public EstateScreen(Strategy strategy, MechanicsMenu mechanicsMenu) {
-        super(strategy, mechanicsMenu);
+    public EstateScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
+        super(strategy, curPlayer, mechanicsMenu);
     }
 
     @Override

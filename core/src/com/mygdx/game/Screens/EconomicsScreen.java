@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class EconomicsScreen extends AbstractMechanicsScreen {
 
-        public EconomicsScreen(Strategy strategy, MechanicsMenu mechanicsMenu) {
-                super(strategy, mechanicsMenu);
+        public EconomicsScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
+                super(strategy, curPlayer, mechanicsMenu);
         }
         
         @Override

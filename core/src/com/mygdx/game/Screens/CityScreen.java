@@ -15,8 +15,8 @@ import java.util.List;
 
 public class CityScreen extends AbstractMechanicsScreen {
     List<Table> citiesList;
-    public CityScreen(Strategy strategy, PlayScreen screen) {
-        super(strategy, screen);
+    public CityScreen(Strategy strategy, int curPlayer, PlayScreen screen) {
+        super(strategy, curPlayer, screen);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CityScreen extends AbstractMechanicsScreen {
         container.add(test).bottom().padLeft(200);
         test.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                strategy.setScreen(new BuildingsScreen(strategy, CityScreen.this));
+                strategy.setScreen(new BuildingsScreen(strategy, curPlayer, CityScreen.this));
             }
         });
     }

@@ -7,8 +7,8 @@ import com.mygdx.game.Strategy;
 
 public class LawScreen extends AbstractMechanicsScreen {
 
-    public LawScreen(Strategy strategy, MechanicsMenu mechanicsMenu) {
-        super(strategy, mechanicsMenu);
+    public LawScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
+        super(strategy, curPlayer, mechanicsMenu);
     }
 
     @Override

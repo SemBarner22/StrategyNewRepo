@@ -18,8 +18,8 @@ public class BuildingsScreen extends AbstractMechanicsScreen {
     private ArrayList<ButtonWithIndex> buttons;
     private ArrayList<Table> tableList;
     private Integer[] buildingIndex = new Integer[1000];
-    public BuildingsScreen(Strategy strategy, CityScreen previousScreen) {
-        super(strategy, previousScreen);
+    public BuildingsScreen(Strategy strategy, int curPlayer, CityScreen previousScreen) {
+        super(strategy, curPlayer, previousScreen);
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class MechanicsMenu implements Screen {
 
     Strategy strategy;
+    int curPlayer;
     private Stage stage;
     private Table container;
     private PlayScreen playScreen;
@@ -26,15 +27,16 @@ public class MechanicsMenu implements Screen {
     private LawScreen lawScreen;
     private EconomicsScreen economicsScreen;
 
-    public MechanicsMenu(Strategy strategy, PlayScreen playScreen) {
+    public MechanicsMenu(Strategy strategy, int curPlayer, PlayScreen playScreen) {
         this.strategy = strategy;
         this.playScreen = playScreen;
-        advisorScreen = new AdvisorScreen(strategy, MechanicsMenu.this);
-        estateScreen = new EstateScreen(strategy, MechanicsMenu.this);
-        armiesScreen = new ArmiesScreen(strategy, MechanicsMenu.this);
-        regionScreen = new RegionScreen(strategy, MechanicsMenu.this);
-        lawScreen = new LawScreen(strategy, MechanicsMenu.this);
-        economicsScreen = new EconomicsScreen(strategy, MechanicsMenu.this);
+        this.curPlayer = curPlayer;
+        advisorScreen = new AdvisorScreen(strategy, curPlayer, MechanicsMenu.this);
+        estateScreen = new EstateScreen(strategy, curPlayer,MechanicsMenu.this);
+        armiesScreen = new ArmiesScreen(strategy, curPlayer,MechanicsMenu.this);
+        regionScreen = new RegionScreen(strategy, curPlayer, MechanicsMenu.this);
+        lawScreen = new LawScreen(strategy, curPlayer,MechanicsMenu.this);
+        economicsScreen = new EconomicsScreen(strategy, curPlayer,MechanicsMenu.this);
     }
 
     @Override

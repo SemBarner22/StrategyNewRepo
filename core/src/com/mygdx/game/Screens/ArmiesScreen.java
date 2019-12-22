@@ -14,8 +14,8 @@ public class ArmiesScreen extends AbstractMechanicsScreen {
 
     public boolean isMobilisation = false;
     private TextButton mobilisation;
-    public ArmiesScreen(Strategy strategy, MechanicsMenu mechanicsMenu) {
-        super(strategy, mechanicsMenu);
+    public ArmiesScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
+        super(strategy, curPlayer, mechanicsMenu);
     }
 
     @Override
@@ -36,11 +36,11 @@ public class ArmiesScreen extends AbstractMechanicsScreen {
                 }
             }
         });
-        Label getModTactic = new Label("" + PlayScreen.world.getPlayerGov().armyMod()[1], skin);
+        Label getModTactic = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).armyMod()[1], skin);
         Label getModShock = new Label("" + 1, skin);
         Label getModFire = new Label("" + 1, skin);
-        Label getModMorale = new Label("" + PlayScreen.world.getPlayerGov().armyMod()[0], skin);
-        Label getModOrganisation = new Label("" + PlayScreen.world.getPlayerGov().armyMod()[2], skin);
+        Label getModMorale = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).armyMod()[0], skin);
+        Label getModOrganisation = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).armyMod()[2], skin);
         Label getEquipment = new Label("" + 1, skin);
         Table table = new Table();
         stage.addActor(table);

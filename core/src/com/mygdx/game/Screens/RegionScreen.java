@@ -7,8 +7,8 @@ import com.mygdx.game.Strategy;
 
 public class RegionScreen extends AbstractMechanicsScreen {
 
-    public RegionScreen(Strategy strategy, MechanicsMenu mechanicsMenu) {
-        super(strategy, mechanicsMenu);
+    public RegionScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
+        super(strategy, curPlayer, mechanicsMenu);
     }
 
     @Override

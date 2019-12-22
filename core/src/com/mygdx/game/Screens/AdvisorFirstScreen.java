@@ -18,8 +18,8 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
     private Integer[] availibleAdvisorsIndex = new Integer[1000];
 
 
-    public AdvisorFirstScreen(Strategy strategy, AdvisorScreen advisorScreen, int place) {
-        super(strategy, advisorScreen);
+    public AdvisorFirstScreen(Strategy strategy, int curPlayer, AdvisorScreen advisorScreen, int place) {
+        super(strategy, curPlayer, advisorScreen);
         stage = new Stage();
         container = new Table();
         stage.addActor(container);
@@ -37,7 +37,7 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
         //Until advisors are created properly
         //PlayScreen.world.getPlayerGov().CreateAdvisor("Cleric");
         //Advisor a = PlayScreen.world.getPlayerGov().getAdv(0);
-        availibleAdvisors = PlayScreen.world.getPlayerGov().getUnasignAdvisors();
+        availibleAdvisors = PlayScreen.world.getPlayerGov(curPlayer).getUnasignAdvisors();
         //System.out.println(a.getAbilityName());
 
         Table table = new Table();
@@ -45,8 +45,8 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
         dismissButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
 
-                if (PlayScreen.world.getPlayerGov().AdvisorNumber(place) != -1) {
-                    PlayScreen.world.getPlayerGov().DismissAdvisor(PlayScreen.world.getPlayerGov().AdvisorNumber(place));
+                if (PlayScreen.world.getPlayerGov(curPlayer).AdvisorNumber(place) != -1) {
+                    PlayScreen.world.getPlayerGov(curPlayer).DismissAdvisor(PlayScreen.world.getPlayerGov(curPlayer).AdvisorNumber(place));
                     strategy.setScreen(previousScreen);
                     //TODO
                 }
@@ -57,7 +57,7 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
         table.pad(10).defaults().expandX().space(4);
 
         //PlayScreen.world.getPlayerGov().getUnasignAdvisors();
-        availibleAdvisors = PlayScreen.world.getPlayerGov().getUnasignAdvisors();
+        availibleAdvisors = PlayScreen.world.getPlayerGov(curPlayer).getUnasignAdvisors();
 
         System.out.println(availibleAdvisors.length);
 
@@ -80,7 +80,7 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
                         //TODO make change advisor i (testing)
                         //PlayScreen.world.getPlayerGov().AssignAdvisor(availibleAdvisors[j], place + 1);
 
-                        PlayScreen.world.getPlayerGov().AssignAdvisor(
+                        PlayScreen.world.getPlayerGov(curPlayer).AssignAdvisor(
                                 availibleAdvisors[getButtonWithIndex().getIndex()], place);
 
                         System.out.println(getButtonWithIndex().getIndex());
@@ -104,7 +104,7 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
 
                         //TODO
                         //PlayScreen.world.getPlayerGov().AssignAdvisor(availibleAdvisors[j], place + 1);
-                        PlayScreen.world.getPlayerGov().AssignAdvisor(
+                        PlayScreen.world.getPlayerGov(curPlayer).AssignAdvisor(
                                 availibleAdvisors[getButtonWithIndex().getIndex()], place + 1);
 
                         System.out.println(getButtonWithIndex().getIndex());
@@ -125,7 +125,7 @@ public class AdvisorFirstScreen extends AbstractMechanicsScreen {
 
     @Override
     public void render(float delta) {
-        availibleAdvisors = PlayScreen.world.getPlayerGov().getUnasignAdvisors();
+        availibleAdvisors = PlayScreen.world.getPlayerGov(curPlayer).getUnasignAdvisors();
 
 
         //System.out.println(availibleAdvisors.length);
