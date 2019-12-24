@@ -11,7 +11,7 @@ public class Region {
     public Region(City[] city, int population, int resource, int capRes, int mineral, int capMin,
                   int religion, int culture, int owner) {
         this.city = city;
-        position = city[1].getPosition();
+        position = city[0].getPosition();
         this.population = population;
         this.resource = resource;
         this.capRes = capRes;

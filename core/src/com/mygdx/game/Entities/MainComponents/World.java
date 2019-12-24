@@ -6,6 +6,7 @@ import com.mygdx.game.Entities.Functional.Maps.CityCoordinate;
 import com.mygdx.game.Entities.Functional.Maps.MapOfArmies;
 import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
+import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 
 import java.io.*;
@@ -30,6 +31,20 @@ public class World {
             Позиция региона задается кстати по первому городу, которй в нем содержится.
             В гов соответсвенно надо запихать те регионы, владельцем которых является эта страна
              */
+        int[] resurs = new int[3];
+        resurs[1] = 1;
+        resurs[2]=2;
+        ArrayList<City> cities = new ArrayList<>();
+        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
+        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
+        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
+        City[] arcity = new City[1];
+        arcity[0] = cities.get(0);
+        allRegions.add(new Region(arcity, 5000, 0, 1000, 0, 1000, 0, 0, 0));
+        arcity[0] = cities.get(1);
+        allRegions.add(new Region(arcity, 5000, 0, 1000, 0, 1000, 0, 0, 1));
+        arcity[0] = cities.get(2);
+        allRegions.add(new Region(arcity, 5000, 0, 1000, 0, 1000, 0, 0, 2));
         for (int i = 0; i < currentPlayers; ++i) {
             ArrayList<Region> regions = new ArrayList<>();
             for (Region reg: allRegions
@@ -72,7 +87,7 @@ public class World {
     private ArrayList<Gov> country = new ArrayList<>();
     private int totalPopulation;
     private CityAttack cityAttack;
-    private ArrayList<Region> allRegions;
+    private ArrayList<Region> allRegions = new ArrayList<>();
 
     public static int heigthOfMap = 5;
     public static int wideOfMap = 5;

@@ -18,6 +18,7 @@ public class City {
         this.owner = owner;
         this.res = res;
         economy = new Economy(population, 1000, 1000);
+        partArmy = new int[8];
     }
 
     private Position position;

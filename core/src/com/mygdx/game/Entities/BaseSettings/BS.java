@@ -30,7 +30,7 @@ public class BS {
     public static int baseLegicimacy = 50;
 
 
-    public static int numberOfCR = 1;
+    public static int numberOfCR = 3;
     public static int numberOfRR = 1;
     public static int numberOfMineral = 1;
     public static int numberOfBuildings = 1;

@@ -58,7 +58,7 @@ public class Gov {
         regionControl = region;
         constructMod();
         constructAdv();
-
+        capital = region.get(0).getCity()[0].getPosition();
 
     }
     private boolean isPlayer = true;
@@ -489,13 +489,13 @@ public class Gov {
     }
     //изменение казны
     public void MakeMoney() {
-        UpAge();
-        UpdateMod();
+        //UpAge();
+        //UpdateMod();
 
-        UpdateArmy();
+        //UpdateArmy();
 
         UpdateAPL();
-        UpdateProfitFromEstates();
+        //UpdateProfitFromEstates();
         UpdateProfit();
         UpdateCost();
         ReCountCost();
