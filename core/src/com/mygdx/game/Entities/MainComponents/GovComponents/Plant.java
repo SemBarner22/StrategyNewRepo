@@ -43,7 +43,7 @@ public class Plant {
             if (sClass.equals("CR")) {
                 costs += World.valueCR[sR];
             }
-            profit = levelOfPlant * (World.valueCR[resourceOfPlant] * (100 +mod) - costs);
+            profit = (int) (levelOfPlant * (World.valueCR[resourceOfPlant] * (100 +mod) - costs));
         }
     }
 
