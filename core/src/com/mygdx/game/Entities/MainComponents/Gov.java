@@ -387,8 +387,11 @@ public class Gov {
             int mod = updateCultureReg(value);
             //переходим к городам
             for (int j = 0; j < value.getCity().length; j++) {
+                //обновляем ребелов
                 value.getCity()[j].UpdateRebelLevel(modRebel + mod);
-                value.getCity()[j].BuildingTurn();
+                //обновляем строительство зданий. Чтобы работало надо сначала создать здания
+                //value.getCity()[j].BuildingTurn();
+                //добавляем к полному производству
                 value.getCity()[j].updatePD();
             }
         }
@@ -425,7 +428,7 @@ public class Gov {
             // обновляем доход от регионов
             int mod = profitMod(value);
             value.setAutonomy(newAut(value, mod));
-            profitFromRegion += value.regionProfit(taxRate);
+            profitFromRegion += value.regionProfit(taxRate, modPopGrRate);
             for (int j = 0; j < value.getCity().length; j++) {
                 //Это надо для создания призывной армии
                 maxEquipment += value.getCity()[j].GetEquipment();
@@ -748,6 +751,14 @@ public class Gov {
     }
 
     // дальше идут только геттеры
+    //в этом методе мы передаем номер игрока (сам его возьмешь), количество денег, доход
+    public int[] mainScreen10Getters(){
+        int[] res = new int[2];
+        res[0] = money;
+        res[1] = profit;
+        return res;
+    }
+
     public int getModShock() {
         return modShock;
     }

@@ -20,6 +20,7 @@ public class Region {
         this.religion = religion;
         this.culture = culture;
         this.owner = owner;
+        World.totalPopulation +=population;
     }
 
     private Position position;
@@ -42,6 +43,7 @@ public class Region {
     private int prodResRate = 5;
     private int prodMinRate = 5;
     private int owner;
+    private int taxes;
 
     private int religion;
     private int rebelLevel;
@@ -105,31 +107,64 @@ public class Region {
 
     // обновление населения
     private void updatePopulation(int rate){
-        population *= 1000 + rate + BS.populationRate;
-        population /= 1000;
+        World.totalPopulation -= population;
+        population = (int) (population*(1000+BS.populationRate+1.0*prosperity/3+rate)/1000);
+        World.totalPopulation += population;
     }
 
     // ЭКОНОМИКА. Обычная экономика с убывающей отдачей
-    public int regionProfit(int tax){
-        updateProfitMineral(tax);
-        updateProfitRR(tax);
+    public int regionProfit(int tax, int popRate){
+        taxes=tax;
+        updatePopulation(popRate);
+        updateProfitMineral();
+        updateProfitRR();
+        int ret = (int) ((1.0*profitMineral+1.0*profitRR*autonomy/100)*tax/100);
         if (occupation){
-            return (profitMineral+profitRR)/2;
+            return ret/2;
         } else {
-            return profitMineral + profitRR;
+            return ret;
         }
     }
-    private void updateProfitRR(int tax) {
-        productionRR = (int) (RRTPF*capRes* Math.pow(1.0*population*prodResRate/10, 0.6));
-        profitRR = productionRR * World.valueRR[mineral] *tax *autonomy/10000;
+    private void updateProfitRR() {
+        productionRR = (int) (1.0*RRTPF/100*capRes* Math.pow(1.0*population*prodResRate/10, 0.3));
+        //System.out.println(productionRR);
+        profitRR = (int) (productionRR * World.valueRR[mineral]);
     }
-    private void updateProfitMineral(int tax) {
-        productionMin = (int) (MinTPF* capMin*Math.pow(1.0*population*prodMinRate/10, 0.4));
-        profitMineral = productionMin*World.valueMineral[mineral]*tax/100;
+    private void updateProfitMineral() {
+        productionMin = (int) (1.0*MinTPF/100* capMin*Math.pow(1.0*population*prodMinRate/10, 0.2));
+        //System.out.println(productionRR);
+        profitMineral = (int) (productionMin*World.valueMineral[mineral]);
+    }
+    //напишем чему равен спрос в городе на товары. Для начала C=Y-G-s. Но как будет распределено? По соотношению долей
+    //цент. то есть если цена p, а сумма всех цент P, то спрос на этот товар будет C*p/P. P лежит в ресурсах
+    private int CA = 0;
+    private void regionDemand(){
+        int C = productionMin+productionRR;
+        double x = 0;
+        for (int i = 0; i <BS.numberOfRR;i++){
+            World.totalRRDemand[i] += (int) (1.0*C*Resources.getValueRR(i)/Resources.getTotalValue());
+            x+=Resources.getValueRR(i)/Resources.getTotalValue();
+            CA -=(int) (1.0*C*Resources.getValueRR(i)/Resources.getTotalValue());
+        }
+        for (int i = 0; i <BS.numberOfCR;i++){
+            World.totalCRDemand[i] += (int) (1.0*C*Resources.getValueCR(i)/Resources.getTotalValue());
+            x+=Resources.getValueCR(i)/Resources.getTotalValue();
+            CA-=(int) (1.0*C*Resources.getValueCR(i)/Resources.getTotalValue());
+        }
+        for (int i = 0; i <BS.numberOfMineral;i++){
+            World.totalMineralDemand[i] += (int) (1.0*C*Resources.getValueMineral(i)/Resources.getTotalValue());
+            x+=Resources.getValueMineral(i)/Resources.getTotalValue();
+            CA-= (int) (1.0*C*Resources.getValueMineral(i)/Resources.getTotalValue());;
+        }
+        System.out.println("Pt"+x);
+
     }
     public void updatePD(){
         World.totalRegionProduction[resource] += productionRR;
         World.totalMineralProduction[mineral] += productionMin;
+        CA = productionRR+productionMin;
+        regionDemand();
+        System.out.println("Region CA"+CA);
     }
 
     public void setAutonomy(int autonomy) {

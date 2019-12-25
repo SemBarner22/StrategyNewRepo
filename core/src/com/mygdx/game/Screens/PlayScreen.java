@@ -112,12 +112,13 @@ public class PlayScreen implements Screen {
         world.preTurn(0);
         moveEndButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                //world.afterTurn(curPlayer);
+                world.afterTurn(curPlayer);
                 curPlayer = (curPlayer + 1) % players.size();
                 if (curPlayer == 0) {
-                    //world.AfterGlobalTurn();
+                    world.AfterGlobalTurn();
                 }
-                //world.preTurn(curPlayer);
+                world.preTurn(curPlayer);
+
             }
         });
     }

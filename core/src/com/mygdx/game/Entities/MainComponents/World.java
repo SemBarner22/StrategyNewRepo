@@ -8,6 +8,7 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
+import com.mygdx.game.Entities.MainComponents.GovComponents.Resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -40,11 +41,11 @@ public class World {
         cities.add(new City(new Position(10, 2), 5000, 2, resurs));
         City[] arcity = new City[1];
         arcity[0] = cities.get(0);
-        allRegions.add(new Region(arcity, 5000, 0, 1000, 0, 1000, 0, 0, 0));
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
         arcity[0] = cities.get(1);
-        allRegions.add(new Region(arcity, 5000, 0, 1000, 0, 1000, 0, 0, 1));
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
         arcity[0] = cities.get(2);
-        allRegions.add(new Region(arcity, 5000, 0, 1000, 0, 1000, 0, 0, 2));
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 2));
         for (int i = 0; i < currentPlayers; ++i) {
             ArrayList<Region> regions = new ArrayList<>();
             for (Region reg: allRegions
@@ -84,8 +85,9 @@ public class World {
 
     // компонены мира
     private boolean endGame = false;
+    private Resources resources = new Resources();
     private ArrayList<Gov> country = new ArrayList<>();
-    private int totalPopulation;
+    public static int totalPopulation = 0;
     private CityAttack cityAttack;
     private ArrayList<Region> allRegions = new ArrayList<>();
 
@@ -126,13 +128,32 @@ public class World {
     }
     // цены на ресурсы
 
-    public static int[] valueRR = new int[BS.numberOfRR];
-    public static int[] valueMineral = new int[BS.numberOfMineral];
-    public static int[] valueCR = new int[BS.numberOfCR];
+    public static double[] valueRR = new double[BS.numberOfRR];
+    public static double[] valueMineral = new double[BS.numberOfMineral];
+    public static double[] valueCR = new double[BS.numberOfCR];
 
-    private int[] baseValueCR =  new int[BS.numberOfCR];
-    private int[] baseValueRR = new int[BS.numberOfRR];
-    private int[] baseValueMineral = new int[BS.numberOfMineral];
+    private static int[] basePopulationRRDemand = new int[BS.numberOfRR];
+    private static int[] basePopulationMineralDemand = new int[BS.numberOfMineral];
+    private static int[] basePopulationCRDemand = new int[BS.numberOfCR];
+
+    private static int[] baseValueCR =  new int[BS.numberOfCR];
+    private static int[] baseValueRR = new int[BS.numberOfRR];
+    private static int[] baseValueMineral = new int[BS.numberOfMineral];
+    //задаем базовые цены и спрос на ресурсы
+    static {
+        for (int i =0; i < BS.numberOfRR; i++){
+            baseValueRR[i] = 1;
+            basePopulationRRDemand[i] = 1;
+        }
+        for (int i =0; i < BS.numberOfMineral; i++){
+            baseValueMineral[i] = 1;
+            basePopulationMineralDemand[i] = 1;
+        }
+        for (int i =0; i < BS.numberOfCR; i++){
+            baseValueCR[i] = 1;
+            basePopulationCRDemand[i] = 1;
+        }
+    }
 
     // производство ресурсов
     public static int[] totalCityProduction = new int[BS.numberOfCR];
@@ -144,15 +165,9 @@ public class World {
     public static int[] totalPlantRRDemand = new int[BS.numberOfRR];
     public static int[] totalPlantMineralDemand = new int[BS.numberOfMineral];
 
-    private int[] basePopulationRRDemand = new int[BS.numberOfRR];
-    private int[] basePopulationMineralDemand = new int[BS.numberOfMineral];
-    private int[] basePopulationCRDemand = new int[BS.numberOfCR];
-
-    // Служебное
-    public static boolean otladka = true;
-    // штука, которая дает массив заводов
-
-
+    public static int[] totalCRDemand = new int[BS.numberOfCR];
+    public static int[] totalRRDemand = new int[BS.numberOfRR];
+    public static int[] totalMineralDemand = new int[BS.numberOfMineral];
 
     /*не знаю где это оставить, поэтому пусть будут тут
      Находит 2 армии по координатам и сталкивает их. Можно сократить конечно количество опреций, тк мы знаем первую страну, но есть варик делать
@@ -313,15 +328,17 @@ public class World {
         //считаем цены на региональные ресурсы
         for (int j = 0; j < BS.numberOfRR; j++) {
             if (totalRegionProduction[j] != 0) {
-                valueRR[j] = (totalPlantRRDemand[j] + totalPopulation * basePopulationRRDemand[j]) * baseValueRR[j] / totalRegionProduction[j];
+                valueRR[j] = (1.0*totalPlantRRDemand[j] + totalPopulation * basePopulationRRDemand[j]) * baseValueRR[j] / totalRegionProduction[j];
             } else {
                 valueRR[j] = 0;
             }
+            //System.out.println(totalPopulation);
+            //System.out.println(totalCityProduction[0]);
         }
         //считаем цены на ископаемые ресурсы
-        for (int j = 0; j < BS.numberOfCR; j++) {
+        for (int j = 0; j < BS.numberOfMineral; j++) {
             if (totalMineralProduction[j] != 0) {
-                valueMineral[j] = (totalPlantMineralDemand[j] + totalPopulation * basePopulationMineralDemand[j]) * baseValueMineral[j] / totalMineralProduction[j];
+                valueMineral[j] = (1.0*totalPlantMineralDemand[j] + totalPopulation * basePopulationMineralDemand[j]) * baseValueMineral[j] / totalMineralProduction[j];
             } else {
                 valueMineral[j] = 0;
             }
@@ -329,11 +346,12 @@ public class World {
         // считаем цены на городские товары
         for (int j = 0; j < BS.numberOfCR; j++) {
             if (totalCityProduction[j] != 0) {
-                valueCR[j] = (totalPlantCRDemand[j] + totalPopulation * basePopulationCRDemand[j]) * baseValueCR[j] / totalCityProduction[j];
+                valueCR[j] = (1.0*totalPlantCRDemand[j] + totalPopulation * basePopulationCRDemand[j]) * baseValueCR[j] / totalCityProduction[j];
             } else {
                 valueCR[j] = 0;
             }
         }
+        System.out.println(valueCR[0]);
         //Обнуляем разные важные массивы
         NullArray(totalCityProduction);
         NullArray(totalMineralProduction);
@@ -341,6 +359,22 @@ public class World {
         NullArray(totalPlantCRDemand);
         NullArray(totalPlantRRDemand);
         NullArray(totalPlantMineralDemand);
+    }
+    //пацанский маркет
+    private void trueMarket(){
+        resources.setCR(totalCRDemand, totalCityProduction);
+        resources.setMineral(totalMineralDemand, totalMineralProduction);
+        resources.setRR(totalRRDemand,totalRegionProduction);
+        resources.updateTotalValue();
+
+        //checkTotalPD();
+        resources.showPrices();
+        NullArray(totalCityProduction);
+        NullArray(totalMineralProduction);
+        NullArray(totalRegionProduction);
+        NullArray(totalCRDemand);
+        NullArray(totalMineralDemand);
+        NullArray(totalRRDemand);
     }
     // все что делается до хода
     public void preTurn(int i){
@@ -352,9 +386,34 @@ public class World {
     }
     //после хода всех игроков. Сюдаже пихается дата и прочее
     public void AfterGlobalTurn(){
-        Market();
+        trueMarket();
     }
-
+    //Нужен для проверки текущего балланса. Чисто служебный метод
+    private void checkTotalPD(){
+        int res = 0;
+        System.out.println(totalCityProduction[0]+" " +totalCityProduction[1]+" "+totalCityProduction[2]+" "
+                +totalRegionProduction[0]+" "+ totalMineralProduction[0]+" "+totalMineralDemand[0]+" "+totalRRDemand[0]
+                +" "+totalCRDemand[0]+" "+ totalCRDemand[1]+" "+totalCRDemand[2]);
+        for (int i: totalRegionProduction) {
+            res+=i;
+        }
+        for (int i: totalMineralProduction) {
+            res+=i;
+        }
+        for (int i: totalCityProduction) {
+            res+=i;
+        }
+        for (int i: totalMineralDemand) {
+            res-=i;
+        }
+        for (int i: totalRRDemand) {
+            res-=i;
+        }
+        for (int i: totalCRDemand) {
+            res-=i;
+        }
+        System.out.println("Current account "+res);
+    }
 //    public void Main() {
 //        int i = -1;
 //        while (!endGame){

@@ -11,15 +11,15 @@ public class Economy {
     private double scientists = 10;
     private double growth = 0;
 
-    public Economy(int labor, int stock, int tfp) {
+    public Economy(int labor, int tfp) {
         this.labor = labor;
-        this.stock = stock;
+        this.stock = (int) (saveRate*Math.pow(labor, 1.5)*tfp/amort);
         this.tfp = tfp;
         CountGdp(0);
     }
     private void CountGdp(int prosperity){
         int gr = gdp;
-        gdp = (int) (tfp / 100 * Math.pow(stock, 0.34) * Math. pow((100-scientists) *labor/100, 0.66) * (100+prosperity)/1000);
+        gdp = (int) (1.0*tfp / 100 * Math.pow(stock, 0.34) * Math. pow((100-scientists) *labor/100, 0.66) * (100+prosperity)/1000);
         //System.out.println();
         growth = (1.0*gdp-gr)*100/gr;
     }
@@ -34,6 +34,10 @@ public class Economy {
         labor = population;
         CountGdp(prosperity);
         return gdp;
+    }
+
+    public int getSaveRate() {
+        return saveRate;
     }
 
     public int getTfp() {
