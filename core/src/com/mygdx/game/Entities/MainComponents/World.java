@@ -85,7 +85,7 @@ public class World {
 
     // компонены мира
     private boolean endGame = false;
-    private Resources resources = new Resources();
+    public static Resources resources = new Resources();
     private ArrayList<Gov> country = new ArrayList<>();
     public static int totalPopulation = 0;
     private CityAttack cityAttack;

@@ -96,7 +96,8 @@ public class City {
         Prosperity();
         updatePopulation(popGrRate);
         this.taxes = taxes;
-        profit = (int) (economy.getGdp() * (World.valueCR[res[0]] + World.valueCR[res[1]] + World.valueCR[res[2]]) /3);
+        profit = (int) (economy.getGdp() * (Resources.getValueCR(res[0]) + Resources.getValueCR(res[1])
+                + Resources.getValueCR(res[2])) /3);
         return taxes * profit*autonomy/10000;
     }
     private void Prosperity(){
