@@ -128,12 +128,12 @@ public class Region {
     private void updateProfitRR() {
         productionRR = (int) (1.0*RRTPF/100*capRes* Math.pow(1.0*population*prodResRate/10, 0.3));
         //System.out.println(productionRR);
-        profitRR = (int) (productionRR * World.valueRR[mineral]);
+        profitRR = (int) (productionRR * Resources.getValueRR(resource));
     }
     private void updateProfitMineral() {
         productionMin = (int) (1.0*MinTPF/100* capMin*Math.pow(1.0*population*prodMinRate/10, 0.2));
         //System.out.println(productionRR);
-        profitMineral = (int) (productionMin*World.valueMineral[mineral]);
+        profitMineral = (int) (productionMin*Resources.getValueMineral(mineral));
     }
     //напишем чему равен спрос в городе на товары. Для начала C=Y-G-s. Но как будет распределено? По соотношению долей
     //цент. то есть если цена p, а сумма всех цент P, то спрос на этот товар будет C*p/P. P лежит в ресурсах
@@ -156,7 +156,7 @@ public class Region {
             x+=Resources.getValueMineral(i)/Resources.getTotalValue();
             CA-= (int) (1.0*C*Resources.getValueMineral(i)/Resources.getTotalValue());;
         }
-        System.out.println("Pt"+x);
+        //System.out.println("Pt"+x);
 
     }
     public void updatePD(){
@@ -164,7 +164,7 @@ public class Region {
         World.totalMineralProduction[mineral] += productionMin;
         CA = productionRR+productionMin;
         regionDemand();
-        System.out.println("Region CA"+CA);
+        //System.out.println("Region CA"+CA);
     }
 
     public void setAutonomy(int autonomy) {

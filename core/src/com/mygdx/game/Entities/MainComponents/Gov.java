@@ -193,7 +193,7 @@ public class Gov {
 
     //доходы
     private int money;
-    private int taxRate = 10;
+    private int taxRate = 1;
     private int profitFromProduction;
     private int profitFromRegion;
     private int profitFromMineral;
@@ -382,6 +382,7 @@ public class Gov {
         return mod;
     }
     public void UpdatePD() {
+        System.out.println("Cash"+money+" "+profit);
         for (Region value : regionControl) {
             value.updatePD();
             int mod = updateCultureReg(value);
@@ -436,6 +437,7 @@ public class Gov {
             }
         }
         profit = profitFromCity+profitFromRegion;
+        maxDebt = profit*10;
     }
 
     //расходы - армия, бюрократия, долги
@@ -502,7 +504,7 @@ public class Gov {
         UpdateProfit();
         UpdateCost();
         ReCountCost();
-        money += profit * profitFromEstates / 100000 - cost;
+        money += profit - cost;
         while (!CheckMoney(0)){
             TakeDebt();
         }
@@ -511,9 +513,9 @@ public class Gov {
     // проверка на наличие суммы денег
     public boolean CheckMoney( int number){
         if (number < money) {
-            return false;
-        } else{
             return true;
+        } else{
+            return false;
         }
     }
     // получаем деньги
@@ -756,6 +758,24 @@ public class Gov {
         int[] res = new int[2];
         res[0] = money;
         res[1] = profit;
+        return res;
+    }
+    //для скрина экономика
+    public int[] getEconomy(){
+        int[] res = new int[9];
+        res[0] = money;
+        res[1] = profit;
+        res[2] = cost;
+        res[3] = costAdm;
+        res[4] = costArmy;
+        res[5] = profitFromRegion;
+        res[6] = profitFromCity;
+        res[7] = maxDebt;
+        int totDebt = 0;
+        for (Debt i: debt){
+            totDebt+=i.getSum();
+        }
+        res[8] = totDebt;
         return res;
     }
 

@@ -13,7 +13,7 @@ public class BS {
     public static int baseProfitFromMineral = 1;
     public static int baseProfitFromProduction = 1;
     public static int baseCostArmy = 1;
-    public static int baseCostAdm = 1;
+    public static int baseCostAdm = 100;
     public static int baseAdvisorCost = 1;
     public static int baseInterest = 3;
     public static int baseAutonomy = 1;
