@@ -3,6 +3,9 @@ package com.mygdx.game.Entities.MainComponents.GovComponents;
 
 import com.mygdx.game.Entities.BaseSettings.BS;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
 //этот класс нужен для работы со всеми ресурсами. Он хранит в себе информацию о том, что откуда берется и какой ресурс
 // из чего делается.
 public class Resources {
@@ -81,23 +84,27 @@ public class Resources {
     public static int[] investCR(int i){
         return CR[i].investCR();
     }
-    public void showPrices(){
+    DecimalFormat decimalFormat = new DecimalFormat("#.###");
+    public ArrayList<String> showPrices() {
+        ArrayList<String> res = new ArrayList<>();
         String str = "";
         for (Resource value: CR){
-            str = str+ value.getValue()+" ";
+            str = str + decimalFormat.format(value.getValue()) +" ";
         }
+        res.add("CR Value "+ str);
         System.out.println("CR Value "+ str);
         str = " ";
         for (Resource value: RR){
-            str= str+ value.getValue()+" ";
+            str= str + decimalFormat.format(value.getValue()) + " ";
         }
+        res.add("RR Value "+ str);
         System.out.println("RR Value "+str);
         str = " ";
         for (Resource value: Mineral){
-            str= str+ value.getValue()+" ";
+            str= str+ decimalFormat.format(value.getValue()) +" ";
         }
+        res.add("Mineral Value "+ str);
         System.out.println("Mineral Value "+str);
-        str = " ";
-
+        return res;
     }
 }

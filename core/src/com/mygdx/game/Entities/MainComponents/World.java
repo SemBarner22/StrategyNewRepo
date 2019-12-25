@@ -368,7 +368,7 @@ public class World {
         resources.updateTotalValue();
 
         // checkTotalPD();
-        // resources.showPrices();
+       // resources.showPrices();
         NullArray(totalCityProduction);
         NullArray(totalMineralProduction);
         NullArray(totalRegionProduction);
@@ -414,6 +414,15 @@ public class World {
         }
         System.out.println("Current account "+res);
     }
+
+    public static Resources getResources() {
+        return resources;
+    }
+
+    public static void setResources(Resources resources) {
+        World.resources = resources;
+    }
+
 //    public void Main() {
 //        int i = -1;
 //        while (!endGame){

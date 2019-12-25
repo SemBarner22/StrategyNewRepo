@@ -1,5 +1,7 @@
 package com.mygdx.game.Entities.MainComponents.GovComponents;
 
+import java.text.DecimalFormat;
+
 public class Resource {
     //для создания региональных и минералов
     public Resource() {
