@@ -86,7 +86,7 @@ public class Resources {
         for (Resource value: CR){
             str = str+ value.getValue()+" ";
         }
-        System.out.println("CR Value "+str);
+        System.out.println("CR Value "+ str);
         str = " ";
         for (Resource value: RR){
             str= str+ value.getValue()+" ";

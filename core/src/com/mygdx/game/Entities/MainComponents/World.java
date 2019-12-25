@@ -367,8 +367,8 @@ public class World {
         resources.setRR(totalRRDemand,totalRegionProduction);
         resources.updateTotalValue();
 
-        //checkTotalPD();
-        resources.showPrices();
+        // checkTotalPD();
+        // resources.showPrices();
         NullArray(totalCityProduction);
         NullArray(totalMineralProduction);
         NullArray(totalRegionProduction);

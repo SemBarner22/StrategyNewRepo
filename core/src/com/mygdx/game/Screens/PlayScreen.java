@@ -132,7 +132,7 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
-        labels.get(2).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
+        labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
         im = new InputMultiplexer(stage, players.get(curPlayer));
         Gdx.input.setInputProcessor(im);
         Gdx.gl.glClearColor(1, 0, 0, 1);

@@ -814,4 +814,12 @@ public class Gov {
     public int getMaxMobilisationArmy() {
         return maxMobilisationArmy;
     }
+
+    public int getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(int taxRate) {
+        this.taxRate = taxRate;
+    }
 }
