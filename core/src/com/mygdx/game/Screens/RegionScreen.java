@@ -2,6 +2,7 @@ package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.game.Entities.MainComponents.World;
@@ -21,7 +22,9 @@ public class RegionScreen extends AbstractMechanicsScreen {
         super.show();
         Table table = new Table();
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
-            container.add(new TextButton("Im Owner", skin));
+            container.add(new TextButton("Im the owner of region index " + regionIndex, skin));
+            container.add(new Label("First city Y coordinate (as example) " +
+                    PlayScreen.world.getAllRegions().get(regionIndex).getCity()[0].getPosition().GetY(), skin));
             container.row();
         }
         table.add(backButton).bottom().left();

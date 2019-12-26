@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 import static java.nio.file.Files.readAllLines;
@@ -36,38 +37,59 @@ public class World {
         resurs[1] = 1;
         resurs[2]=2;
         ArrayList<City> cities = new ArrayList<>();
-        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
-        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
-        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    new FileInputStream("res/Inits/CityInit")))) {
+                String nextLine;
+                bufferedReader.readLine();
+                while ((nextLine = bufferedReader.readLine()) != null) {
+                    Scanner scanner = new Scanner(nextLine);
+                    int x = scanner.nextInt();
+                    int y = scanner.nextInt();
+                    int popul = scanner.nextInt();
+                    int owner = scanner.nextInt();
+                    int[] res = new int[3];
+                    res[0] = scanner.nextInt();
+                    res[1] = scanner.nextInt();
+                    res[2] = scanner.nextInt();
+                    cities.add(new City(new Position(x, y), popul, owner, res));
+                }
 
-        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
-        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
-        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
-
-        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
-        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
-        City[] arcity = new City[1];
-        arcity[0] = cities.get(0);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
-        arcity[0] = cities.get(1);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
-        arcity[0] = cities.get(2);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 2));
-        arcity[0] = cities.get(3);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
-        arcity[0] = cities.get(4);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
-        arcity[0] = cities.get(5);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 2));
-        arcity[0] = cities.get(6);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
-        arcity[0] = cities.get(7);
-        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
+//        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
+//        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
+//
+//        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
+//        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
+//        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
+//
+//        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
+//        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
+        allRegions.add(new Region(new City[] {cities.get(0)}, 5000, 0, 100, 0, 100, 0, 0, 0));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(1)}, 5000, 0, 100, 0, 100, 0, 0, 1));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(2)}, 5000, 0, 100, 0, 100, 0, 0, 2));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(3)}, 5000, 0, 100, 0, 100, 0, 0, 0));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(4)}, 5000, 0, 100, 0, 100, 0, 0, 1));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(5)}, 5000, 0, 100, 0, 100, 0, 0, 2));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        //System.out.println(arcity[0].getPosition().GetY());
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(6)}, 5000, 0, 100, 0, 100, 0, 0, 0));
+        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
+        allRegions.add(new Region(new City[] {cities.get(7)}, 5000, 0, 100, 0, 100, 0, 0, 1));
 
         for (int i = 0; i < currentPlayers; ++i) {
             ArrayList<Region> regions = new ArrayList<>();
-            for (Region reg: allRegions
-                 ) {
+            for (Region reg: allRegions) {
                 if (reg.getOwner() == i){
                     regions.add(reg);
                 }
