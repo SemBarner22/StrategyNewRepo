@@ -178,6 +178,10 @@ public class PlayScreen implements Screen {
                     renderer.render(new int[]{map.getLayers().getIndex("Region" +
                             object.getProperties().get("RegIndex", Integer.class))});
                     strategy.batch.end();
+                    strategy.setScreen(new RegionScreen(strategy, curPlayer,
+                            object.getProperties().get("RegIndex", Integer.class),PlayScreen.this));
+                    players.get(curPlayer).setX(0);
+                    players.get(curPlayer).setY(0);
                 }
             }
         }

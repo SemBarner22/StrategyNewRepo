@@ -39,6 +39,13 @@ public class World {
         cities.add(new City(new Position(2, 2), 5000, 0, resurs));
         cities.add(new City(new Position(10, 10), 5000, 1, resurs));
         cities.add(new City(new Position(10, 2), 5000, 2, resurs));
+
+        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
+        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
+        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
+
+        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
+        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
         City[] arcity = new City[1];
         arcity[0] = cities.get(0);
         allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
@@ -46,6 +53,17 @@ public class World {
         allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
         arcity[0] = cities.get(2);
         allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 2));
+        arcity[0] = cities.get(3);
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
+        arcity[0] = cities.get(4);
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
+        arcity[0] = cities.get(5);
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 2));
+        arcity[0] = cities.get(6);
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 0));
+        arcity[0] = cities.get(7);
+        allRegions.add(new Region(arcity, 5000, 0, 100, 0, 100, 0, 0, 1));
+
         for (int i = 0; i < currentPlayers; ++i) {
             ArrayList<Region> regions = new ArrayList<>();
             for (Region reg: allRegions
@@ -90,7 +108,6 @@ public class World {
     public static int totalPopulation = 0;
     private CityAttack cityAttack;
     private ArrayList<Region> allRegions = new ArrayList<>();
-
     public static int heigthOfMap = 5;
     public static int wideOfMap = 5;
 
@@ -422,6 +439,15 @@ public class World {
     public static void setResources(Resources resources) {
         World.resources = resources;
     }
+
+    public ArrayList<Region> getAllRegions() {
+        return allRegions;
+    }
+
+    public void setAllRegions(ArrayList<Region> allRegions) {
+        this.allRegions = allRegions;
+    }
+
 
 //    public void Main() {
 //        int i = -1;

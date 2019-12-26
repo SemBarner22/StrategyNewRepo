@@ -34,7 +34,6 @@ public class MechanicsMenu implements Screen {
         advisorScreen = new AdvisorScreen(strategy, curPlayer, MechanicsMenu.this);
         estateScreen = new EstateScreen(strategy, curPlayer,MechanicsMenu.this);
         armiesScreen = new ArmiesScreen(strategy, curPlayer,MechanicsMenu.this);
-        regionScreen = new RegionScreen(strategy, curPlayer, MechanicsMenu.this);
         lawScreen = new LawScreen(strategy, curPlayer,MechanicsMenu.this);
         economicsScreen = new EconomicsScreen(strategy, curPlayer,MechanicsMenu.this);
     }
@@ -56,9 +55,9 @@ public class MechanicsMenu implements Screen {
         final ScrollPane scroll = new ScrollPane(table, skin);
 
         table.pad(10).defaults().expandX().space(4);
-        String[] strings = new String[] {"Advisor", "Estates", "Armies", "Regions",
+        String[] strings = new String[] {"Advisor", "Estates", "Armies",
                 "Laws", "Economics"};
-        final Screen[] screens = new Screen[] {advisorScreen, estateScreen, armiesScreen, regionScreen,
+        final Screen[] screens = new Screen[] {advisorScreen, estateScreen, armiesScreen,
                                         lawScreen, economicsScreen};
         for (int i = 0; i < strings.length; i++) {
             table.row();

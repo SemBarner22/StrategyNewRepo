@@ -3,17 +3,29 @@ package com.mygdx.game.Screens;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.mygdx.game.Entities.MainComponents.World;
 import com.mygdx.game.Strategy;
 
 public class RegionScreen extends AbstractMechanicsScreen {
+    public int regionIndex;
 
-    public RegionScreen(Strategy strategy, int curPlayer, MechanicsMenu mechanicsMenu) {
-        super(strategy, curPlayer, mechanicsMenu);
+
+    public RegionScreen(Strategy strategy, int curPlayer, int regionIndex, Screen playScreen) {
+        super(strategy, curPlayer, playScreen);
+        this.regionIndex = regionIndex;
     }
 
     @Override
     public void show() {
         super.show();
+        Table table = new Table();
+        if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
+            container.add(new TextButton("Im Owner", skin));
+            container.row();
+        }
+        table.add(backButton).bottom().left();
+        container.add(table);
     }
 
     @Override
