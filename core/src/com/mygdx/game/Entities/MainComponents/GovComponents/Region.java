@@ -23,6 +23,8 @@ public class Region {
         World.totalPopulation +=population;
     }
     private int numberOfRegion;
+    private int deIureControl;
+    private int deFactoControl;
 
     private Position position;
     private City[] city;
@@ -208,9 +210,19 @@ public class Region {
 
 
     //Действия с экономикой. Снижение автономии, донат денег в капитал
+    public boolean posDecAut(){
+        boolean result = true;
+        //TODO сделать проверку на модификатор
+        if (autonomy < 20 & result){
+            result = false;
+        }
+        return result;
+    }
     public void decreaseAutonomy(){
-        autonomy = Math.max(autonomy-20, 0);
-        //TODO create mod that increase rebel level
+        if (posDecAut()) {
+            autonomy = Math.max(autonomy - 20, 0);
+            //TODO create mod that increase rebel level
+        }
     }
     public int costOfCapitalDonate(int citynum){
         return (city[citynum].getPotentialStock() - city[citynum].getStock())/10;
@@ -265,7 +277,7 @@ public class Region {
     }
     //для вывода на экран регионов.
     public int[] getRegionScreen(){
-        int[] res = new int[11];
+        int[] res = new int[21];
         res[0] = city.length;
         res[1] = productionRR;
         res[2] = profitRR;

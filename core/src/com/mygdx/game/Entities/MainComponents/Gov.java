@@ -225,6 +225,23 @@ public class Gov {
     private Position capital;
     private int religion;
     private int culture;
+    //Метод дает номер региона в массиве region, если ему дать регистрационный номер региона
+    public int getNumRegion(int numberOfRegion){
+        for (int i = 0; i <region.size();i++){
+            if (region.get(i).getNumberOfRegion() ==numberOfRegion){
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int getNumRegionControl(int numberOfRegion){
+        for (int i = 0; i <regionControl.size();i++){
+            if (regionControl.get(i).getNumberOfRegion() ==numberOfRegion){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     // армия
     public ArrayList<Army> army = new ArrayList<>();
@@ -525,10 +542,18 @@ public class Gov {
         debt.add(new Debt(maxDebt, interest + modInterest, 10));
         money += maxDebt;
     }
-    //invest in stock
-    /*public boolean posibInvest(int region, int city){
-        return re
-    }*/
+    //invest in stock тут как раз обращаться уже надо по номеру региона
+    public boolean posibInvest(int reg, int city){
+        return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+    }
+    public void invest(int reg, int city){
+        if (posibInvest(reg, city)){
+            region.get(getNumRegion(reg)).getCity()[city]
+                    .investStock(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+            PlusMoney(-region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+        }
+    }
+
     //обновляем другие ресурсы
     public void UpdateAPL() {
         PlusAdm(BS.baseAdm + modAdm);
@@ -602,30 +627,6 @@ public class Gov {
             PlusMoney(-costInf(numberOfRegion));
         }
     }
-
-
-    // Заводы проверяем можем ли построить/улучшить завод
-    /*
-    public int costUpgradePlant(int numberOfRegion, int numberOfCity, int numberPlant){
-        return regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfPlant(numberPlant) * modBuildingCost / 100;
-    }
-    public boolean posBuildPlant(int numberOfRegion, int numberOfCity, int numberPlant /*номер клетки){
-        return CheckMoney(costUpgradePlant(numberOfRegion, numberOfCity, numberPlant));
-    }
-    // строим завод
-    public void BuildPlant(int numberOfRegion, int numberOfCity, int numberPlant){
-        if (posBuildPlant(numberOfRegion, numberOfCity, numberPlant)){
-            regionControl.get(numberOfRegion).getCity()[numberOfCity].getPlant().get(numberPlant).Upgrade();
-            PlusMoney(-costUpgradePlant(numberOfRegion, numberOfCity, numberPlant));
-        }
-    }
-    public void newPlant(int numberOfRegion, int numberOfCity, int numberPlant, int resource){
-        if (posBuildPlant(numberOfRegion, numberOfCity, numberPlant)) {
-            regionControl.get(numberOfRegion).getCity()[numberOfCity].newPlant(resource);
-            PlusMoney(-costUpgradePlant(numberOfRegion, numberOfCity, numberPlant));
-        }
-    }*/
-
     //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ
     // Эта штука принимает позицию, но в целом можно переделать и под саму армию, убрав первую часть. В целом потребуется
     // для удаления армий после поражения. Хотя не особо. В общем есть и есть
@@ -753,7 +754,6 @@ public class Gov {
         st[2] = "Organisation " + modOrganisation + "%";
         return st;
     }
-
     // дальше идут только геттеры
     //в этом методе мы передаем номер игрока (сам его возьмешь), количество денег, доход
     public int[] mainScreen10Getters(){
@@ -780,47 +780,36 @@ public class Gov {
         res[8] = totDebt;
         return res;
     }
-
     public int getModShock() {
         return modShock;
     }
-
     public int getModFire() {
         return modFire;
     }
-
     public ArrayList<Region> getRegionControl() {
         return regionControl;
     }
-
     public ArrayList<Region> getRegion() {
         return region;
     }
-
     public int getModMorale() {
         return modMorale;
     }
-
     public int getModOrganisation() {
         return modOrganisation;
     }
-
     public int getMaxEquipment() {
         return maxEquipment;
     }
-
     public int getEquipment() {
         return equipment;
     }
-
     public int getMaxMobilisationArmy() {
         return maxMobilisationArmy;
     }
-
     public int getTaxRate() {
         return taxRate;
     }
-
     public void setTaxRate(int taxRate) {
         this.taxRate = taxRate;
     }

@@ -86,7 +86,11 @@ public class World {
         allRegions.add(new Region(new City[] {cities.get(6)}, 5000, 0, 100, 0, 100, 0, 0, 0));
         //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
         allRegions.add(new Region(new City[] {cities.get(7)}, 5000, 0, 100, 0, 100, 0, 0, 1));
-
+        /*TODO Так, я не изменяю конструктор, но вообще просто пронумеруй регионы все в любом порядке. в гове будет
+        лежать метод, который будет давать регион по номеру. есть две переменные еще, deIureControl и deFractoControl
+        Их делаешь одинаковыми и равными номеру игрока, которому они принадлежат. И в общем, тогда ты можешь также
+        пронумеровать все регионы на карте, а затем легко получать информацию о государстве
+        */
         for (int i = 0; i < currentPlayers; ++i) {
             ArrayList<Region> regions = new ArrayList<>();
             for (Region reg: allRegions) {

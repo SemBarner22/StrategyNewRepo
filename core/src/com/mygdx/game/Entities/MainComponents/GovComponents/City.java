@@ -355,40 +355,32 @@ public class City {
     public Position getPosition() {
         return position;
     }
-
     public int getOwner() {
         return owner;
     }
-
     public ArrayList<Plant> getPlant() {
         return plant;
     }
-
     public void setAutonomy(double autonomy) {
         this.autonomy = autonomy;
     }
-
     public void ActivateModificator(int i){
         modificator[i].Activate();
     }
-
     public void setOwner(int owner) {
         this.owner = owner;
     }
-
     public boolean isMobilisation() {
         return mobilisation;
     }
-
     public void setMobilisation(boolean mobilisation) {
         this.mobilisation = mobilisation;
     }
-
     public int getPopulation() {
         return population;
     }
     public int[] getCityScreen(){
-        int[] res = new int[11];
+        int[] res = new int[20];
         res[0] = economy.getGdp();
         res[1] = economy.getStock();
         res[2] = population;
