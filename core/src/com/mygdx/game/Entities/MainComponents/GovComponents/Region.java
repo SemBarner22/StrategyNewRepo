@@ -22,13 +22,15 @@ public class Region {
         this.owner = owner;
         World.totalPopulation +=population;
     }
+    private int numberOfRegion;
 
     private Position position;
     private City[] city;
     private int population;
     private int prosperity = 0;
     private int infrastructure = 1;
-    private int autonomy;
+    private double autonomy;
+    private double potentialAutonomy;
 
     private int resource;
     private int capRes;
@@ -50,7 +52,7 @@ public class Region {
     private int culture;
     private boolean occupation;
 
-    private int numberOfModificators = 0;
+    private int numberOfModificators = BS.regionModsNum;
     private Modificator[] modificator = new Modificator[numberOfModificators];
 
     public void updateRegion(){
@@ -138,6 +140,23 @@ public class Region {
     //напишем чему равен спрос в городе на товары. Для начала C=Y-G-s. Но как будет распределено? По соотношению долей
     //цент. то есть если цена p, а сумма всех цент P, то спрос на этот товар будет C*p/P. P лежит в ресурсах
     private int CA = 0;
+    private void regionDemand2(){
+        int C = productionMin+productionRR;
+        double[] reversedPrices = maximisationUtility();
+        //System.out.println("Consumption "+C);
+        for (int i = 0; i <BS.numberOfRR;i++){
+            World.totalRRDemand[i] += (int) (1.0*C*reversedPrices[i+BS.numberOfMineral]);
+            CA+=(int) (1.0*C*reversedPrices[i+BS.numberOfMineral]);
+        }
+        for (int i = 0; i <BS.numberOfCR;i++){
+            World.totalCRDemand[i] += (int) (1.0*C*reversedPrices[i+BS.numberOfMineral+BS.numberOfRR]);
+            CA +=(int) (1.0*C*reversedPrices[i+BS.numberOfMineral+BS.numberOfRR]);
+        }
+        for (int i = 0; i <BS.numberOfMineral;i++){
+            World.totalMineralDemand[i] += (int) (1.0*C*reversedPrices[i]);
+            CA+=(int) (1.0*C*reversedPrices[i]);
+        }
+    }
     private void regionDemand(){
         int C = productionMin+productionRR;
         double x = 0;
@@ -159,21 +178,61 @@ public class Region {
         //System.out.println("Pt"+x);
 
     }
+    private double[] maximisationUtility(){
+        double[] reversedPrices = new double[BS.numberOfMineral+BS.numberOfRR+BS.numberOfCR];
+        for (int i = 0; i< BS.numberOfMineral; i++){
+            reversedPrices[i] = 1/Resources.getValueMineral(i);
+        }
+        for (int i = BS.numberOfMineral; i< BS.numberOfRR+BS.numberOfMineral; i++){
+            reversedPrices[i] = 1/Resources.getValueRR(i-BS.numberOfMineral);
+        }
+        for (int i = BS.numberOfRR+BS.numberOfMineral; i< BS.numberOfCR+BS.numberOfRR+BS.numberOfMineral; i++){
+            reversedPrices[i] = 1/Resources.getValueCR(i-BS.numberOfRR-BS.numberOfMineral);
+        }
+        double sumRP = 0;
+        for (double i: reversedPrices){
+            sumRP += i;
+        }
+        for (int i = 0; i < reversedPrices.length; i++){
+            reversedPrices[i] /=sumRP;
+        }
+        return reversedPrices;
+    }
     public void updatePD(){
         World.totalRegionProduction[resource] += productionRR;
         World.totalMineralProduction[mineral] += productionMin;
         CA = productionRR+productionMin;
-        regionDemand();
+        regionDemand2();
         //System.out.println("Region CA"+CA);
     }
 
-    public void setAutonomy(int autonomy) {
-        this.autonomy = autonomy;
-        for (City city: city) {
-            city.setAutonomy(autonomy);
-        }
+
+    //Действия с экономикой. Снижение автономии, донат денег в капитал
+    public void decreaseAutonomy(){
+        autonomy = Math.max(autonomy-20, 0);
+        //TODO create mod that increase rebel level
+    }
+    public int costOfCapitalDonate(int citynum){
+        return (city[citynum].getPotentialStock() - city[citynum].getStock())/10;
+    }
+    public void capitalDonate(int cityNum){
+        city[cityNum].investStock((int) (costOfCapitalDonate(cityNum)*(100-autonomy)/100));
     }
 
+
+
+
+    public void setAutonomy(double autonomy) {
+        potentialAutonomy = autonomy;
+        if (Math.abs(this.autonomy - potentialAutonomy) < 0.1){
+            this.autonomy = potentialAutonomy;
+        } else {
+            this.autonomy += (autonomy - potentialAutonomy) / 10;
+        }
+        for (City city: city) {
+            city.setAutonomy(this.autonomy);
+        }
+    }
     public Position getPosition() {
         return position;
     }
@@ -203,6 +262,33 @@ public class Region {
     }
     public int getOwner() {
         return owner;
+    }
+    //для вывода на экран регионов.
+    public int[] getRegionScreen(){
+        int[] res = new int[11];
+        res[0] = city.length;
+        res[1] = productionRR;
+        res[2] = profitRR;
+        res[3] = productionMin;
+        res[4] = profitMineral;
+        res[5] = culture;
+        res[6] = religion;
+        res[7] = population;
+        int totalPop=0;
+        for (City value: city){
+            totalPop+=value.getPopulation();
+        }
+        res[8] = totalPop;
+        res[9]  =infrastructure;
+        res[10] = prosperity;
+        return res;
+    }
+    public double getPotentialAutonomy() {
+        return potentialAutonomy;
+    }
+
+    public int getNumberOfRegion() {
+        return numberOfRegion;
     }
 }
 

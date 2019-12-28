@@ -125,6 +125,7 @@ public class World {
 
     // компонены мира
     private boolean endGame = false;
+    private int turnNumber = 1;
     public static Resources resources = new Resources();
     private ArrayList<Gov> country = new ArrayList<>();
     public static int totalPopulation = 0;
@@ -401,7 +402,8 @@ public class World {
     }
     //пацанский маркет
     private void trueMarket(){
-        resources.setCR(totalCRDemand, totalCityProduction);
+        double increaseOverTime = (1.0*turnNumber+20)/20;
+        resources.setCR(totalCRDemand, totalCityProduction, increaseOverTime);
         resources.setMineral(totalMineralDemand, totalMineralProduction);
         resources.setRR(totalRRDemand,totalRegionProduction);
         resources.updateTotalValue();
@@ -426,6 +428,7 @@ public class World {
     //после хода всех игроков. Сюдаже пихается дата и прочее
     public void AfterGlobalTurn(){
         trueMarket();
+        turnNumber++;
     }
     //Нужен для проверки текущего балланса. Чисто служебный метод
     private void checkTotalPD(){

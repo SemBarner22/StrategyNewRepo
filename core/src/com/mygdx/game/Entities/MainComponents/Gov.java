@@ -281,7 +281,6 @@ public class Gov {
     }
     // убираем советника
 
-    //TODO adv without job has Job -1
     public void DismissAdvisor(int adv){
         advList.get(adv).setHaveJob(-1);
     }
@@ -291,7 +290,6 @@ public class Gov {
     }
     // выдаем список незанятых советников
 
-    //TODO
     public Integer[] getUnasignAdvisors() {
         ArrayList<Integer> ar = new ArrayList<>();
         for (int i = 0; i < advList.size(); i++){
@@ -382,7 +380,7 @@ public class Gov {
         return mod;
     }
     public void UpdatePD() {
-        System.out.println("Cash"+money+" "+profit);
+        //System.out.println("Cash"+money+" "+profit);
         for (Region value : regionControl) {
             value.updatePD();
             int mod = updateCultureReg(value);
@@ -527,6 +525,10 @@ public class Gov {
         debt.add(new Debt(maxDebt, interest + modInterest, 10));
         money += maxDebt;
     }
+    //invest in stock
+    /*public boolean posibInvest(int region, int city){
+        return re
+    }*/
     //обновляем другие ресурсы
     public void UpdateAPL() {
         PlusAdm(BS.baseAdm + modAdm);

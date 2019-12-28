@@ -21,6 +21,7 @@ public class BS {
 
     public static int numberOfEvent = 1;
     public static int numberOfModificators = 1;
+    public static int regionModsNum = 0;
 
     public static int baseNumberOfEstates = 7;
     public static int baseLoyalityIncrease = 1;

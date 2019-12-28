@@ -6,7 +6,6 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.World;
 
 import java.util.ArrayList;
-import java.util.SimpleTimeZone;
 /* текщая позиция по экономике такова - есть класс экономика и он принадлежит для каждого города. К региону эта штука не
 применима, там используется такая же, только с фиксированным капиталом. Соответственно пока чтов се взаимодействие с
 городом и регионом это установка налоговой ставки. Потом надо будет добавить различные эдикты
@@ -18,10 +17,14 @@ public class City {
         this.population = population;
         this.owner = owner;
         this.res = res;
-        economy = new Economy(population, 1000);
-        partArmy = new int[8];
+        economy = new Economy(population, 100);
         World.totalPopulation += population;
         updateEconomy(0, 0, 0);
+        partArmy = new int[8];
+        partArmy[0] = 1;
+        laborStructure[0] = 0.33;
+        laborStructure[1] = 0.33;
+        laborStructure[2] = 0.34;
     }
 
     private Position position;
@@ -31,17 +34,17 @@ public class City {
     private int infrastructure = 1;
     private int owner;
     private int prosperity = 1;
-    private int autonomy=0;
+    private double autonomy=0;
     private int rebelLevel=0;
     private int[] partArmy;
     private boolean mobilisation = false;
     private Economy economy;
     private int profit;
-    private int taxes;
 
     //новое производство
     private int production = 1;
     private int[] res;
+    private double[] laborStructure = new double[3];
 
     private int numberOfModificators = 0;
     private Modificator[] modificator = new Modificator[numberOfModificators];
@@ -95,10 +98,29 @@ public class City {
         production = economy.ReCount(taxes, prosperity, infrastructure, rebelLevel, education, population);
         Prosperity();
         updatePopulation(popGrRate);
-        this.taxes = taxes;
-        profit = (int) (economy.getGdp() * (Resources.getValueCR(res[0]) + Resources.getValueCR(res[1])
-                + Resources.getValueCR(res[2])) /3);
-        return taxes * profit*autonomy/10000;
+        profit = (int) (economy.getGdp() * (Resources.getValueCR(res[0])*laborStructure[0]
+                + Resources.getValueCR(res[1])*laborStructure[1] + laborStructure[2]*Resources.getValueCR(res[2])));
+        return (int) (taxes * profit*autonomy/10000);
+    }
+    private void changeStructure(){
+        for (int i = 0; i<3;i++){
+            for (int j = 0; j<3;j++){
+                if (Resources.getValueCR(res[i])>Resources.getValueCR(res[j])*1.03){
+                    double change = 0.1 *(1- Resources.getValueCR(res[j])/Resources.getValueCR(res[i]));
+                    laborStructure[i]+=change;
+                    laborStructure[j]-=change;
+                }
+            }
+        }
+        for (int i = 0; i<3; i++){
+            if (laborStructure[i] < 0){
+                laborStructure[(i+1)%3] += laborStructure[i]/2;
+                laborStructure[(i+2)%3] +=laborStructure[i]/2;
+                laborStructure[i] = 0;
+            }
+        }
+        laborStructure[2]=1-laborStructure[1]-laborStructure[0];
+        System.out.println("New structure "+ laborStructure[0]+" "+laborStructure[1]+" "+laborStructure[2]);
     }
     private void Prosperity(){
         int i = (int) (Math.random() * 100);
@@ -106,86 +128,140 @@ public class City {
             prosperity++;
         }
     }
+    public void investStock(int invest){
+        economy.increaseStock(invest);
+    }
     //сейчас добавляем к общему производству мира
     //напишем чему равен спрос в городе на товары. Для начала C=Y-G-s. Но как будет распределено? По соотношению долей
     //цент. то есть если цена p, а сумма всех цент P, то спрос на этот товар будет C*p/P. P лежит в ресурсах
-    int CA =0;
-    int CA2=0;
+    private int CA =0;
+    private int CA2=0;
+    private double[] maximisationUtility(){
+        double[] reversedPrices = new double[BS.numberOfMineral+BS.numberOfRR+BS.numberOfCR];
+        for (int i = 0; i< BS.numberOfMineral; i++){
+            reversedPrices[i] = 1/Resources.getValueMineral(i);
+        }
+        for (int i = BS.numberOfMineral; i< BS.numberOfRR+BS.numberOfMineral; i++){
+            reversedPrices[i] = 1/Resources.getValueRR(i-BS.numberOfMineral);
+        }
+        for (int i = BS.numberOfRR+BS.numberOfMineral; i< BS.numberOfCR+BS.numberOfRR+BS.numberOfMineral; i++){
+            reversedPrices[i] = 1/Resources.getValueCR(i-BS.numberOfRR-BS.numberOfMineral);
+        }
+        double sumRP = 0;
+        for (double i: reversedPrices){
+            sumRP += i;
+        }
+        for (int i = 0; i < reversedPrices.length; i++){
+            reversedPrices[i] /=sumRP;
+        }
+        return reversedPrices;
+    }
     private void cityDemand(){
-        int C = production *(10-economy.getSaveRate())/10;
+        int C = (int) (production *(10-economy.getSaveRate()*10)/10);
+        double[] reversedPrices = maximisationUtility();
+        //System.out.println("Consumption "+C);
         CA2+=C;
         for (int i = 0; i <BS.numberOfRR;i++){
-            World.totalRRDemand[i] += (int) (1.0*C*Resources.getValueRR(i)/Resources.getTotalValue());
-            CA+=(int) (1.0*C*Resources.getValueRR(i)/Resources.getTotalValue());
+            World.totalRRDemand[i] += (int) (1.0*C*reversedPrices[i+BS.numberOfMineral]);
+            CA+=(int) (1.0*C*reversedPrices[i+BS.numberOfMineral]);
         }
         for (int i = 0; i <BS.numberOfCR;i++){
-            World.totalCRDemand[i] += (int) (1.0*C*Resources.getValueCR(i)/Resources.getTotalValue());
-            CA +=(int) (1.0*C*Resources.getValueCR(i)/Resources.getTotalValue());
+            World.totalCRDemand[i] += (int) (1.0*C*reversedPrices[i+BS.numberOfMineral+BS.numberOfRR]);
+            CA +=(int) (1.0*C*reversedPrices[i+BS.numberOfMineral+BS.numberOfRR]);
         }
         for (int i = 0; i <BS.numberOfMineral;i++){
-            World.totalMineralDemand[i] += (int) (1.0*C*Resources.getValueMineral(i)/Resources.getTotalValue());
-            CA+=(int) (1.0*C*Resources.getValueMineral(i)/Resources.getTotalValue());
+            World.totalMineralDemand[i] += (int) (1.0*C*reversedPrices[i]);
+            CA+=(int) (1.0*C*reversedPrices[i]);
         }
     }
     private void investments(){
-        int inv = production *economy.getSaveRate()/10;
-        double totalValue=0;
+        int inv = (int) (production *economy.getSaveRate());
+        //System.out.println("Investments "+inv);
         CA2+=inv;
+        double totalValue=0;
         double priceChecker=0;
+        double[] reversedPrices = new double[6];
+        int numprice = 0;
         for (int resource: res){
             int[] info = Resources.investCR(resource);
             for (int i = 1; i<3; i++) {
                 if (info[-2+2*i] == 0){
-                    totalValue += Resources.getValueRR(info[2*i-1]);
+                     reversedPrices[numprice] = 1/Resources.getValueRR(info[2*i-1]);
+                     numprice++;
                 }
                 if (info[-2+2*i] == 1){
-                    totalValue += Resources.getValueMineral(info[2*i-1]);
+                    reversedPrices[numprice] = 1/Resources.getValueMineral(info[2*i-1]);
+                    numprice++;
                 }
                 if (info[-2+2*i] == 2){
-                    totalValue += Resources.getValueCR(info[2*i-1]);
+                    reversedPrices[numprice] = 1/Resources.getValueCR(info[2*i-1]);
+                    numprice++;
                 }
                 //System.out.println("Price checker "+priceChecker);
             }
         }
+        double sumRP = 0;
+        for (double i: reversedPrices){
+            sumRP += i;
+            //System.out.println(i);
+        }
+        for (int i = 0; i < reversedPrices.length; i++){
+            reversedPrices[i] /=sumRP;
+            //System.out.println(reversedPrices[i]);
+        }
+        numprice = 0;
         //System.out.println("TotalValue "+totalValue);
         for (int resource: res) {
             int[] info = Resources.investCR(resource);
             for (int i = 1; i<3; i++) {
                 if (info[-2+2*i] == 0){
-                    World.totalRRDemand[info[2*i-1]] += (int) (1.0*inv*Resources.getValueRR(info[2*i-1])
-                            /totalValue);
-                    priceChecker+=Resources.getValueRR(info[2*i-1])
-                            /totalValue;
-                    CA+=(int) (1.0*inv*Resources.getValueRR(info[2*i-1])
-                            /totalValue);
+                    World.totalRRDemand[info[2*i-1]] += (int) (1.0*inv/Resources.getValueRR(info[2*i-1])/sumRP);
+                    priceChecker+=1/Resources.getValueRR(info[2*i-1])
+                            /sumRP;
+                    CA+=(int) (1.0*inv/Resources.getValueRR(info[2*i-1])
+                            /sumRP);
                 }
                 if (info[-2+2*i] == 1){
-                    World.totalMineralDemand[info[2*i-1]] += (int) (1.0*inv*Resources.getValueMineral(info[2*i-1])
-                            /totalValue);
-                    priceChecker+=Resources.getValueMineral(info[2*i-1])
-                            /totalValue;
-                    CA+=(int) (1.0*inv*Resources.getValueMineral(info[2*i-1])
-                            /totalValue);
+                    World.totalMineralDemand[info[2*i-1]] += (int) (1.0*inv/Resources.getValueMineral(info[2*i-1])
+                            /sumRP);
+                    priceChecker+=1/Resources.getValueMineral(info[2*i-1])
+                            /sumRP;
+                    CA+=(int) (1.0*inv/Resources.getValueMineral(info[2*i-1])
+                            /sumRP);
                 }
                 if (info[-2+2*i] == 2){
-                    World.totalCRDemand[info[2*i-1]] += (int) (1.0*inv*Resources.getValueCR(info[2*i-1])
-                            /totalValue);
-                    priceChecker+=Resources.getValueCR(info[2*i-1])
-                            /totalValue;
-                    CA+=(int) (1.0*inv*Resources.getValueCR(info[2*i-1])
-                            /totalValue);
+                    World.totalCRDemand[info[2*i-1]] += (int) (1.0*inv/Resources.getValueCR(info[2*i-1])
+                            /sumRP);
+                    priceChecker+=1/Resources.getValueCR(info[2*i-1])
+                            /sumRP;
+                    CA+=(int) (1.0*inv/Resources.getValueCR(info[2*i-1])
+                            /sumRP);
                 }
             }
+        }
+        if (priceChecker < 0.9 | priceChecker >1.1){
+            System.out.println("WARNING PRICE CHECKER IS NO 1. PRICECHECKER IS "+priceChecker);
         }
     }
     public void updatePD(){
         CA = 0;
+        CA2 = -production;
         for (int i = 0; i < res.length; i++){
-            World.totalCityProduction[i] +=(int) (1.0*production/3);
-            CA-=(int) (1.0*production/3);
+            World.totalCityProduction[i] +=(int) (1.0*production*laborStructure[i]);
+            CA-=(int) (1.0*production*laborStructure[i]);
         }
         investments();
         cityDemand();
+        checkCA();
+        changeStructure();
+    }
+    private void checkCA(){
+        if (Math.abs(CA)> production/100){
+            System.out.println("WARNING CA IS NOT 0. CA is "+CA);
+        }
+        if (Math.abs(CA2)> production/100){
+            System.out.println("WARNING CA2 IS NOT 0. CA is "+CA2);
+        }
     }
     // обновление населения
     public void updatePopulation(int rate){
@@ -288,7 +364,7 @@ public class City {
         return plant;
     }
 
-    public void setAutonomy(int autonomy) {
+    public void setAutonomy(double autonomy) {
         this.autonomy = autonomy;
     }
 
@@ -307,4 +383,30 @@ public class City {
     public void setMobilisation(boolean mobilisation) {
         this.mobilisation = mobilisation;
     }
+
+    public int getPopulation() {
+        return population;
+    }
+    public int[] getCityScreen(){
+        int[] res = new int[11];
+        res[0] = economy.getGdp();
+        res[1] = economy.getStock();
+        res[2] = population;
+        res[3] = (int) (economy.getScientists()*100);
+        res[4] = (int) economy.getTfp()*100;
+        res[5] = (int) (economy.getGrowth()*100-100);
+        res[6] = economy.getTaxes();
+        res[7] = this.res[0];
+        res[8] = this.res[1];
+        res[9] = this.res[2];
+        res[10] = profit;
+        return res;
+    }
+    public int getStock(){
+        return economy.getStock();
+    }
+    public int getPotentialStock(){
+        return economy.getPotentialStock();
+    }
+
 }

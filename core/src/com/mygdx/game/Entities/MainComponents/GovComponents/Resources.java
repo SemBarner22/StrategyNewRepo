@@ -21,6 +21,8 @@ public class Resources {
         for (int i = 0; i <CR.length; i++){
             CR[i] = new Resource(0, 0, 1, 0);
         }
+        CR[0].changeValue(1);
+        CR[1].changeValue(-1);
         for (int i = 0; i <RR.length; i++){
             RR[i] = new Resource();
         }
@@ -30,9 +32,9 @@ public class Resources {
     }
 
     //Маркет в мире это вызов этих методов
-    public void setCR(int[] demand, int[] supply) {
+    public void setCR(int[] demand, int[] supply, double increaseOverTime) {
         for (int i = 0; i<CR.length;i++){
-            CR[i].setDemand(demand[i]);
+            CR[i].setDemand((int) (increaseOverTime*demand[i]));
             CR[i].setSupply(supply[i]);
             CR[i].countValue();
         }
@@ -40,7 +42,7 @@ public class Resources {
 
     public void setRR(int demand[], int supply[]) {
         for (int i = 0; i<RR.length;i++){
-            RR[i].setDemand(demand[i]);
+            RR[i].setDemand((int) (demand[i]));
             RR[i].setSupply(supply[i]);
             RR[i].countValue();
         }
@@ -48,7 +50,7 @@ public class Resources {
 
     public void setMineral(int[] demand, int[] supply) {
         for (int i = 0; i<Mineral.length;i++){
-            Mineral[i].setDemand(demand[i]);
+            Mineral[i].setDemand((int) (demand[i]));
             Mineral[i].setSupply(supply[i]);
             Mineral[i].countValue();
         }
@@ -65,7 +67,7 @@ public class Resources {
         for (int i = 0; i <Mineral.length;i++){
             totalValue +=getValueMineral(i);
         }
-        System.out.println("Total value " + totalValue);
+        //System.out.println("Total value " + totalValue);
     }
 
     public static double getValueRR(int i){
@@ -92,19 +94,19 @@ public class Resources {
             str = str + decimalFormat.format(value.getValue()) +" ";
         }
         res.add("CR Value "+ str);
-        System.out.println("CR Value "+ str);
+        //System.out.println("CR Value "+ str);
         str = " ";
         for (Resource value: RR){
             str= str + decimalFormat.format(value.getValue()) + " ";
         }
         res.add("RR Value "+ str);
-        System.out.println("RR Value "+str);
+        //System.out.println("RR Value "+str);
         str = " ";
         for (Resource value: Mineral){
             str= str+ decimalFormat.format(value.getValue()) +" ";
         }
         res.add("Mineral Value "+ str);
-        System.out.println("Mineral Value "+str);
+        //System.out.println("Mineral Value "+str);
         return res;
     }
 }

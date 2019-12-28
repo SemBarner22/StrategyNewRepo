@@ -27,9 +27,9 @@ public class Resource {
 
     public void countValue(){
         if (demand>supply){
-            value = Math.max(value+0.1 *demand/supply, value+0.5);
+            value = Math.max(value+(value/50) *demand/supply, value+0.5);
         } else{
-            value=Math.max(value-0.1*supply/demand, value-0.5);
+            value=Math.max(value-(value/50)*supply/demand, value-0.5);
         }
         if (value<0){
             value = 0.1;
@@ -72,7 +72,9 @@ public class Resource {
         return sResClass;
     }
     public int[] investCR(){
-        int[] ret = {fResClass, fRes, sResClass, sRes};
-        return ret;
+        return new int[]{fResClass, fRes, sResClass, sRes};
+    }
+    public void changeValue(double i){
+        value +=i;
     }
 }
