@@ -33,13 +33,13 @@ public class RegionScreen extends AbstractMechanicsScreen {
         decAut = new TextButton("Decrease autonomy", skin);
         final ScrollPane scroll = new ScrollPane(table, skin);
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
-        for (int i = 0; i < res.length; ++i) {
-            table.add(new Label("" + res[i], skin));
-            if (i % 2 == 1) {
-                table.row();
-            }
-        }
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
+            for (int i = 0; i < res.length; ++i) {
+                table.add(new Label("" + res[i], skin));
+                if (i % 2 == 1) {
+                    table.row();
+                }
+            }
             City[] cities = PlayScreen.world.getAllRegions().get(regionIndex).getCity();
             decAut.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
