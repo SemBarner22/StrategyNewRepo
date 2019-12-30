@@ -35,7 +35,7 @@ public class CityScreen extends AbstractMechanicsScreen {
             table.row();
         }
         table.pad(100).defaults().expandX().space(4);
-        Table cityTable = new Table();
+        final Table cityTable = new Table();
         Table regionTable = new Table();
         citiesList = new ArrayList<>();
         Table otherCities = new Table();
@@ -62,6 +62,13 @@ public class CityScreen extends AbstractMechanicsScreen {
         container.add(scroll).expand().fill().colspan(4);
         container.row();
         container.add(backButton).bottom().left();
+        Button investment = new TextButton("Invest", skin);
+        container.add(investment).bottom().padLeft(100);
+        investment.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                PlayScreen.world.getPlayerGov(curPlayer).invest(regionIndex, cityIndex);
+            }
+        });
         Button test = new TextButton("test", skin);
         container.add(test).bottom().padLeft(200);
         test.addListener(new ClickListener() {
