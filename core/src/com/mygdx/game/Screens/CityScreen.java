@@ -32,33 +32,35 @@ public class CityScreen extends AbstractMechanicsScreen {
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
         for (int i = 0; i < res.length; ++i) {
             table.add(new Label("" + res[i], skin));
-            table.row();
+            if (i % 2 == 1) {
+                table.row();
+            }
         }
         table.pad(100).defaults().expandX().space(4);
-        Table cityTable = new Table();
-        Table regionTable = new Table();
-        citiesList = new ArrayList<>();
-        Table otherCities = new Table();
-        table.add(regionTable);
-        table.row();
-        table.add(cityTable);
-        table.row();
-        for (int i = 0; i < 100; i++) {
-            citiesList.add(new Table());
-            citiesList.get(i).add(new Label("City" + (i + 1), skin));
-            citiesList.get(i).row();
-            citiesList.get(i).add(new TextButton("top", skin)).left().padRight(100);
-            citiesList.get(i).add(new TextButton("middlee", skin)).padRight(100);
-            citiesList.get(i).add(new TextButton("kek", skin)).right();
-        }
-        //more
-        for (int i = 0; i < citiesList.size(); i++) {
-            table.add(citiesList.get(i));
-            table.row();
-        }
-        regionTable.add(new Label("Region name", skin));
-        cityTable.add(new Label("City name", skin));
-        otherCities.add(new Label("OtherCities", skin));
+//        Table cityTable = new Table();
+//        Table regionTable = new Table();
+//        citiesList = new ArrayList<>();
+//        Table otherCities = new Table();
+//        table.add(regionTable);
+//        table.row();
+//        table.add(cityTable);
+//        table.row();
+//        for (int i = 0; i < 100; i++) {
+//            citiesList.add(new Table());
+//            citiesList.get(i).add(new Label("City" + (i + 1), skin));
+//            citiesList.get(i).row();
+//            citiesList.get(i).add(new TextButton("top", skin)).left().padRight(100);
+//            citiesList.get(i).add(new TextButton("middlee", skin)).padRight(100);
+//            citiesList.get(i).add(new TextButton("kek", skin)).right();
+//        }
+//        //more
+//        for (int i = 0; i < citiesList.size(); i++) {
+//            table.add(citiesList.get(i));
+//            table.row();
+//        }
+//        regionTable.add(new Label("Region name", skin));
+//        cityTable.add(new Label("City name", skin));
+//        otherCities.add(new Label("OtherCities", skin));
         container.add(scroll).expand().fill().colspan(4);
         container.row();
         container.add(backButton).bottom().left();
