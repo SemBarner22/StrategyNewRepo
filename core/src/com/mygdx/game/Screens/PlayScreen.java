@@ -134,8 +134,9 @@ public class PlayScreen implements Screen {
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
         labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
         labels.get(2).setText("Admin" + world.getPlayerGov(curPlayer).mainScreen10Getters()[2]);
-        labels.get(3).setText("Prestige" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
-        labels.get(4).setText("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[4]);
+        labels.get(3).setText("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
+        labels.get(4).setText("Prestige" + world.getPlayerGov(curPlayer).mainScreen10Getters()[4]);
+        //System.out.println("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
         im = new InputMultiplexer(stage, players.get(curPlayer));
         Gdx.input.setInputProcessor(im);
         Gdx.gl.glClearColor(1, 0, 0, 1);
