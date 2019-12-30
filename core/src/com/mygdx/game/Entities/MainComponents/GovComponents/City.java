@@ -120,7 +120,7 @@ public class City {
             }
         }
         laborStructure[2]=1-laborStructure[1]-laborStructure[0];
-        System.out.println("New structure "+ laborStructure[0]+" "+laborStructure[1]+" "+laborStructure[2]);
+        //System.out.println("New structure "+ laborStructure[0]+" "+laborStructure[1]+" "+laborStructure[2]);
     }
     private void Prosperity(){
         int i = (int) (Math.random() * 100);

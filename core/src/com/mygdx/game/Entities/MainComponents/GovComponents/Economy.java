@@ -41,13 +41,13 @@ public class Economy {
         taxes = govSp;
         scientists += Math.random()/2 - 0.25 +education *1.0/200;
         tfp += labor * Math.pow(scientists, 0.2) /basePop;
-        System.out.println("Stock Change"+(int) (gdp*1.0 * saveRate) +" Stock decrease"+ (1.0*amort *stock));
+        //System.out.println("Stock Change"+(int) (gdp*1.0 * saveRate) +" Stock decrease"+ (1.0*amort *stock));
         //stock += (int) (gdp*1.0 *(50-govSp)/50* (saveRate*100-Math.max(rebel, 0)+prosperity)/100 - 1.0*(amort*100-infrastructure)/ 100 *stock);
         stock +=(int) (gdp*1.0 * saveRate - 1.0*amort *stock);
         if (stock < 1){
             stock = 100;
         }
-        System.out.println("GDP "+gdp+" Stock "+stock+" TFP "+tfp+" Scientists "+scientists + " Labour "+ labor + " tax " + govSp + " Rebel "+ rebel);
+        //System.out.println("GDP "+gdp+" Stock "+stock+" TFP "+tfp+" Scientists "+scientists + " Labour "+ labor + " tax " + govSp + " Rebel "+ rebel);
         labor = population;
         CountGdp(prosperity, govSp);
         return gdp;
