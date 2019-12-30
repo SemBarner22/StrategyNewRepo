@@ -198,7 +198,7 @@ public class PlayScreen implements Screen {
                     renderer.render(new int[]{map.getLayers().getIndex("ProvReg" +
                             object.getProperties().get("RegIndex", Integer.class))});
                     strategy.batch.end();
-                    strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
+                    //strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
                     players.get(curPlayer).setX(0);
                     players.get(curPlayer).setY(0);
                 }

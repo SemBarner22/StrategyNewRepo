@@ -15,8 +15,8 @@ import java.util.List;
 
 public class CityScreen extends AbstractMechanicsScreen {
     List<Table> citiesList;
-    public CityScreen(Strategy strategy, int curPlayer, PlayScreen screen) {
-        super(strategy, curPlayer, screen);
+    public CityScreen(Strategy strategy, int curPlayer, int region, int cityIndex, RegionScreen regionScreen) {
+        super(strategy, curPlayer, regionScreen);
     }
 
     @Override
