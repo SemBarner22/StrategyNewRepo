@@ -210,7 +210,7 @@ public class Region {
 
 
     //Действия с экономикой. Снижение автономии, донат денег в капитал
-    public boolean posDecAut(){
+    private boolean posDecAut(){
         boolean result = true;
         //TODO сделать проверку на модификатор
         if (autonomy < 20 & result){
@@ -221,7 +221,10 @@ public class Region {
     public void decreaseAutonomy(){
         if (posDecAut()) {
             autonomy = Math.max(autonomy - 20, 0);
+            System.out.println("posDecAut Succeeded");
             //TODO create mod that increase rebel level
+        } else {
+            System.out.println("posDecAut Failed");
         }
     }
     public int costOfCapitalDonate(int citynum){
