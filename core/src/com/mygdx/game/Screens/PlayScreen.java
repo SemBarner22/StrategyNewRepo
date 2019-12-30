@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 public class PlayScreen implements Screen {
 
     //public boolean isMoveEnded;
+    State state = State.DEFAULT;
     private ArrayList<Player> players;
     public static World world;
     public ArrayList<Label> labels;
@@ -50,6 +53,8 @@ public class PlayScreen implements Screen {
     public Texture texture;
     private OrthographicCamera gameCam;
     private Viewport gamePort;
+    private TiledMapTileLayer armies;
+    private TiledMapTileLayer greenArea;
 
     public PlayScreen(final Strategy strategy) {
         this.strategy = strategy;
@@ -121,6 +126,17 @@ public class PlayScreen implements Screen {
 
             }
         });
+        armies = new TiledMapTileLayer(Strategy.V_WIDTH, Strategy.V_HEIGHT, 16, 16);
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+
+        //test
+        TiledMapTileSet dungeon = map.getTileSets().getTileSet(0);
+        cell.setTile(dungeon.getTile(1));
+        for (int i = 0; i < 50; ++i) {
+            armies.setCell(i, i, cell);
+        }
+        greenArea = new TiledMapTileLayer(Strategy.V_WIDTH, Strategy.V_HEIGHT, 16, 16);
+
     }
 
     @Override
@@ -150,65 +166,74 @@ public class PlayScreen implements Screen {
         renderer.render(new int[]{0, 1, 2, 3, 4});
         strategy.batch.end();
 
-        MapObject playObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
-        Polygon regPlayer = ((PolygonMapObject) playObject).getPolygon();
-        Vector3 v3 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
-        gameCam.unproject(v3);
-        regPlayer.setPosition(v3.x, v3.y);
-        //regPlayer.setPosition(player.getX(), player.getY());
-        sr.begin(ShapeRenderer.ShapeType.Line);
-        sr.polygon(regPlayer.getTransformedVertices());
-        sr.end();
+        if (state == State.DEFAULT) {
 
-        MapObject provObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
-        Polygon provPlayer = ((PolygonMapObject) provObject).getPolygon();
-        Vector3 v33 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
-        gameCam.unproject(v33);
-        provPlayer.setPosition(v33.x, v33.y);
-        //regPlayer.setPosition(player.getX(), player.getY());
-        sr.begin(ShapeRenderer.ShapeType.Line);
-        sr.polygon(provPlayer.getTransformedVertices());
-        sr.end();
+            //mof
 
-        for (MapObject object : map.getLayers().get("RegionsNew").getObjects()) {
-            if (object instanceof PolygonMapObject && object.getProperties().containsKey("RegIndex")) {
-                Polygon polygonMapObject = ((PolygonMapObject) object).getPolygon();
-                sr.begin(ShapeRenderer.ShapeType.Line);
-                sr.polygon(polygonMapObject.getTransformedVertices());
-                sr.end();
+            MapObject playObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
+            Polygon regPlayer = ((PolygonMapObject) playObject).getPolygon();
+            Vector3 v3 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
+            gameCam.unproject(v3);
+            regPlayer.setPosition(v3.x, v3.y);
+            //regPlayer.setPosition(player.getX(), player.getY());
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.polygon(regPlayer.getTransformedVertices());
+            sr.end();
 
-                if (Intersector.overlapConvexPolygons(polygonMapObject, regPlayer)) {
-                    strategy.batch.begin();
-                    renderer.render(new int[]{map.getLayers().getIndex("Region" +
-                            object.getProperties().get("RegIndex", Integer.class))});
-                    strategy.batch.end();
+            MapObject provObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
+            Polygon provPlayer = ((PolygonMapObject) provObject).getPolygon();
+            Vector3 v33 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
+            gameCam.unproject(v33);
+            provPlayer.setPosition(v33.x, v33.y);
+            //regPlayer.setPosition(player.getX(), player.getY());
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.polygon(provPlayer.getTransformedVertices());
+            sr.end();
+
+            for (MapObject object : map.getLayers().get("RegionsNew").getObjects()) {
+                if (object instanceof PolygonMapObject && object.getProperties().containsKey("RegIndex")) {
+                    Polygon polygonMapObject = ((PolygonMapObject) object).getPolygon();
+                    sr.begin(ShapeRenderer.ShapeType.Line);
+                    sr.polygon(polygonMapObject.getTransformedVertices());
+                    sr.end();
+
+                    if (Intersector.overlapConvexPolygons(polygonMapObject, regPlayer)) {
+                        strategy.batch.begin();
+                        renderer.render(new int[]{map.getLayers().getIndex("Region" +
+                                object.getProperties().get("RegIndex", Integer.class))});
+                        strategy.batch.end();
 //                    strategy.setScreen(new RegionScreen(strategy, curPlayer,
 //                            object.getProperties().get("RegIndex", Integer.class),PlayScreen.this));
 //                    players.get(curPlayer).setX(0);
 //                    players.get(curPlayer).setY(0);
+                    }
+                }
+            }
+
+            for (MapObject object : map.getLayers().get("Provincions").getObjects()) {
+                if (object instanceof PolygonMapObject && object.getProperties().containsKey("RegIndex")) {
+                    Polygon polygonMapObject = ((PolygonMapObject) object).getPolygon();
+                    //sr.begin(ShapeRenderer.ShapeType.Line);
+                    //sr.polygon(polygonMapObject.getTransformedVertices());
+                    //sr.end();
+
+                    if (Intersector.overlapConvexPolygons(polygonMapObject, provPlayer)) {
+                        strategy.batch.begin();
+                        renderer.render(new int[]{map.getLayers().getIndex("ProvReg" +
+                                object.getProperties().get("RegIndex", Integer.class))});
+                        strategy.batch.end();
+                        strategy.setScreen(new RegionScreen(strategy, curPlayer,
+                                object.getProperties().get("RegIndex", Integer.class), PlayScreen.this));
+                        //strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
+                        players.get(curPlayer).setX(0);
+                        players.get(curPlayer).setY(0);
+                    }
                 }
             }
         }
-
-        for (MapObject object : map.getLayers().get("Provincions").getObjects()) {
-            if (object instanceof PolygonMapObject && object.getProperties().containsKey("RegIndex")) {
-                Polygon polygonMapObject = ((PolygonMapObject) object).getPolygon();
-                //sr.begin(ShapeRenderer.ShapeType.Line);
-                //sr.polygon(polygonMapObject.getTransformedVertices());
-                //sr.end();
-
-                if (Intersector.overlapConvexPolygons(polygonMapObject, provPlayer)) {
-                    strategy.batch.begin();
-                    renderer.render(new int[]{map.getLayers().getIndex("ProvReg" +
-                            object.getProperties().get("RegIndex", Integer.class))});
-                    strategy.batch.end();
-                    strategy.setScreen(new RegionScreen(strategy, curPlayer,
-                            object.getProperties().get("RegIndex", Integer.class),PlayScreen.this));
-                    //strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
-                    players.get(curPlayer).setX(0);
-                    players.get(curPlayer).setY(0);
-                }
-            }
+        if (state == State.ARMIE) {
+            map.getLayers().add(armies);
+            renderer.render(new int[]{map.getLayers().getIndex(armies)});
         }
         stage.act();
         stage.draw();
@@ -240,4 +265,9 @@ public class PlayScreen implements Screen {
         map.dispose();
         batch.dispose();
     }
+}
+
+enum State {
+    ARMIE,
+    DEFAULT
 }
