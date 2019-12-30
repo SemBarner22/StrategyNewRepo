@@ -11,8 +11,6 @@ import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Resources;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -63,6 +61,7 @@ public class World {
             String nextLine;
             bufferedReader.readLine();
             // 1 2 5000 0 1000 0 1000 0 0 3
+            int unicNumber = 0;
             while ((nextLine = bufferedReader.readLine()) != null) {
                 Scanner scanner = new Scanner(nextLine);
                 int count = scanner.nextInt();
@@ -80,7 +79,8 @@ public class World {
                 int relig = scanner.nextInt();
                 int cult = scanner.nextInt();
                 int owner = scanner.nextInt();
-                allRegions.add(new Region(citiesArray, popul, res, capRes, min, capMin, relig, cult, owner));
+                allRegions.add(new Region(citiesArray, popul, res, capRes, min, capMin, relig, cult, owner, unicNumber));
+                unicNumber++;
             }
 
         } catch (FileNotFoundException e) {

@@ -9,7 +9,7 @@ import com.mygdx.game.Entities.MainComponents.World;
 public class Region {
 
     public Region(City[] city, int population, int resource, int capRes, int mineral, int capMin,
-                  int religion, int culture, int owner) {
+                  int religion, int culture, int owner, int numberOfRegion) {
         this.city = city;
         position = city[0].getPosition();
         this.population = population;
@@ -21,6 +21,7 @@ public class Region {
         this.culture = culture;
         this.owner = owner;
         World.totalPopulation +=population;
+        this.numberOfRegion = numberOfRegion;
     }
     private int numberOfRegion;
     private int deIureControl;
