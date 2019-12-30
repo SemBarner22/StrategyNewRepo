@@ -41,7 +41,7 @@ public class Gov {
             i++;
         }
     }
-    private void constructAdv(){
+    private void constructAdv() {
         for (int t = 0; t < 5; t++) {
             CreateAdvisor("Cleric");
             AssignAdvisor(t, t);
