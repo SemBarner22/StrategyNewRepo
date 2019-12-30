@@ -567,9 +567,10 @@ public class Gov {
     //обновляем другие ресурсы
     public void UpdateAPL() {
         PlusAdm(BS.baseAdm + modAdm);
-        PlusPrestige(-(prestige * (100 - BS.basePrestige) / 100 - modPrestige));
+        PlusPrestige(-(prestige * (100 - BS.basePrestige) / 100 - modPrestige)+1000);
+        System.out.println("Prestige "+prestige + " " + modPrestige);
         PlusLegicimacy(BS.baseLegicimacy + modLegecimacy);
-        System.out.println("Legitimacy "+legicimacy);
+        //System.out.println("Legitimacy "+legicimacy);
     }
     public void PlusPrestige(int p){
         prestige += p;
