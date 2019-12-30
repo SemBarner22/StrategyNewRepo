@@ -32,7 +32,9 @@ public class CityScreen extends AbstractMechanicsScreen {
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
         for (int i = 0; i < res.length; ++i) {
             table.add(new Label("" + res[i], skin));
-            table.row();
+            if (i % 2 == 1) {
+                table.row();
+            }
         }
         table.pad(100).defaults().expandX().space(4);
 //        Table cityTable = new Table();
@@ -80,6 +82,7 @@ public class CityScreen extends AbstractMechanicsScreen {
 
     @Override
     public void render(float delta) {
+
         super.render(delta);
     }
 }
