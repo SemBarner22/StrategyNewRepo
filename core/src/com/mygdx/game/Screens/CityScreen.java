@@ -30,8 +30,13 @@ public class CityScreen extends AbstractMechanicsScreen {
         Table table = new Table();
         final ScrollPane scroll = new ScrollPane(table, skin);
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
+        //TODO
+        String[] namesGet = new String[res.length];
+        namesGet[0] = "GDP ";
+        namesGet[1] = "Stock ";
+        namesGet[2] = "Population ";
         for (int i = 0; i < res.length; ++i) {
-            table.add(new Label("" + res[i], skin));
+            table.add(new Label(namesGet[i] + res[i], skin));
             if (i % 2 == 1) {
                 table.row();
             }

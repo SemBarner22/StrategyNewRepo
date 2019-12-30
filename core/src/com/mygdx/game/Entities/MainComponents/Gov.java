@@ -12,6 +12,8 @@ import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
+import com.mygdx.game.Screens.PlayScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 
