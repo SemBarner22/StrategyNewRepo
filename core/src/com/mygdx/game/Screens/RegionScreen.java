@@ -4,10 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
@@ -34,7 +31,12 @@ public class RegionScreen extends AbstractMechanicsScreen {
         buttons = new ArrayList<>();
         Table table = new Table();
         decAut = new TextButton("Decrease autonomy", skin);
-
+        final ScrollPane scroll = new ScrollPane(table, skin);
+        int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
+        for (int i = 0; i < res.length; ++i) {
+            table.add(new Label("" + res[i], skin));
+            table.row();
+        }
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
             City[] cities = PlayScreen.world.getAllRegions().get(regionIndex).getCity();
             decAut.addListener(new ClickListener() {
@@ -59,7 +61,8 @@ public class RegionScreen extends AbstractMechanicsScreen {
             }
         }
         table.add(backButton).bottom().left();
-        container.add(table);
+        //container.add(table);
+        container.add(scroll).expand().fill().colspan(4);
     }
 
     @Override
