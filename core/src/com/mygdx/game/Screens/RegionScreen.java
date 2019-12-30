@@ -35,7 +35,9 @@ public class RegionScreen extends AbstractMechanicsScreen {
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
         for (int i = 0; i < res.length; ++i) {
             table.add(new Label("" + res[i], skin));
-            table.row();
+            if (i % 2 == 1) {
+                table.row();
+            }
         }
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
             City[] cities = PlayScreen.world.getAllRegions().get(regionIndex).getCity();
