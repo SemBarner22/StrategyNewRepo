@@ -12,6 +12,8 @@ import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
+import com.mygdx.game.Screens.PlayScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,7 @@ public class Gov {
             i++;
         }
     }
-    private void constructAdv(){
+    private void constructAdv() {
         for (int t = 0; t < 5; t++) {
             CreateAdvisor("Cleric");
             AssignAdvisor(t, t);
@@ -544,13 +546,21 @@ public class Gov {
     }
     //invest in stock тут как раз обращаться уже надо по номеру региона
     public boolean posibInvest(int reg, int city){
-        return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+        if (getNumRegion(reg) != -1){
+            return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+        } else {
+            System.out.println("Region is not by our control");
+            return false;
+        }
     }
     public void invest(int reg, int city){
         if (posibInvest(reg, city)){
             region.get(getNumRegion(reg)).getCity()[city]
                     .investStock(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
             PlusMoney(-region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+            System.out.println("investment succeeded");
+        } else {
+            System.out.println("investment failed");
         }
     }
 

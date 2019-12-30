@@ -30,8 +30,13 @@ public class CityScreen extends AbstractMechanicsScreen {
         Table table = new Table();
         final ScrollPane scroll = new ScrollPane(table, skin);
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
+        //TODO
+        String[] namesGet = new String[res.length];
+        namesGet[0] = "GDP ";
+        namesGet[1] = "Stock ";
+        namesGet[2] = "Population ";
         for (int i = 0; i < res.length; ++i) {
-            table.add(new Label("" + res[i], skin));
+            table.add(new Label(namesGet[i] + res[i], skin));
             if (i % 2 == 1) {
                 table.row();
             }
@@ -64,6 +69,13 @@ public class CityScreen extends AbstractMechanicsScreen {
         container.add(scroll).expand().fill().colspan(4);
         container.row();
         container.add(backButton).bottom().left();
+        Button investment = new TextButton("Invest", skin);
+        container.add(investment).bottom().padLeft(100);
+        investment.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                PlayScreen.world.getPlayerGov(curPlayer).invest(regionIndex, cityIndex);
+            }
+        });
         Button test = new TextButton("test", skin);
         container.add(test).bottom().padLeft(200);
         test.addListener(new ClickListener() {
@@ -75,6 +87,7 @@ public class CityScreen extends AbstractMechanicsScreen {
 
     @Override
     public void render(float delta) {
+
         super.render(delta);
     }
 }
