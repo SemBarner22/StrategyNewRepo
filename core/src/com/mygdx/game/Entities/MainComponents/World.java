@@ -56,36 +56,36 @@ public class World {
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-//        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
-//        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
-//        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
-//
-//        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
-//        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
-//        cities.add(new City(new Position(10, 2), 5000, 2, resurs));
-//
-//        cities.add(new City(new Position(2, 2), 5000, 0, resurs));
-//        cities.add(new City(new Position(10, 10), 5000, 1, resurs));
-        allRegions.add(new Region(new City[] {cities.get(0)}, 5000, 0, 100, 0, 100, 0, 0, 0));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(1)}, 5000, 0, 100, 0, 100, 0, 0, 1));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(2)}, 5000, 0, 100, 0, 100, 0, 0, 2));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(3)}, 5000, 0, 100, 0, 100, 0, 0, 0));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(4)}, 5000, 0, 100, 0, 100, 0, 0, 1));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(5)}, 5000, 0, 100, 0, 100, 0, 0, 2));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        //System.out.println(arcity[0].getPosition().GetY());
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(6)}, 5000, 0, 100, 0, 100, 0, 0, 0));
-        //System.out.println(allRegions.get(allRegions.size() - 1).getCity()[0].getPosition().GetY());
-        allRegions.add(new Region(new City[] {cities.get(7)}, 5000, 0, 100, 0, 100, 0, 0, 1));
+            //Сначала идет число городов, потом их номера(такие, что в файле инит), потом инты какие нужны в конструкторе
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream("res/Inits/RegionInit")))) {
+            String nextLine;
+            bufferedReader.readLine();
+            // 1 2 5000 0 1000 0 1000 0 0 3
+            while ((nextLine = bufferedReader.readLine()) != null) {
+                Scanner scanner = new Scanner(nextLine);
+                int count = scanner.nextInt();
+                City[] citiesArray = new City[count];
+                for (int i = 0; i < count; ++i) {
+                    citiesArray[i] = cities.get(scanner.nextInt());
+                }
+                //City[] city, int population, int resource, int capRes, int mineral, int capMin,
+                //                  int religion, int culture, int owner
+                int popul = scanner.nextInt();
+                int res = scanner.nextInt();
+                int capRes = scanner.nextInt();
+                int min = scanner.nextInt();
+                int capMin = scanner.nextInt();
+                int relig = scanner.nextInt();
+                int cult = scanner.nextInt();
+                int owner = scanner.nextInt();
+                allRegions.add(new Region(citiesArray, popul, res, capRes, min, capMin, relig, cult, owner));
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         /*TODO Так, я не изменяю конструктор, но вообще просто пронумеруй регионы все в любом порядке. в гове будет
         лежать метод, который будет давать регион по номеру. есть две переменные еще, deIureControl и deFractoControl
         Их делаешь одинаковыми и равными номеру игрока, которому они принадлежат. И в общем, тогда ты можешь также
