@@ -15,8 +15,13 @@ import java.util.List;
 
 public class CityScreen extends AbstractMechanicsScreen {
     List<Table> citiesList;
-    public CityScreen(Strategy strategy, int curPlayer, PlayScreen screen) {
-        super(strategy, curPlayer, screen);
+    ArrayList<Label> labels = new ArrayList<>();
+    private int regionIndex;
+    private int cityIndex;
+    public CityScreen(Strategy strategy, int curPlayer, int regionIndex, int cityIndex, RegionScreen regionScreen) {
+        super(strategy, curPlayer, regionScreen);
+        this.regionIndex = regionIndex;
+        this.cityIndex = cityIndex;
     }
 
     @Override
@@ -24,6 +29,11 @@ public class CityScreen extends AbstractMechanicsScreen {
         super.show();
         Table table = new Table();
         final ScrollPane scroll = new ScrollPane(table, skin);
+        int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
+        for (int i = 0; i < res.length; ++i) {
+            table.add(new Label("" + res[i], skin));
+            table.row();
+        }
         table.pad(100).defaults().expandX().space(4);
         Table cityTable = new Table();
         Table regionTable = new Table();
