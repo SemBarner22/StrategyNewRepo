@@ -559,6 +559,7 @@ public class Gov {
         PlusAdm(BS.baseAdm + modAdm);
         PlusPrestige(-(prestige * (100 - BS.basePrestige) / 100 - modPrestige));
         PlusLegicimacy(BS.baseLegicimacy + modLegecimacy);
+        System.out.println("Legitimacy "+legicimacy);
     }
     public void PlusPrestige(int p){
         prestige += p;
@@ -757,9 +758,12 @@ public class Gov {
     // дальше идут только геттеры
     //в этом методе мы передаем номер игрока (сам его возьмешь), количество денег, доход
     public int[] mainScreen10Getters(){
-        int[] res = new int[2];
+        int[] res = new int[5];
         res[0] = money;
         res[1] = profit;
+        res[2] = adm;
+        res[3] = legicimacy;
+        res[4] = prestige/10;
         return res;
     }
     //для скрина экономика
