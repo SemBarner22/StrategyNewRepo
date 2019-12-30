@@ -544,7 +544,12 @@ public class Gov {
     }
     //invest in stock тут как раз обращаться уже надо по номеру региона
     public boolean posibInvest(int reg, int city){
-        return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+        if (getNumRegion(reg) != -1){
+            return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+        } else {
+            System.out.println("Region is not by our control");
+            return false;
+        }
     }
     public void invest(int reg, int city){
         if (posibInvest(reg, city)){
