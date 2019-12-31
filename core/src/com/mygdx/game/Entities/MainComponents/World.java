@@ -20,9 +20,17 @@ import static java.nio.file.Files.readAllLines;
 
 //* Название ресурсов mineral RR CR
 public class World {
+    public static int heightOfMap;
+    public static int wideOfMap;
 
-    public World(int currentPlayers) throws IOException {
+    public static MapOfArmies mof;
+
+    public World(int currentPlayers, int width, int height) throws IOException {
         //создаем карту для аттак городов
+         mof = new MapOfArmies(width, height);
+         heightOfMap = height;
+         wideOfMap = width;
+
         moFConstructor();
         /*TODO Тут надо создать конструктор городов и регионов. В инитах есть все необходимые данные. Я думаю
             что надо создать большой массив всех городов, а потом регионам просто давать передавать соответсвующий номер
@@ -33,7 +41,7 @@ public class World {
              */
         int[] resurs = new int[3];
         resurs[1] = 1;
-        resurs[2]=2;
+        resurs[2] = 2;
         ArrayList<City> cities = new ArrayList<>();
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                     new FileInputStream("res/Inits/CityInit")))) {
@@ -50,6 +58,15 @@ public class World {
                     res[1] = scanner.nextInt();
                     res[2] = scanner.nextInt();
                     cities.add(new City(new Position(x, y), popul, owner, res));
+
+                    //TODO put this in mof Constructor
+                    mof.addCity(owner, new Position(x, y));
+                    mof.addCity(owner, new Position(x, y + 1));
+                    mof.addCity(owner, new Position(x + 1, y));
+                    mof.addCity(owner, new Position(x + 1, y + 1));
+                    for (int k = 0; k < 3; ++k) {
+                        mof.addArmy(owner, new Position(x + k, y + k));
+                    }
                 }
 
             } catch (FileNotFoundException e) {
@@ -135,10 +152,6 @@ public class World {
     public static int totalPopulation = 0;
     private CityAttack cityAttack;
     private ArrayList<Region> allRegions = new ArrayList<>();
-    public static int heigthOfMap = 5;
-    public static int wideOfMap = 5;
-
-    public static MapOfArmies mof = new MapOfArmies(wideOfMap, heigthOfMap);
 
     public static List<String> lines;
 
@@ -219,7 +232,7 @@ public class World {
      Мой тебе совет НЕ ЛЕЗЬ СУКА, ТАМ 150 СТРОК ИХ ДАЖЕ Я НЕ МОГУ ПОНЯТЬ
      Но если я не ошибаюсь, то она обрабатывает вообще все перемещения включая битвы, отступления и прочую ересь
     */
-    public void MoveArmy(Army army, Position second){
+    public void moveArmy(Army army, Position second){
         if ((!cityAttack.CheckPosition(second)) && army.CheckMove(second)){
             if (mof.CheckPosition(second) == -1){
                 army.Move(second);

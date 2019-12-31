@@ -11,8 +11,11 @@ public class MapOfArmies {
             }
         }
     }
-    public void AddArmy(int countryTag, Position position){
+    public void addArmy(int countryTag, Position position){
         map[position.GetX()][position.GetY()] = countryTag;
+    }
+    public void addCity(int countryTag, Position position){
+        map[position.GetX()][position.GetY()] = -2;
     }
     public int CheckPosition(Position position){
         return map[position.GetX()][position.GetY()];

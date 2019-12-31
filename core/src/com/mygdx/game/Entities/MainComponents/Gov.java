@@ -12,7 +12,6 @@ import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
-import com.mygdx.game.Screens.PlayScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -429,7 +428,7 @@ public class Gov {
         int aut;
         aut = (int) (Math.tan((Math.pow(capital.GetX() - value.getPosition().GetX(), 2) +
                 Math.pow(value.getPosition().GetY() - capital.GetY(), 2)))
-                / Math.sqrt(Math.pow(World.heigthOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
+                / Math.sqrt(Math.pow(World.heightOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
         if (aut > 100) {
             aut = 100;
         }
@@ -659,7 +658,7 @@ public class Gov {
             Army newArmy = new Army(counryNum, modMorale, modOrganisation, cit.getPosArmy(), 3);
             newArmy.Employ(0);
             army.add(newArmy);
-            World.mof.AddArmy(counryNum, cit.getPosArmy());
+            World.mof.addArmy(counryNum, cit.getPosArmy());
             money -= BS.baseCostCreationSquad[0] * (100 + modArmyCreation);
         }
     }
@@ -702,7 +701,7 @@ public class Gov {
             PlusMoney(arm.getMaxEquipment() * BS.baseCostMobilisation);
             maxEquipment -= arm.getMaxEquipment();
             equipment -= arm.getTotalEquipment();
-            World.mof.AddArmy(counryNum, cit.getPosArmy());
+            World.mof.addArmy(counryNum, cit.getPosArmy());
         }
     }
     public void Mobilisation(){

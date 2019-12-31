@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.*;
+import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.World;
 import com.mygdx.game.Entities.Player;
 import com.mygdx.game.Strategy;
@@ -36,6 +37,8 @@ public class PlayScreen implements Screen {
     //public boolean isMoveEnded;
     State state = State.DEFAULT;
     private ArrayList<Player> players;
+    TextButton mechanicsButton;
+    TextButton moveEndButton;
     public static World world;
     public ArrayList<Label> labels;
     //private Player player;
@@ -69,7 +72,7 @@ public class PlayScreen implements Screen {
         gamePort = new FillViewport(Strategy.V_WIDTH, Strategy.V_HEIGHT, gameCam);
         stage = new Stage();
         try {
-            world = new World(players.size());
+            world = new World(players.size(), Strategy.F_WIDTH, Strategy.F_HEIGHT);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,16 +106,20 @@ public class PlayScreen implements Screen {
         stage.addActor(bottomTable);
         bottomTable.setFillParent(true);
         bottomTable.bottom().pad(10).defaults().expandX().space(100);
-        TextButton mechanicsButton = new TextButton("Mechanics menu", skin);
+        mechanicsButton = new TextButton("Mechanics menu", skin);
         bottomTable.add(mechanicsButton);
         mechanicsButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                strategy.setScreen(new MechanicsMenu(strategy, curPlayer, PlayScreen.this));
-                players.get(curPlayer).setX(0);
-                players.get(curPlayer).setY(0);
+                if (state == State.DEFAULT) {
+                    strategy.setScreen(new MechanicsMenu(strategy, curPlayer, PlayScreen.this));
+                    players.get(curPlayer).setX(0);
+                    players.get(curPlayer).setY(0);
+                } else {
+                    state = State.DEFAULT;
+                }
             }
         });
-        TextButton moveEndButton = new TextButton("End of the move", skin);
+        moveEndButton = new TextButton("End of the move", skin);
         bottomTable.add(moveEndButton);
         world.preTurn(0);
         moveEndButton.addListener(new ClickListener() {
@@ -126,15 +133,7 @@ public class PlayScreen implements Screen {
 
             }
         });
-        armies = new TiledMapTileLayer(Strategy.V_WIDTH, Strategy.V_HEIGHT, 16, 16);
-        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
 
-        //test
-        TiledMapTileSet dungeon = map.getTileSets().getTileSet(0);
-        cell.setTile(dungeon.getTile(1));
-        for (int i = 0; i < 50; ++i) {
-            armies.setCell(i, i, cell);
-        }
         greenArea = new TiledMapTileLayer(Strategy.V_WIDTH, Strategy.V_HEIGHT, 16, 16);
 
     }
@@ -146,6 +145,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
         labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
@@ -166,9 +166,35 @@ public class PlayScreen implements Screen {
         renderer.render(new int[]{0, 1, 2, 3, 4});
         strategy.batch.end();
 
+        armies = new TiledMapTileLayer(Strategy.F_WIDTH, Strategy.F_HEIGHT, 16, 16);
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+
+        //test
+        TiledMapTileSet dungeon = map.getTileSets().getTileSet(0);
+        cell.setTile(dungeon.getTile(1));
+        for (int i = 0; i < Strategy.F_HEIGHT; ++i) {
+            for (int j = 0; j < Strategy.F_WIDTH; j++) {
+                if (World.mof.CheckPosition(new Position(i, j)) >= 0) {
+                    armies.setCell(i, j, cell);
+                }
+            }
+        }
         if (state == State.DEFAULT) {
 
+            mechanicsButton.setText("Mechanics menu");
+            moveEndButton.setText("End of the move");
+
+            //TODO Coordinates from screen to TileMap
             //mof
+//            Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
+//            gameCam.unproject(v0);
+//            System.out.println("COORDINATES: " + v0.x + " " + v0.y);
+//            int newX = (int) v0.x;
+//            int newY = (int) v0.y;
+//            if (World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
+//                state = State.ARMIE;
+//                // World.mof. GreenArea
+//            }
 
             MapObject playObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
             Polygon regPlayer = ((PolygonMapObject) playObject).getPolygon();
@@ -232,9 +258,13 @@ public class PlayScreen implements Screen {
             }
         }
         if (state == State.ARMIE) {
-            map.getLayers().add(armies);
-            renderer.render(new int[]{map.getLayers().getIndex(armies)});
+
+            mechanicsButton.setText("Cancel");
+            moveEndButton.setText("Advanced");
+
         }
+        map.getLayers().add(armies);
+        renderer.render(new int[]{map.getLayers().getIndex(armies)});
         stage.act();
         stage.draw();
     }
