@@ -35,7 +35,9 @@ import java.util.ArrayList;
 public class PlayScreen implements Screen {
 
     //public boolean isMoveEnded;
-    State state = State.DEFAULT;
+    private int armyX;
+    private int armyY;
+    State state = State.ARMIE;
     private ArrayList<Player> players;
     TextButton mechanicsButton;
     TextButton moveEndButton;
@@ -134,8 +136,6 @@ public class PlayScreen implements Screen {
             }
         });
 
-        greenArea = new TiledMapTileLayer(Strategy.V_WIDTH, Strategy.V_HEIGHT, 16, 16);
-
     }
 
     @Override
@@ -193,7 +193,9 @@ public class PlayScreen implements Screen {
 //            int newY = (int) v0.y;
 //            if (World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
 //                state = State.ARMIE;
-//                // World.mof. GreenArea
+//                armyX = newX;
+//                armyY = newY;
+//
 //            }
 
             MapObject playObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
@@ -256,15 +258,31 @@ public class PlayScreen implements Screen {
                     }
                 }
             }
+            map.getLayers().add(armies);
+            renderer.render(new int[]{map.getLayers().getIndex(armies)});
         }
         if (state == State.ARMIE) {
+            greenArea = new TiledMapTileLayer(Strategy.F_WIDTH, Strategy.F_HEIGHT, 16, 16);
 
             mechanicsButton.setText("Cancel");
             moveEndButton.setText("Advanced");
+            TiledMapTileLayer.Cell cellGreen = new TiledMapTileLayer.Cell();
 
+            //test
+            TiledMapTileSet greenSet = map.getTileSets().getTileSet(1);
+            cell.setTile(greenSet.getTile(1));
+            for (int i = 0; i < Strategy.F_HEIGHT; ++i) {
+                for (int j = 0; j < Strategy.F_WIDTH; j++) {
+                    if (World.mof.CheckPosition(new Position(i, j)) == -1) {
+                        greenArea.setCell(i, j, cellGreen);
+                    }
+                }
+            }
+            map.getLayers().add(armies);
+            renderer.render(new int[]{map.getLayers().getIndex(armies)});
+            map.getLayers().add(greenArea);
+            renderer.render(new int[]{map.getLayers().getIndex(greenArea)});
         }
-        map.getLayers().add(armies);
-        renderer.render(new int[]{map.getLayers().getIndex(armies)});
         stage.act();
         stage.draw();
     }
