@@ -64,8 +64,11 @@ public class World {
                     mof.addCity(owner, new Position(x, y + 1));
                     mof.addCity(owner, new Position(x + 1, y));
                     mof.addCity(owner, new Position(x + 1, y + 1));
-                    for (int k = 0; k < 3; ++k) {
-                        mof.addArmy(owner, new Position(x + k, y + k));
+                    if (x < 46 && y < 46) {
+                        mof.addArmy(owner, new Position(x + 3, y + 3));
+                        mof.addArmy(owner, new Position(x + 4, y + 4));
+                        mof.addArmy(owner, new Position(x + 4, y + 3));
+                        mof.addArmy(owner, new Position(x + 3, y + 4));
                     }
                 }
 

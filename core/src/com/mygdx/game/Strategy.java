@@ -25,7 +25,7 @@ public class Strategy extends Game {
 	int row_height;
 	int col_width;
 	public static final int V_WIDTH = 400;
-	public static final int V_HEIGHT = 208;
+	public static final int V_HEIGHT = 400;
 	public static final int F_HEIGHT = 50;
 	public static final int F_WIDTH = 50;
 	public SpriteBatch batch;

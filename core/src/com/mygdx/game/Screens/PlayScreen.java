@@ -32,6 +32,9 @@ import com.mygdx.game.Strategy;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class PlayScreen implements Screen {
 
     //public boolean isMoveEnded;
@@ -118,6 +121,8 @@ public class PlayScreen implements Screen {
                     players.get(curPlayer).setY(0);
                 } else {
                     state = State.DEFAULT;
+                    players.get(curPlayer).setX(0);
+                    players.get(curPlayer).setY(0);
                 }
             }
         });
@@ -186,17 +191,19 @@ public class PlayScreen implements Screen {
 
             //TODO Coordinates from screen to TileMap
             //mof
-//            Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
-//            gameCam.unproject(v0);
-//            System.out.println("COORDINATES: " + v0.x + " " + v0.y);
-//            int newX = (int) v0.x;
-//            int newY = (int) v0.y;
-//            if (World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
-//                state = State.ARMIE;
-//                armyX = newX;
-//                armyY = newY;
-//
-//            }
+            Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
+            gameCam.unproject(v0);
+            int newX = max(0, (int) (min(49, v0.x / 10)));
+            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
+            System.out.println("COORDINATES: " + newX + " " + newY);
+            if (World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
+                state = State.ARMIE;
+                armyX = newX;
+                armyY = newY;
+                players.get(curPlayer).setX(0);
+                players.get(curPlayer).setY(0);
+            }
+
 
             MapObject playObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
             Polygon regPlayer = ((PolygonMapObject) playObject).getPolygon();
@@ -273,10 +280,22 @@ public class PlayScreen implements Screen {
             cell.setTile(greenSet.getTile(1));
             for (int i = 0; i < Strategy.F_HEIGHT; ++i) {
                 for (int j = 0; j < Strategy.F_WIDTH; j++) {
-                    if (World.mof.CheckPosition(new Position(i, j)) == -1) {
+                   // if (World.mof.CheckPosition(new Position(i, j)) == -1) {
                         greenArea.setCell(i, j, cellGreen);
-                    }
+                   // }
                 }
+            }
+            Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
+            gameCam.unproject(v0);
+            int newX = max(0, (int) (min(49, v0.x / 10)));
+            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
+            System.out.println("COORDINATES: " + newX + " " + newY);
+            if (World.mof.CheckPosition(new Position(newX, newY)) == -1) {
+                state = State.DEFAULT;
+                //Only one tile changes
+                World.mof.moveArmy(new Position(armyX, armyY), new Position(newX, newY));
+                players.get(curPlayer).setX(0);
+                players.get(curPlayer).setY(0);
             }
             map.getLayers().add(armies);
             renderer.render(new int[]{map.getLayers().getIndex(armies)});
