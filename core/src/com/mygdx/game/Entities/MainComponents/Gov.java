@@ -558,7 +558,8 @@ public class Gov {
             region.get(getNumRegion(reg)).getCity()[city]
                     .investStock(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
             PlusMoney(-region.get(getNumRegion(reg)).costOfCapitalDonate(city));
-            System.out.println("investment succeeded");
+            System.out.println("investment succeeded " + money + " " + region.get(getNumRegion(reg)).getCity()[city].
+                    getStock());
         } else {
             System.out.println("investment failed");
         }

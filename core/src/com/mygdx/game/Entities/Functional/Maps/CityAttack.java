@@ -20,6 +20,7 @@ public class CityAttack {
         return null;
     }
 
+
     public boolean CheckPosition(Position position){
         for (int i = 0; i < cityCoordinate.length; i++){
             if (position == cityPosition[i]){

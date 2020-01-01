@@ -35,6 +35,16 @@ public class CityScreen extends AbstractMechanicsScreen {
         namesGet[0] = "GDP ";
         namesGet[1] = "Stock ";
         namesGet[2] = "Population ";
+        namesGet[3] = "Scientists ";
+        namesGet[4] = "TFP ";
+        namesGet[5] = "Growth ";
+        namesGet[6] = "Taxes ";
+        namesGet[7] = "First resource ";
+        namesGet[8] = "Second resource ";
+        namesGet[9] = "Third resource ";
+        namesGet[10] = "Profit ";
+
+
         for (int i = 0; i < res.length; ++i) {
             table.add(new Label(namesGet[i] + res[i], skin));
             if (i % 2 == 1) {

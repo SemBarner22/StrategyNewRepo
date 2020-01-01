@@ -229,7 +229,7 @@ public class Region {
         }
     }
     public int costOfCapitalDonate(int citynum){
-        return (city[citynum].getPotentialStock() - city[citynum].getStock())/10;
+        return Math.max((city[citynum].getPotentialStock() - city[citynum].getStock())/10, 1000);
     }
     public void capitalDonate(int cityNum){
         city[cityNum].investStock((int) (costOfCapitalDonate(cityNum)*(100-autonomy)/100));

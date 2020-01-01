@@ -216,10 +216,30 @@ public class World {
     /*не знаю где это оставить, поэтому пусть будут тут
      Находит 2 армии по координатам и сталкивает их. Можно сократить конечно количество опреций, тк мы знаем первую страну, но есть варик делать
     и все перемещения через карту армий.
+
+    Короче хз, как это все работает. Походу сейчас придется передлывать Этот метод, а если быть точнее, то
+    заменять его другим. Только теперь я буду писать. что он делает и зачем.
+    Фактически у нас есть 4 возможных взаимодействия
+    1) Просто походить
+    2) Сражаться
+    3) Захватить город
+    4) Посражаться и захватить город
+    Будет проще сделать метод, который говорит какого рода у нас взаимодействие. Сражение происходит, если 2
+    враждебные армии находятся в одной клетке
+    Захват города происходит, если мы находимся в соседней клетке и больше нет армий другого государства (враждебного
+    блока)
+    Тогда просто разбиваем весь метод на 2 различных подметода.
+    В случае если просто ход, то движемся и все
+    Если битва, то у нас вроде есть метод батл. Он вроде работающий.
+    И в конце мы чекаем захват города, можем ли мы это сделать.
+
      Мой тебе совет НЕ ЛЕЗЬ СУКА, ТАМ 150 СТРОК ИХ ДАЖЕ Я НЕ МОГУ ПОНЯТЬ
      Но если я не ошибаюсь, то она обрабатывает вообще все перемещения включая битвы, отступления и прочую ересь
     */
-    public void MoveArmy(Army army, Position second){
+    public void moveArmy(Position first, Position second){
+
+    }
+    public void MoveArmyOld(Army army, Position second){
         if ((!cityAttack.CheckPosition(second)) && army.CheckMove(second)){
             if (mof.CheckPosition(second) == -1){
                 army.Move(second);
@@ -265,7 +285,7 @@ public class World {
             }
         }
     }
-    // позволяет Сражаться армиям, которые находятся на двух позициях
+    // позволяет Сражаться армиям, которые находятся на двух позициях. Типо рабочий вариант, но отступление хромает. Также гетпосарми надо исправить
     private void Battle(Position position, Position battle){
         for (int j = 0; j < country.get(mof.CheckPosition(position)).army.size() ; j++){
             if (country.get(mof.CheckPosition(position)).army.get(j).getPosition() == position){
@@ -274,6 +294,7 @@ public class World {
                         boolean win = Fight(country.get(mof.CheckPosition(position)).army.get(j), country.get(mof.CheckPosition(battle)).army.get(j));
                         if (win){
                             int regi = (int) (Math.random() * country.get(mof.CheckPosition(battle)).getRegionControl().size());
+                            //TODO make it normal
                             if (country.get(mof.CheckPosition(battle)).getRegionControl().get(regi).getCity()[0].CheckPosition()){
                                 country.get(mof.CheckPosition(battle)).army.get(j).
                                         Move(country.get(mof.CheckPosition(battle)).getRegionControl().get(regi).getCity()[0].getPosArmy());
