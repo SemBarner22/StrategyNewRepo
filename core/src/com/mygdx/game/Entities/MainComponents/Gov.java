@@ -244,6 +244,20 @@ public class Gov {
         }
         return -1;
     }
+    public int[] getNumCity(int numberOfCity){
+        for (int i = 0; i <regionControl.size();i++){
+            for (int j = 0; j < regionControl.get(i).getCity().length; j++){
+                if (regionControl.get(i).getCity()[j].getUnicNumber() == numberOfCity){
+                    int[] result = new int[2];
+                    result[0] = i;
+                    result[1] = j;
+                    return result;
+                }
+            }
+        }
+        System.out.println("ERROR IN getNumCity");
+        return null;
+    }
 
     // армия
     public ArrayList<Army> army = new ArrayList<>();
@@ -770,7 +784,7 @@ public class Gov {
     // дальше идут только геттеры
     //в этом методе мы передаем номер игрока (сам его возьмешь), количество денег, доход
     public int[] mainScreen10Getters(){
-        int[] res = new int[5];
+        int[] res = new int[6];
         res[0] = money;
         res[1] = profit;
         res[2] = adm;
@@ -828,5 +842,11 @@ public class Gov {
     }
     public void setTaxRate(int taxRate) {
         this.taxRate = taxRate;
+    }
+    public void removeRegion(Region reg){
+        regionControl.remove(reg);
+    }
+    public void addRegion(Region reg){
+        regionControl.add(reg);
     }
 }

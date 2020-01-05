@@ -133,6 +133,7 @@ public class PlayScreen implements Screen {
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
         labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
+        labels.get(5).setText("Turn Number "+ world.getTurnNumber());
         labels.get(2).setText("Admin" + world.getPlayerGov(curPlayer).mainScreen10Getters()[2]);
         labels.get(3).setText("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
         labels.get(4).setText("Prestige" + world.getPlayerGov(curPlayer).mainScreen10Getters()[4]);

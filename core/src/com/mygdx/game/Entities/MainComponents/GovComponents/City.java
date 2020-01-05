@@ -12,7 +12,7 @@ import java.util.ArrayList;
 */
 
 public class City {
-    public City(Position position, int population, int owner, int[] res) {
+    public City(Position position, int population, int owner, int[] res, int unicNumber) {
         this.position = position;
         this.population = population;
         this.owner = owner;
@@ -25,7 +25,11 @@ public class City {
         laborStructure[0] = 0.33;
         laborStructure[1] = 0.33;
         laborStructure[2] = 0.34;
+        this.unicNumber = unicNumber;
+        occupator = owner;
     }
+
+    private int unicNumber;
 
     private Position position;
     private Building[] building = new Building[BS.numberOfBuildings];
@@ -38,6 +42,8 @@ public class City {
     private int rebelLevel=0;
     private int[] partArmy;
     private boolean mobilisation = false;
+    private boolean occupation = false;
+    private int occupator;
     private Economy economy;
     private int profit;
 
@@ -401,4 +407,15 @@ public class City {
         return economy.getPotentialStock();
     }
 
+    public int getUnicNumber() {
+        return unicNumber;
+    }
+
+    public boolean isOccupation() {
+        return occupation;
+    }
+    public void occupy(int country){
+        occupator = country;
+        occupation = owner != country;
+    }
 }

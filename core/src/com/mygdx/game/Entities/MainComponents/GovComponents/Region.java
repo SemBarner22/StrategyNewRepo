@@ -22,6 +22,7 @@ public class Region {
         this.owner = owner;
         World.totalPopulation +=population;
         this.numberOfRegion = numberOfRegion;
+        occupator = owner;
     }
     private int numberOfRegion;
     private int deIureControl;
@@ -54,6 +55,7 @@ public class Region {
     private int rebelLevel;
     private int culture;
     private boolean occupation;
+    private int occupator;
 
     private int numberOfModificators = BS.regionModsNum;
     private Modificator[] modificator = new Modificator[numberOfModificators];
@@ -109,6 +111,11 @@ public class Region {
         }
         rebelLevel -= prosperity - level;
     }
+    public boolean occupy(int cityNum, int country){
+        city[cityNum].occupy(country);
+        occupation = (cityNum == 0) & (country !=owner);
+        return occupation;
+    }
 
     // обновление населения
     private void updatePopulation(int rate){
@@ -137,7 +144,7 @@ public class Region {
     }
     private void updateProfitMineral() {
         productionMin = (int) (1.0*MinTPF/100* capMin*Math.pow(1.0*population*prodMinRate/10, 0.2));
-        //System.out.println(productionRR);
+        //System.out.println(productionMin);
         profitMineral = (int) (productionMin*Resources.getValueMineral(mineral));
     }
     //напишем чему равен спрос в городе на товары. Для начала C=Y-G-s. Но как будет распределено? По соотношению долей

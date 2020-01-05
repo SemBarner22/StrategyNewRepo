@@ -39,6 +39,7 @@ public class World {
                     new FileInputStream("res/Inits/CityInit")))) {
                 String nextLine;
                 bufferedReader.readLine();
+                int unicNumber = 0;
                 while ((nextLine = bufferedReader.readLine()) != null) {
                     Scanner scanner = new Scanner(nextLine);
                     int x = scanner.nextInt();
@@ -49,7 +50,9 @@ public class World {
                     res[0] = scanner.nextInt();
                     res[1] = scanner.nextInt();
                     res[2] = scanner.nextInt();
-                    cities.add(new City(new Position(x, y), popul, owner, res));
+                    mof.addCity(new Position(x, y), unicNumber, owner);
+                    cities.add(new City(new Position(x, y), popul, owner, res, unicNumber));
+                    unicNumber++;
                 }
 
             } catch (FileNotFoundException e) {
@@ -236,8 +239,31 @@ public class World {
      Мой тебе совет НЕ ЛЕЗЬ СУКА, ТАМ 150 СТРОК ИХ ДАЖЕ Я НЕ МОГУ ПОНЯТЬ
      Но если я не ошибаюсь, то она обрабатывает вообще все перемещения включая битвы, отступления и прочую ересь
     */
-    public void moveArmy(Position first, Position second){
+    public void moveArmy(Army selArm, Position second){
+        //if attack army
+        boolean battle = false;
+        if (mof.checkArmy(second)){
+            battle = true;
+            Battle(selArm.getPosition(), second);
+        } else {
+            selArm.Move(second);
+        }
 
+        //if attack City
+        if (mof.checkCity(second) & mof.posOccupy(second)){
+            int number = mof.getCityCoordinates(second)[1];
+            int strana = mof.getCityCoordinates(second)[2];
+            int[] coord = country.get(strana).getNumCity(number);
+            //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
+            //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
+            boolean occup = country.get(strana).getRegionControl().get(coord[0]).occupy(coord[1],
+                    selArm.getCountry());
+            Region regi = country.get(strana).getRegionControl().get(coord[0]);
+            if (occup){
+                country.get(strana).removeRegion(regi);
+                country.get(selArm.getCountry()).addRegion(regi);
+            }
+        }
     }
     public void MoveArmyOld(Army army, Position second){
         if ((!cityAttack.CheckPosition(second)) && army.CheckMove(second)){
@@ -427,7 +453,7 @@ public class World {
     }
     //пацанский маркет
     private void trueMarket(){
-        double increaseOverTime = (1.0*turnNumber+20)/20;
+        double increaseOverTime = (1.0*turnNumber)/20;
         resources.setCR(totalCRDemand, totalCityProduction, increaseOverTime);
         resources.setMineral(totalMineralDemand, totalMineralProduction);
         resources.setRR(totalRRDemand,totalRegionProduction);
@@ -498,8 +524,11 @@ public class World {
         this.allRegions = allRegions;
     }
 
+    public int getTurnNumber() {
+        return turnNumber;
+    }
 
-//    public void Main() {
+    //    public void Main() {
 //        int i = -1;
 //        while (!endGame){
 //            i++;

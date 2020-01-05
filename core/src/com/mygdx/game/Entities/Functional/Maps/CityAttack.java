@@ -8,6 +8,9 @@ public class CityAttack {
         this.cityCoordinate = cityCoordinate;
     }
 
+    public CityAttack() {
+    }
+
     private Position[] cityPosition;
     private CityCoordinate[] cityCoordinate;
 
