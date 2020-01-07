@@ -70,8 +70,8 @@ public class MapOfArmies {
     public boolean checkCity(Position position){
         int x = position.GetX();
         int y = position.GetY();
-        if ((map[x+1][y] == -2) | (map[x+1][y+1] == -2) | (map[x+1][y-1] == -2) | (map[x][y+1] == -2) | (map[x][y-1] == -2) |
-        (map[x-1][y] == -2) | (map[x-1][y+1] == -2) | (map[x-1][y-1] == -2)
+        if ((map[x+1][y] == -2) || (map[x+1][y+1] == -2) || (map[x+1][y-1] == -2) || (map[x][y+1] == -2) || (map[x][y-1] == -2) |
+        (map[x-1][y] == -2) || (map[x-1][y+1] == -2) || (map[x-1][y-1] == -2)
         ){
             if (map[x][y] != -2){
                 return true;

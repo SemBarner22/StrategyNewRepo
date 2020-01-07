@@ -108,6 +108,7 @@ public class World {
             // одна вещь для конструктора нужна пока что. Фактически, если написать инициалтизатор для городов и
             // регионов, то все готово
             country.add(new Gov(regions));
+            country.get(i).setCounryNum(i);
         }
     }
     private void moFConstructor(){
@@ -250,14 +251,14 @@ public class World {
         }
 
         //if attack City
-        if (mof.checkCity(second) & mof.posOccupy(second)){
+        if (mof.checkCity(second) && mof.posOccupy(second)){
             int number = mof.getCityCoordinates(second)[1];
-            int strana = mof.getCityCoordinates(second)[2];
+            int strana = mof.getCityCoordinates(second)[0];
             int[] coord = country.get(strana).getNumCity(number);
             //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
             //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
-            boolean occup = country.get(strana).getRegionControl().get(coord[0]).occupy(coord[1],
-                    selArm.getCountry());
+            boolean occup = country.get(strana).getRegionControl().get(coord[0]).
+                    occupy(coord[1], selArm.getCountry());
             Region regi = country.get(strana).getRegionControl().get(coord[0]);
             if (occup){
                 country.get(strana).removeRegion(regi);
@@ -321,7 +322,7 @@ public class World {
                         if (win){
                             int regi = (int) (Math.random() * country.get(mof.CheckPosition(battle)).getRegionControl().size());
                             //TODO make it normal
-                            if (country.get(mof.CheckPosition(battle)).getRegionControl().get(regi).getCity()[0].CheckPosition()){
+                            if (country.get(mof.CheckPosition(battle)).getRegionControl().get(regi).getCity()[0].checkPosition()){
                                 country.get(mof.CheckPosition(battle)).army.get(j).
                                         Move(country.get(mof.CheckPosition(battle)).getRegionControl().get(regi).getCity()[0].getPosArmy());
                             } else {
@@ -330,7 +331,7 @@ public class World {
 
                         } else {
                             int regi = (int) (Math.random() * country.get(mof.CheckPosition(position)).getRegionControl().size());
-                            if (country.get(mof.CheckPosition(position)).getRegionControl().get(regi).getCity()[0].CheckPosition()){
+                            if (country.get(mof.CheckPosition(position)).getRegionControl().get(regi).getCity()[0].checkPosition()){
                                 country.get(mof.CheckPosition(position)).army.get(j).
                                         Move(country.get(mof.CheckPosition(position)).getRegionControl().get(regi).getCity()[0].getPosArmy());
                             } else {

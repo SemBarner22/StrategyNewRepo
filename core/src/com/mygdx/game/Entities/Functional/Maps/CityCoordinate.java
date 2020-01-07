@@ -24,7 +24,7 @@ public class CityCoordinate {
         int xmin = position.GetX()-1;
         int ymax = position.GetY()+2;
         int ymin = position.GetY()-1;
-        if (pos.GetY()<ymin | pos.GetY()>ymax | pos.GetX() >xmax | pos.GetX() < xmin){
+        if (pos.GetY()<ymin || pos.GetY()>ymax || pos.GetX() >xmax || pos.GetX() < xmin){
             return false;
         } else{
             return true;

@@ -64,7 +64,6 @@ public abstract class Advisor {
         return haveJob;
     }
 
-    //TODO
     public String getAbilityName(){
         return abilityName == null ? "No advisor" : abilityName;
     }

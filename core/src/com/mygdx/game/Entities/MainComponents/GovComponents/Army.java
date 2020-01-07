@@ -10,6 +10,9 @@ public class Army {
     private static int baseMaxMorale = 10000;
     private static int baseMaxOrganisation = 1000;
 
+    //army times
+    private boolean extraPay = false;
+
     private int country;
     private int[] armyMan;
     private int amount = 0;
@@ -117,7 +120,24 @@ public class Army {
                 * (25 + tactic) * prof  /50000;
     }
 
+    //make extra pay to update morale
+    public boolean payMorale(){
+        if (!extraPay) {
+            morale += 10;
+            extraPay = true;
+            if (morale > maxMorale) {
+                morale = maxMorale;
+            }
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     //каждый ход отсюда
+    public void everyTurn(){
+        extraPay = false;
+    }
     public void UpdateTactic(int govTac){
         tactic = (govTac + general.getTactic()) * 4;
     }

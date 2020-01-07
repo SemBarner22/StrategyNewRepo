@@ -113,7 +113,7 @@ public class Region {
     }
     public boolean occupy(int cityNum, int country){
         city[cityNum].occupy(country);
-        occupation = (cityNum == 0) & (country !=owner);
+        occupation = (cityNum == 0) && (country !=owner);
         return occupation;
     }
 
@@ -221,7 +221,7 @@ public class Region {
     private boolean posDecAut(){
         boolean result = true;
         //TODO сделать проверку на модификатор
-        if (autonomy < 20 & result){
+        if (autonomy < 20 && result){
             result = false;
         }
         return result;

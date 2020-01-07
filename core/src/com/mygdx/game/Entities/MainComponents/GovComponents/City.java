@@ -59,10 +59,10 @@ public class City {
 
 
     //АРМИЯ
-    public boolean CheckPosition(){
-        for (int i = -1; i <2; i++) {
-            for (int j = -1; j < 2; j++) {
-                if (World.mof.CheckPosition(new Position(position.GetX()+i, position.GetY()+j)) == -1 && (i != 0 | j != 0)){
+    public boolean checkPosition(){
+        for (int i = -1; i <3; i++) {
+            for (int j = -1; j < 3; j++) {
+                if (World.mof.CheckPosition(new Position(position.GetX()+i, position.GetY()+j)) == -1){
                     posArmy = new Position(position.GetX()+i, position.GetY()+j);
                     return true;
                 }
@@ -245,7 +245,7 @@ public class City {
                 }
             }
         }
-        if (priceChecker < 0.9 | priceChecker >1.1){
+        if (priceChecker < 0.9 || priceChecker >1.1){
             System.out.println("WARNING PRICE CHECKER IS NO 1. PRICECHECKER IS "+priceChecker);
         }
     }

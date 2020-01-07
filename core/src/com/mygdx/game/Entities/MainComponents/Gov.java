@@ -12,7 +12,6 @@ import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
-import com.mygdx.game.Screens.PlayScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +42,11 @@ public class Gov {
     }
     private void constructAdv() {
         for (int t = 0; t < 5; t++) {
-            CreateAdvisor("Cleric");
+            CreateAdvisor("Cleric", true);
             AssignAdvisor(t, t);
         }
         for (int t = 0; t < 10; t++) {
-            CreateAdvisor("Diplomat");
+            CreateAdvisor("Diplomat", true);
         }
     }
     private void constructEstate(){
@@ -61,7 +60,7 @@ public class Gov {
         constructMod();
         constructAdv();
         capital = region.get(0).getCity()[0].getPosition();
-
+        adm = 100;
     }
     private boolean isPlayer = true;
 
@@ -181,11 +180,11 @@ public class Gov {
                     estate[i].setManufatory(false);
                 }
                 if (estate[i].isFinancier()){
-                    CreateAdvisor("Financier");
+                    CreateAdvisor("Financier", true);
                     estate[i].setFinancier(false);
                 }
                 if (estate[i].isGeneral()){
-                    CreateAdvisor("General");
+                    CreateAdvisor("General", true);
                     estate[i].setFinancier(false);
                 }
             }
@@ -273,33 +272,34 @@ public class Gov {
     private ArrayList<Advisor> advList = new ArrayList<>();
     private ArrayList<General> general = new ArrayList<>();
     // призываем советника
-    public void CreateAdvisor(String adv) {
-        //TODO
-        // if (adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100) {
-        PlusAdm( - BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100);
-        if (adv.equals("Diplomat")){
-            advList.add(new Diplomat());
-        }
-        if (adv.equals("Cleric")){
-            System.out.println("ok");
-            advList.add(new Cleric());
-        }
-        if (adv.equals("Financier")){
-            advList.add(new Financier());
-        }
-        if (adv.equals("General")){
-            General gen = new General();
-            general.add(gen);
-            advList.add(gen);
-        }
-        if (adv.equals("Judge")){
-            advList.add(new Judge());
-        }
-        if (adv.equals("Scientist")){
-            advList.add(new Scientist());
-        }
-        if (adv.equals("Spy")){
-            advList.add(new Spy());
+    public void CreateAdvisor(String adv, boolean isFree) {
+        if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (isFree)) {
+            PlusAdm(-BS.baseAdvisorCost * (100 + modAdvisorCost) / 100);
+            PlusMoney(profit/4);
+            if (adv.equals("Diplomat")) {
+                advList.add(new Diplomat());
+            }
+            if (adv.equals("Cleric")) {
+                System.out.println("ok");
+                advList.add(new Cleric());
+            }
+            if (adv.equals("Financier")) {
+                advList.add(new Financier());
+            }
+            if (adv.equals("General")) {
+                General gen = new General();
+                general.add(gen);
+                advList.add(gen);
+            }
+            if (adv.equals("Judge")) {
+                advList.add(new Judge());
+            }
+            if (adv.equals("Scientist")) {
+                advList.add(new Scientist());
+            }
+            if (adv.equals("Spy")) {
+                advList.add(new Spy());
+            }
         }
     }
     //  }
@@ -549,6 +549,10 @@ public class Gov {
             return false;
         }
     }
+    // check ammount of adm points
+    public boolean checkAdm(int number){
+        return number > adm;
+    }
     // получаем деньги
     public void PlusMoney(int m){
         money += m;
@@ -669,8 +673,8 @@ public class Gov {
             money -= BS.baseCostCreationSquad[armyMen];
         }
     }
-    public void CreateArmy(City cit){
-        if (cit.CheckPosition() & CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation))){
+    public void createArmy(City cit){
+        if (cit.checkPosition() && CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation))){
             Army newArmy = new Army(counryNum, modMorale, modOrganisation, cit.getPosArmy(), 3);
             newArmy.Employ(0);
             army.add(newArmy);
@@ -711,7 +715,7 @@ public class Gov {
             partEqp = 1;
         }
         Army arm = new Army(cit.Mobilisation(), counryNum, modMorale, modOrganisation,  cit.getPosArmy(), 2, partEqp);
-        if (cit.CheckPosition() & !cit.isMobilisation() && CheckMoney(arm.getMaxEquipment() * BS.baseCostMobilisation)) {
+        if (cit.checkPosition() && !cit.isMobilisation() && CheckMoney(arm.getMaxEquipment() * BS.baseCostMobilisation)) {
             mobilisateArmy.add(arm);
             cit.setMobilisation(true);
             PlusMoney(arm.getMaxEquipment() * BS.baseCostMobilisation);
@@ -747,6 +751,7 @@ public class Gov {
             value.UpdateMorale(modIncreaseMorale);
             value.UpdateOrganisation(modIncreaseOrganisation);
             value.UpdateTactic(modTactic);
+            value.everyTurn();
         }
         for (Army value : mobilisateArmy) {
             value.UpdateMaxArmy(modMorale, modOrganisation);
@@ -848,5 +853,8 @@ public class Gov {
     }
     public void addRegion(Region reg){
         regionControl.add(reg);
+    }
+    public void setCounryNum(int counryNum) {
+        this.counryNum = counryNum;
     }
 }
