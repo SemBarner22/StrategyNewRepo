@@ -5,6 +5,7 @@ import com.mygdx.game.Entities.Functional.Maps.CityAttack;
 import com.mygdx.game.Entities.Functional.Maps.CityCoordinate;
 import com.mygdx.game.Entities.Functional.Maps.MapOfArmies;
 import com.mygdx.game.Entities.Functional.Maps.Position;
+import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
@@ -21,9 +22,25 @@ import static java.nio.file.Files.readAllLines;
 //* Название ресурсов mineral RR CR
 public class World {
 
-    public World(int currentPlayers) throws IOException {
-        //создаем карту для аттак городов
-        moFConstructor();
+    /*TODO крч я чет запутался, напиши инициализатор модификаторов, смотри файл GovModificator и класс Modificator
+    И еще, проверь, нормально ли я скопировал это в гове
+     */
+    public static ArrayList<Modificator> modificators = new ArrayList<>();
+    public void initModGov() throws IOException{
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream("res/Inits/GovModificator")))) {
+            String nextLine;
+            bufferedReader.readLine();
+            while ((nextLine = bufferedReader.readLine()) != null) {
+
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initCityRegGov(int currentPlayers) throws IOException {
         /*TODO Тут надо создать конструктор городов и регионов. В инитах есть все необходимые данные. Я думаю
             что надо создать большой массив всех городов, а потом регионам просто давать передавать соответсвующий номер
             Имхо будет проще так. Но в общем файлы есть, ты говорил, что сможешь создать инициализатор регионов из файла
@@ -31,34 +48,31 @@ public class World {
             Позиция региона задается кстати по первому городу, которй в нем содержится.
             В гов соответсвенно надо запихать те регионы, владельцем которых является эта страна
              */
-        int[] resurs = new int[3];
-        resurs[1] = 1;
-        resurs[2]=2;
         ArrayList<City> cities = new ArrayList<>();
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                    new FileInputStream("res/Inits/CityInit")))) {
-                String nextLine;
-                bufferedReader.readLine();
-                int unicNumber = 0;
-                while ((nextLine = bufferedReader.readLine()) != null) {
-                    Scanner scanner = new Scanner(nextLine);
-                    int x = scanner.nextInt();
-                    int y = scanner.nextInt();
-                    int popul = scanner.nextInt();
-                    int owner = scanner.nextInt();
-                    int[] res = new int[3];
-                    res[0] = scanner.nextInt();
-                    res[1] = scanner.nextInt();
-                    res[2] = scanner.nextInt();
-                    mof.addCity(new Position(x, y), unicNumber, owner);
-                    cities.add(new City(new Position(x, y), popul, owner, res, unicNumber));
-                    unicNumber++;
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream("res/Inits/CityInit")))) {
+            String nextLine;
+            bufferedReader.readLine();
+            int unicNumber = 0;
+            while ((nextLine = bufferedReader.readLine()) != null) {
+                Scanner scanner = new Scanner(nextLine);
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+                int popul = scanner.nextInt();
+                int owner = scanner.nextInt();
+                int[] res = new int[3];
+                res[0] = scanner.nextInt();
+                res[1] = scanner.nextInt();
+                res[2] = scanner.nextInt();
+                mof.addCity(new Position(x, y), unicNumber, owner);
+                cities.add(new City(new Position(x, y), popul, owner, res, unicNumber));
+                unicNumber++;
             }
-            //Сначала идет число городов, потом их номера(такие, что в файле инит), потом инты какие нужны в конструкторе
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //Сначала идет число городов, потом их номера(такие, что в файле инит), потом инты какие нужны в конструкторе
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                 new FileInputStream("res/Inits/RegionInit")))) {
             String nextLine;
@@ -111,6 +125,14 @@ public class World {
             country.get(i).setCounryNum(i);
         }
     }
+
+    public World(int currentPlayers) throws IOException {
+        //создаем карту для аттак городов
+        moFConstructor();
+        //запихал все это в отдельный метод, ибо инициализация это пипец как многовсего
+        initCityRegGov(currentPlayers);
+    }
+
     private void moFConstructor(){
         ArrayList<Position> pos = new ArrayList<>();
         ArrayList<CityCoordinate> coord = new ArrayList<>();
@@ -148,9 +170,7 @@ public class World {
 
     static {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                //new FileInputStream("src\\Texts\\GovModificator")))) {
-                //TODO
-                new FileInputStream(  "res/CommonText/GovModificator")))) {
+                new FileInputStream("res/CommonText/GovModificator")))) {
             String nextLine;
             lines = new ArrayList<>();
             while ((nextLine = bufferedReader.readLine()) != null) {
@@ -158,12 +178,6 @@ public class World {
                 System.out.println("Pog");
                 lines.add(nextLine);
             }
-        /*try {
-            lines = readAllLines(Paths.get("src\\Texts\\GovModificator"), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-         */
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

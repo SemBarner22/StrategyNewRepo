@@ -13,8 +13,10 @@ import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Gov {
     private void constructMod(){
@@ -61,6 +63,7 @@ public class Gov {
         constructAdv();
         capital = region.get(0).getCity()[0].getPosition();
         adm = 100;
+        modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
     }
     private boolean isPlayer = true;
 
@@ -99,6 +102,8 @@ public class Gov {
     private int modCostArmy = 1;
 
     private Modificator[] modificator = new Modificator[1];
+    //инициализируем модификаторы
+
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
     private void AddToMod(int[] array) {
         modAdvisorCost += array[0];
@@ -151,7 +156,7 @@ public class Gov {
         modProfitFromCity =0;
     }
 
-    public void UpdateMod(){
+    public void updateMod(){
         NullMod();
         for (int i = 0; i < modificator.length; i++){
             if (modificator[i].getIs()) {
@@ -775,7 +780,7 @@ public class Gov {
         return null;
     }
 
-    public void ActivateModificator(int i){
+    public void activateModificator(int i){
         modificator[i].Activate();
     }
 
