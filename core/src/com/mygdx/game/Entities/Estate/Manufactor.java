@@ -14,6 +14,7 @@ public class Manufactor extends Estate {
         for (int i = 0; i < numAbility; i++){
             ability[i] = new Ability();
         }
+        profit = 10;
     }
     private static List<String> abilityName = new ArrayList<>();
     static {

@@ -9,6 +9,9 @@ public class Modificator {
         this.maxTime = maxTime;
         this.name = name;
         this.number = number;
+        modifiers = new int[2][numMod.length];
+        modifiers[0] = numMod;
+        modifiers[1] = levMod;
     }
     public String name;
     public int number;
@@ -16,6 +19,7 @@ public class Modificator {
     private boolean is = false;
     private int time;
     private int maxTime;
+    private int[][] modifiers;
 
     public void Activate(){
         time = maxTime;
@@ -42,7 +46,18 @@ public class Modificator {
         return time;
     }
 
+    //остается для работы модификаторов в регионе и городе. В некоторых случаях это удобнее
     public int[] getModificator() {
         return modificator;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public int[] getNumMod(){
+        return modifiers[0];
+    }
+    public int[] getLevMod(){
+        return modifiers[1];
     }
 }

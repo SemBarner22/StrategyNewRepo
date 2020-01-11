@@ -13,14 +13,28 @@ public class Event {
     // Только со следующего хода
     private int choiseNum;
     private int number;
-    private Modificator[] modificator;
+    private int[] modificators;
     private int probability;
+    private String text;
+    private String[] textsAns;
+    private int weight = 1;
 
-    public Event(int choiсeNum, int number, Modificator[] modificator, int probability) {
-        this.choiseNum = choiсeNum;
-        this.number = number;
-        this.modificator = modificator;
-        this.probability = probability;
+    private int choiceBot(){
+        return 0;
+    }
+    public int getProbability(){
+        probability = 1;
+        return probability;
+    }
+    public int getModNum(int i){
+        return modificators[i];
     }
 
+    public Event(int choiseNum, int number, int[] modificators, String text, String[] textsAns) {
+        this.choiseNum = choiseNum;
+        this.number = number;
+        this.modificators = modificators;
+        this.text = text;
+        this.textsAns = textsAns;
+    }
 }

@@ -1,6 +1,7 @@
 package com.mygdx.game.Entities.MainComponents;
 
 import com.mygdx.game.Entities.BaseSettings.BS;
+import com.mygdx.game.Entities.Functional.Event;
 import com.mygdx.game.Entities.Functional.Maps.CityAttack;
 import com.mygdx.game.Entities.Functional.Maps.CityCoordinate;
 import com.mygdx.game.Entities.Functional.Maps.MapOfArmies;
@@ -155,6 +156,7 @@ public class World {
 
     // компонены мира
     private boolean endGame = false;
+    public static Event[] events;
     private int turnNumber = 1;
     public static Resources resources = new Resources();
     private ArrayList<Gov> country = new ArrayList<>();
@@ -467,11 +469,52 @@ public class World {
         NullArray(totalPlantMineralDemand);
     }
     //пацанский маркет
+    private double increaseMin = 1;
+    private double increaseRR = 1;
+    public double increaseCR = 1;
     private void trueMarket(){
-        double increaseOverTime = (1.0*turnNumber)/20;
-        resources.setCR(totalCRDemand, totalCityProduction, increaseOverTime);
-        resources.setMineral(totalMineralDemand, totalMineralProduction);
-        resources.setRR(totalRRDemand,totalRegionProduction);
+        double change = 0.05*Resources.getAvCR()/Resources.getAvRR();
+        if (Resources.getAvRR() == Math.max(Math.max(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
+            increaseRR -=change;
+        }
+        if (Resources.getAvMin() == Math.max(Math.max(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
+            increaseMin -=change;
+        }
+        if (Resources.getAvCR() == Math.max(Math.max(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
+            increaseCR -= change;
+        }
+
+        if (Resources.getAvRR() == Math.min(Math.min(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
+            increaseRR +=change;
+        }
+        if (Resources.getAvMin() == Math.min(Math.min(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
+            increaseMin +=change;
+        }
+        if (Resources.getAvCR() == Math.min(Math.min(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
+            increaseCR += change;
+        }
+        //System.out.println(increaseCR +" " + increaseRR + " " + increaseMin);
+        /*
+        increaseMin = 1;
+        increaseRR = 1;
+        increaseCR = 1;
+         */
+        double incOverTime = 1;
+        if (turnNumber > 70){
+            incOverTime += Math.min((int) ((turnNumber - 60) / 10) *0.05, 1);
+        }
+        if (turnNumber > 110){
+            incOverTime += Math.min((int) ((turnNumber - 110) / 10) *0.05, 1);
+        }
+        if (turnNumber > 150){
+            incOverTime += Math.min((int) ((turnNumber - 150) / 10) *0.02, 1);
+        }
+        if (turnNumber > 180){
+            incOverTime += Math.min((int) ((turnNumber - 180) / 10) *0.03, 1);
+        }
+        resources.setCR(totalCRDemand, totalCityProduction, increaseCR/4*incOverTime);
+        resources.setMineral(totalMineralDemand, totalMineralProduction, increaseMin*2*incOverTime);
+        resources.setRR(totalRRDemand,totalRegionProduction, increaseRR*2*incOverTime);
         resources.updateTotalValue();
 
         // checkTotalPD();
@@ -496,6 +539,31 @@ public class World {
         trueMarket();
         turnNumber++;
     }
+    //вызов ивентов дает либо номер ивента, либо -1, если его не надо выбирать
+    public int eventNum(int numPlayer){
+        int totalProb = 0;
+        for (int i = 0; i < events.length; i++){
+            totalProb += country.get(numPlayer).getEventWeight(i);
+        }
+        if (Math.random() > BS.basePosEvent){
+            int weight = (int) (Math.random() * totalProb);
+            //todo сделать выбор эвента
+            int i = 0;
+            int curWeight = 0;
+            while (curWeight < weight){
+                curWeight += country.get(numPlayer).getEventWeight(i);
+                i += 1;
+            }
+            return i;
+        } else {
+            return -1;
+        }
+    }
+    //дает выбор игрока в гов
+    public void eventChoice(int numPlayer, int numEvent, int numChoice){
+        country.get(numPlayer).activateModificator(events[numEvent].getModNum(numChoice));
+    }
+
     //Нужен для проверки текущего балланса. Чисто служебный метод
     private void checkTotalPD(){
         int res = 0;

@@ -27,9 +27,9 @@ public class Resource {
 
     public void countValue(){
         if (demand>supply){
-            value = Math.max(value+(value/50) *demand/supply, value+0.5);
+            value = Math.max(value+(value/50) *demand/supply, value+0.1);
         } else{
-            value=Math.max(value-(value/50)*supply/demand, value-0.5);
+            value=Math.min(value-(value/50)*supply/demand, value-0.1);
         }
         if (value<0){
             value = 0.1;

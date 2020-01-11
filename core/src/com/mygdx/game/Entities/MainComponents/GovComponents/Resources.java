@@ -17,6 +17,26 @@ public class Resources {
     private static Resource[] RR = new Resource[BS.numberOfRR];
     private static Resource[] Mineral = new Resource[BS.numberOfMineral];
     private static double totalValue;
+    private static double avMin;
+    private static double avRR;
+    private static double avCR;
+    public static void updateAv(){
+        double totMin = 0;
+        for (Resource res: Mineral){
+            totMin += res.getValue();
+        }
+        avMin = totMin/Mineral.length;
+        double totRR = 0;
+        for (Resource res: RR){
+            totRR += res.getValue();
+        }
+        avRR = totRR/RR.length;
+        double totCR = 0;
+        for (Resource res: CR){
+            totCR += res.getValue();
+        }
+        avCR = totCR/CR.length;
+    }
     static {
         for (int i = 0; i <CR.length; i++){
             CR[i] = new Resource(0, 0, 1, 0);
@@ -37,27 +57,34 @@ public class Resources {
             CR[i].setDemand((int) (increaseOverTime*demand[i]));
             CR[i].setSupply(supply[i]);
             CR[i].countValue();
+            /*System.out.println("Resource " + i + " demand "+ (int) (increaseOverTime*demand[i])
+             + " supply "+ supply[i]);*/
         }
     }
 
-    public void setRR(int demand[], int supply[]) {
+    public void setRR(int demand[], int supply[], double increaseOverTime) {
         for (int i = 0; i<RR.length;i++){
-            RR[i].setDemand((int) (demand[i]));
+            RR[i].setDemand((int) (increaseOverTime*demand[i]));
             RR[i].setSupply(supply[i]);
             RR[i].countValue();
+            /*System.out.println("Resource RR" + " demand "+ (int) (increaseOverTime*demand[i])
+                    + " supply "+ supply[i]);*/
         }
     }
 
-    public void setMineral(int[] demand, int[] supply) {
+    public void setMineral(int[] demand, int[] supply, double increaseOverTime) {
         for (int i = 0; i<Mineral.length;i++){
-            Mineral[i].setDemand((int) (demand[i]));
+            Mineral[i].setDemand((int) (increaseOverTime*demand[i]));
             Mineral[i].setSupply(supply[i]);
             Mineral[i].countValue();
+            //System.out.println("Resource Min" + " demand "+ (int) (increaseOverTime*demand[i])
+             //       + " supply "+ supply[i]);
         }
     }
 
     public void updateTotalValue(){
         totalValue = 0;
+        updateAv();
         for (int i = 0; i <RR.length;i++){
             totalValue +=getValueRR(i);
         }
@@ -108,5 +135,17 @@ public class Resources {
         res.add("Mineral Value "+ str);
         //System.out.println("Mineral Value "+str);
         return res;
+    }
+
+    public static double getAvMin() {
+        return avMin;
+    }
+
+    public static double getAvRR() {
+        return avRR;
+    }
+
+    public static double getAvCR() {
+        return avCR;
     }
 }

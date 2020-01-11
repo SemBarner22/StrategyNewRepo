@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.*;
+import com.mygdx.game.Entities.MainComponents.GovComponents.Resources;
 import com.mygdx.game.Entities.MainComponents.World;
 import com.mygdx.game.Entities.Player;
 import com.mygdx.game.Strategy;
@@ -117,7 +118,18 @@ public class PlayScreen implements Screen {
                 if (curPlayer == 0) {
                     world.AfterGlobalTurn();
                 }
+                //TODO сделать тут вызов ивента
                 world.preTurn(curPlayer);
+                //TODO сдедал, чтобы сразу проходило 30 ходов
+                for (int i = 0; i < 11; i++){
+                    world.afterTurn(curPlayer);
+                    curPlayer = (curPlayer + 1) % players.size();
+                    if (curPlayer == 0) {
+                        world.AfterGlobalTurn();
+                    }
+                    world.preTurn(curPlayer);
+                }
+                System.out.println(Resources.getAvCR());
 
             }
         });

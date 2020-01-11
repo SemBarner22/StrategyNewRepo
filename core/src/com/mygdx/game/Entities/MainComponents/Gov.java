@@ -53,6 +53,7 @@ public class Gov {
     }
     private void constructEstate(){
         //Создаем сословия
+        estate = new Estate[2];
         estate[0] = new Generals();
         estate[1] = new Manufactor();
     }
@@ -61,6 +62,7 @@ public class Gov {
         regionControl = region;
         constructMod();
         constructAdv();
+        constructEstate();
         capital = region.get(0).getCity()[0].getPosition();
         adm = 100;
         modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
@@ -158,12 +160,24 @@ public class Gov {
 
     public void updateMod(){
         NullMod();
+        int[] totSum = new int[BS.numMod];
+        for (int i = 0; i < modificator.length; i++){
+            if (modificator[i].getIs()){
+                for (int j = 0; i < modificator[i].getNumMod().length; i++){
+                    totSum[modificator[i].getNumMod()[j]] += modificator[i].getLevMod()[j];
+                }
+            }
+        }
+        AddToMod(totSum);
+        //Этот способ устарел, поэтому комменчу. но если что-то пойдет не так, то этот надежнее
+        /*
         for (int i = 0; i < modificator.length; i++){
             if (modificator[i].getIs()) {
                 AddToMod(modificator[i].getModificator());
             }
-
+            modificator[i].Turn();
         }
+         */
         for (int i = 0; i < advList.size(); i++){
             if (advList.get(i).getHaveJob() >= 0) {
                 AddToMod(advList.get(i).getMod());
@@ -372,7 +386,7 @@ public class Gov {
 
 
     // Сословия
-    private Estate[] estate = new Estate[2];
+    private Estate[] estate;
     public void UpdateEstate(){
         int commonPower = 0;
         for (int i =0; i < estate.length; i++){
@@ -473,6 +487,8 @@ public class Gov {
             }
         }
         profit = profitFromCity+profitFromRegion;
+        profit *= profitFromEstates;
+        profit /= Math.pow(10, estInLobby);
         maxDebt = profit*10;
     }
 
@@ -518,25 +534,28 @@ public class Gov {
     private void ReCountCost(){
         cost = costArmy + costAdm + costDebt;
     }
-    // обновляем профит от сословий
+    // обновляем профит от
+    private int estInLobby;
     private void UpdateProfitFromEstates(){
         UpdateEstate();
+        estInLobby = 0;
         profitFromEstates = 1;
         for (int i = 0; i < estate.length; i++){
             if (estate[i].getIsInLobby() == 1) {
+                estInLobby +=1;
                 profitFromEstates *= estate[i].getProfit();
             }
         }
     }
     //изменение казны
     public void MakeMoney() {
-        //UpAge();
-        //UpdateMod();
+        UpAge();
+        updateMod();
 
-        //UpdateArmy();
+        UpdateArmy();
 
         UpdateAPL();
-        //UpdateProfitFromEstates();
+        UpdateProfitFromEstates();
         UpdateProfit();
         UpdateCost();
         ReCountCost();
@@ -592,9 +611,7 @@ public class Gov {
     public void UpdateAPL() {
         PlusAdm(BS.baseAdm + modAdm);
         PlusPrestige(-(prestige * (100 - BS.basePrestige) / 100 - modPrestige)+1000);
-        System.out.println("Prestige "+prestige + " " + modPrestige);
         PlusLegicimacy(BS.baseLegicimacy + modLegecimacy);
-        //System.out.println("Legitimacy "+legicimacy);
     }
     public void PlusPrestige(int p){
         prestige += p;
@@ -783,6 +800,15 @@ public class Gov {
     public void activateModificator(int i){
         modificator[i].Activate();
     }
+    public String[] getModifiers(){
+        ArrayList<String> res = new ArrayList<>();
+        for (Modificator mod: modificator){
+            if (mod.getIs()){
+                res.add(mod.getName() + ". Time " + mod.getTime());
+            }
+        }
+        return res.toArray(new String[0]);
+    }
 
     public String[] armyMod(){
         String[] st = new String[3];
@@ -790,6 +816,10 @@ public class Gov {
         st[1] = "Tactic " + modTactic;
         st[2] = "Organisation " + modOrganisation + "%";
         return st;
+    }
+
+    public int getEventWeight(int num){
+        return World.events[num].getProbability();
     }
     // дальше идут только геттеры
     //в этом методе мы передаем номер игрока (сам его возьмешь), количество денег, доход
@@ -803,21 +833,21 @@ public class Gov {
         return res;
     }
     //для скрина экономика
-    public int[] getEconomy(){
-        int[] res = new int[9];
-        res[0] = money;
-        res[1] = profit;
-        res[2] = cost;
-        res[3] = costAdm;
-        res[4] = costArmy;
-        res[5] = profitFromRegion;
-        res[6] = profitFromCity;
-        res[7] = maxDebt;
+    public String[] getEconomy(){
+        String[] res = new String[15];
+        res[0] = "Cash " + money;
+        res[1] = "Profit " + profit;
+        res[2] = "Costs " + cost;
+        res[3] = "Cost adm " + costAdm;
+        res[4] = "Cost army " + costArmy;
+        res[5] = "Region profit " + profitFromRegion;
+        res[6] = "City profit " + profitFromCity;
+        res[7] = "Max debt " + maxDebt;
         int totDebt = 0;
         for (Debt i: debt){
             totDebt+=i.getSum();
         }
-        res[8] = totDebt;
+        res[8] = "Total debt " + totDebt;
         return res;
     }
     public int getModShock() {
