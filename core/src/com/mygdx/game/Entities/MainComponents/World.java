@@ -28,6 +28,7 @@ public class World {
      */
     public static ArrayList<Modificator> modificators = new ArrayList<>();
     public void initModGov() throws IOException{
+        /*
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                 new FileInputStream("res/Inits/GovModificator")))) {
             String nextLine;
@@ -39,6 +40,8 @@ public class World {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+         */
+
     }
 
     public void initCityRegGov(int currentPlayers) throws IOException {
@@ -547,7 +550,6 @@ public class World {
         }
         if (Math.random() > BS.basePosEvent){
             int weight = (int) (Math.random() * totalProb);
-            //todo сделать выбор эвента
             int i = 0;
             int curWeight = 0;
             while (curWeight < weight){

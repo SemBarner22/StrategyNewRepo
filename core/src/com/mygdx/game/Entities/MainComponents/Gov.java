@@ -13,17 +13,21 @@ import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Gov {
     private void constructMod(){
-        int i =1;
+        int i = 1;
         int k;
         int j = 0;
         List<String> string = World.lines;
+        /*
+        Перое число это номер этого модификатора
+        Второе это имя
+        Третье это максимальное время
+        Четвертое это
+         */
         while (!string.get(i).equals("end")) {
             k = i;
             i += 4;
@@ -36,8 +40,8 @@ public class Gov {
                 i++;
                 m++;
             }
-            modificator[j] = new Modificator(Integer.parseInt(string.get(k)), string.get(k+1), Integer.parseInt(string.get(k+2)),
-                    BS.numMod, mods[0], mods[1]);
+            modificator[j] = new Modificator(Integer.parseInt(string.get(k)), string.get(k+1),
+                    Integer.parseInt(string.get(k+2)), BS.numMod, mods[0], mods[1]);
             j++;
             i++;
         }
@@ -65,7 +69,7 @@ public class Gov {
         constructEstate();
         capital = region.get(0).getCity()[0].getPosition();
         adm = 100;
-        modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
+        //modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
     }
     private boolean isPlayer = true;
 
@@ -103,7 +107,7 @@ public class Gov {
     private int modCostAdm = 1;
     private int modCostArmy = 1;
 
-    private Modificator[] modificator = new Modificator[1];
+    private Modificator[] modificator = new Modificator[BS.numberOfModificators];
     //инициализируем модификаторы
 
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
@@ -552,6 +556,8 @@ public class Gov {
         UpAge();
         updateMod();
 
+        updateMods();
+
         UpdateArmy();
 
         UpdateAPL();
@@ -797,6 +803,11 @@ public class Gov {
         return null;
     }
 
+    private void updateMods(){
+        for (Modificator modif: modificator){
+            modif.turn();
+        }
+    }
     public void activateModificator(int i){
         modificator[i].Activate();
     }
