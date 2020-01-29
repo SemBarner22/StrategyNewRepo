@@ -653,7 +653,7 @@ public class Gov {
             money -= BS.baseCostCreationSquad[armyMen];
         }
     }
-    public void createArmy(City city){
+    public String createArmy(City city){
         if (CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation))) {
             if (city.CheckPosition()) {
                 Army newArmy = new Army(counryNum, modMorale, modOrganisation, city.getPosArmy(), 3);
@@ -661,8 +661,13 @@ public class Gov {
                 army.add(newArmy);
                 World.mof.addArmy(counryNum, city.getPosArmy());
                 money -= BS.baseCostCreationSquad[0] * (100 + modArmyCreation);
+            } else {
+                return "No place for army to create";
             }
+        } else {
+            return "Not enough money";
         }
+        return "Success";
     }
     // cетаем генерала
     public void SetGeneral(int arm, int genera){

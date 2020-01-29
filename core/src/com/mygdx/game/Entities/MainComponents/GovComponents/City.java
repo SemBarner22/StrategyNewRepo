@@ -54,13 +54,15 @@ public class City {
 
     //АРМИЯ
     public boolean CheckPosition(){
-        for (int i = -1; i <2; i++) {
-            for (int j = -1; j < 2; j++) {
-                if (World.mof.CheckPosition(new Position(position.GetX()+i, position.GetY()+j)) == -1 && (i != 0 || j != 0)
-                        && position.GetX() + i >= 0 && position.GetX() + i < Strategy.F_HEIGHT
-                        && position.GetY() + j >= 0 && position.GetY() + j < Strategy.F_WIDTH){
-                    posArmy = new Position(position.GetX()+i, position.GetY()+j);
-                    return true;
+        for (int i = -1; i < 3; i++) {
+            for (int j = -1; j < 3; j++) {
+                if (i == -1 || i == 2 || j == -1 || j == 2) {
+                    if (World.mof.CheckPosition(new Position(position.GetX() + i, position.GetY() + j)) == -1 && (i != 0 || j != 0)
+                            && position.GetX() + i >= 0 && position.GetX() + i < Strategy.F_HEIGHT
+                            && position.GetY() + j >= 0 && position.GetY() + j < Strategy.F_WIDTH) {
+                        posArmy = new Position(position.GetX() + i, position.GetY() + j);
+                        return true;
+                    }
                 }
             }
         }
