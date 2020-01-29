@@ -27,6 +27,8 @@ import com.badlogic.gdx.utils.viewport.*;
 import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.World;
 import com.mygdx.game.Entities.Player;
+import com.mygdx.game.ExtensionLibrary.OrthogonalTiledMapRendererWithSprites;
+import com.mygdx.game.ExtensionLibrary.OrthographicCameraWithZoom;
 import com.mygdx.game.Strategy;
 
 import java.io.IOException;
@@ -52,14 +54,14 @@ public class PlayScreen implements Screen {
     private InputMultiplexer im;
     private int curPlayer;
     private TiledMap map;
-    private OrthogonalTiledMapRendererWithSprites renderer;
+    private com.mygdx.game.ExtensionLibrary.OrthogonalTiledMapRendererWithSprites renderer;
     private Batch batch;
     private ShapeRenderer sr;
     private Strategy strategy;
     private Stage stage;
     private Table table;
     public Texture texture;
-    private OrthographicCamera gameCam;
+    private OrthographicCameraWithZoom gameCam;
     private Viewport gamePort;
     private TiledMapTileLayer armies;
     private TiledMapTileLayer greenArea;
@@ -69,12 +71,12 @@ public class PlayScreen implements Screen {
         labels = new ArrayList<>();
         players = new ArrayList<>();
         curPlayer = 0;
-        players.add(new Player(200, -10));
-        players.add(new Player(300, -10));
-        players.add(new Player(400, -10));
+        gameCam = new OrthographicCameraWithZoom();
+        players.add(new Player(200, -10, gameCam));
+        players.add(new Player(300, -10, gameCam));
+        players.add(new Player(400, -10, gameCam));
         texture = new Texture("badlogic.jpg");
-        gameCam = new OrthographicCamera();
-        gamePort = new FillViewport(Strategy.V_WIDTH, Strategy.V_HEIGHT, gameCam);
+        gamePort = new FillViewport(Strategy.V_WIDTH / 2f, Strategy.V_HEIGHT / 2f, gameCam);
         stage = new Stage();
         try {
             world = new World(players.size(), Strategy.F_WIDTH, Strategy.F_HEIGHT);
@@ -145,12 +147,13 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-
+        renderer.setView(gameCam);
     }
 
     @Override
     public void render(float delta) {
-
+        gameCam.handleInput();
+        gameCam.update();
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
         labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
@@ -192,25 +195,28 @@ public class PlayScreen implements Screen {
             //TODO Coordinates from screen to TileMap
             //mof
             Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
-            gameCam.unproject(v0);
-            int newX = max(0, (int) (min(49, v0.x / 10)));
-            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
+            //Vector3 v00 = gameCam.unproject(v0);
+            //int newX = max(0, (int) (min(49, max(0, v0.x / 10))));
+            //int newY = max(0, (int) (49 - min(49, max(0, v0.y / 10))));
+            int newX = (int) v0.x / 10;
+            int newY = (int) v0.y / 10;
+            System.out.println("PLAYER COORDINATES: " + players.get(curPlayer).getX() + " " + players.get(curPlayer).getY());
             System.out.println("COORDINATES: " + newX + " " + newY);
-            if (World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
+            if (newX >= 0 && newX <= 49 && newY >= 0 && newY <= 49 && World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
                 state = State.ARMIE;
                 armyX = newX;
                 armyY = newY;
-                players.get(curPlayer).setX(0);
-                players.get(curPlayer).setY(0);
+                players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
+                players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
             }
 
 
             MapObject playObject = map.getLayers().get("RegionsNew").getObjects().get("Player" + curPlayer);
             Polygon regPlayer = ((PolygonMapObject) playObject).getPolygon();
-            Vector3 v3 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
-            gameCam.unproject(v3);
-            regPlayer.setPosition(v3.x, v3.y);
-            //regPlayer.setPosition(player.getX(), player.getY());
+            Vector3 v3 = new Vector3(gameCam.unproject(new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0)));
+            // gameCam.unproject(v3);
+            //       regPlayer.setPosition(v3.x, v3.y);
+            regPlayer.setPosition(players.get(curPlayer).getX(), players.get(curPlayer).getY());
             sr.begin(ShapeRenderer.ShapeType.Line);
             sr.polygon(regPlayer.getTransformedVertices());
             sr.end();
@@ -219,8 +225,8 @@ public class PlayScreen implements Screen {
             Polygon provPlayer = ((PolygonMapObject) provObject).getPolygon();
             Vector3 v33 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
             gameCam.unproject(v33);
-            provPlayer.setPosition(v33.x, v33.y);
-            //regPlayer.setPosition(player.getX(), player.getY());
+            // provPlayer.setPosition(v33.x, v33.y);
+            provPlayer.setPosition(players.get(curPlayer).getX(), players.get(curPlayer).getY());
             sr.begin(ShapeRenderer.ShapeType.Line);
             sr.polygon(provPlayer.getTransformedVertices());
             sr.end();
@@ -260,8 +266,8 @@ public class PlayScreen implements Screen {
                         strategy.setScreen(new RegionScreen(strategy, curPlayer,
                                 object.getProperties().get("RegIndex", Integer.class), PlayScreen.this));
                         //strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
-                        players.get(curPlayer).setX(0);
-                        players.get(curPlayer).setY(0);
+                        players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
+                        players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
                     }
                 }
             }
@@ -280,22 +286,24 @@ public class PlayScreen implements Screen {
             cell.setTile(greenSet.getTile(1));
             for (int i = 0; i < Strategy.F_HEIGHT; ++i) {
                 for (int j = 0; j < Strategy.F_WIDTH; j++) {
-                   // if (World.mof.CheckPosition(new Position(i, j)) == -1) {
-                        greenArea.setCell(i, j, cellGreen);
-                   // }
+                    // if (World.mof.CheckPosition(new Position(i, j)) == -1) {
+                    greenArea.setCell(i, j, cellGreen);
+                    // }
                 }
             }
             Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
             gameCam.unproject(v0);
-            int newX = max(0, (int) (min(49, v0.x / 10)));
-            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
-            System.out.println("COORDINATES: " + newX + " " + newY);
-            if (World.mof.CheckPosition(new Position(newX, newY)) == -1) {
+//            int newX = max(0, (int) (min(49, v0.x / 10)));
+//            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
+            int newX = (int) v0.x / 10;
+            int newY = (int) v0.y / 10;
+            //System.out.println("COORDINATES: " + newX + " " + newY);
+            if (newX >= 0 && newX <= 49 && newY >= 0 && newY <= 49 && World.mof.CheckPosition(new Position(newX, newY)) == -1) {
                 state = State.DEFAULT;
                 //Only one tile changes
                 World.mof.moveArmy(new Position(armyX, armyY), new Position(newX, newY));
-                players.get(curPlayer).setX(0);
-                players.get(curPlayer).setY(0);
+                players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
+                players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
             }
             map.getLayers().add(armies);
             renderer.render(new int[]{map.getLayers().getIndex(armies)});
@@ -338,3 +346,4 @@ enum State {
     ARMIE,
     DEFAULT
 }
+
