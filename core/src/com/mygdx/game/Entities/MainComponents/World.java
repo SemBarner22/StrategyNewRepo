@@ -543,22 +543,33 @@ public class World {
         turnNumber++;
     }
     //вызов ивентов дает либо номер ивента, либо -1, если его не надо выбирать
+    private int nextEvent;
+    private boolean isNextEvent = false;
     public int eventNum(int numPlayer){
         int totalProb = 0;
-        for (int i = 0; i < events.length; i++){
-            totalProb += country.get(numPlayer).getEventWeight(i);
-        }
-        if (Math.random() > BS.basePosEvent){
-            int weight = (int) (Math.random() * totalProb);
-            int i = 0;
-            int curWeight = 0;
-            while (curWeight < weight){
-                curWeight += country.get(numPlayer).getEventWeight(i);
-                i += 1;
-            }
-            return i;
+        if (isNextEvent){
+            isNextEvent = false;
+            return nextEvent;
         } else {
-            return -1;
+            for (int i = 0; i < events.length; i++) {
+                totalProb += country.get(numPlayer).getEventWeight(i);
+            }
+            if (Math.random() > BS.basePosEvent) {
+                int weight = (int) (Math.random() * totalProb);
+                int i = 0;
+                int curWeight = 0;
+                while (curWeight < weight) {
+                    curWeight += country.get(numPlayer).getEventWeight(i);
+                    i += 1;
+                }
+                if (events[i].getIsNextEvent()){
+                    isNextEvent = true;
+                    nextEvent = events[i].getNextEvent();
+                }
+                return i;
+            } else {
+                return -1;
+            }
         }
     }
     //дает выбор игрока в гов

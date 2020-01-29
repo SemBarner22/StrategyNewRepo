@@ -49,6 +49,10 @@ public class BS {
     public static int possibleAdvisors = 15;
     public static int infrBase = 3;
     public static double basePosEvent = 0.5;
+    public static int basePoverIncrease = -20;
+
+    public static int numberOfLaws = 1;
+
 
     public static int baseChanceOfChangingReligion = 2;
     public static int baseChanceOfChangingCulture = 5;

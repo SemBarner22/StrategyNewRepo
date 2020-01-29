@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Estate {
-    protected int isInLobby = 0; // показывает является ли в частью лобби 1/0
+    protected String name;
+    protected boolean isInLobby = false; // показывает является ли в частью лобби 1/0
     protected int power = 100;
     protected int powerIncrease = 0;
     protected int loyality = 500;
@@ -47,7 +48,7 @@ public abstract class Estate {
         if (loyality < maxLoyality){
             loyality += loyalityIncrease;
         }
-        power += powerIncrease + basePoverIncrease;
+        power += powerIncrease + BS.basePoverIncrease;
         if (power < 100){
             power = 100;
         }
@@ -58,7 +59,7 @@ public abstract class Estate {
     public String getBonus(){
         return "Null";
     }
-    public int getIsInLobby() {
+    public boolean getIsInLobby() {
         return isInLobby;
     }
 
@@ -138,5 +139,9 @@ public abstract class Estate {
 
     public int[] getMod() {
         return mod;
+    }
+
+    public String getName() {
+        return name;
     }
 }

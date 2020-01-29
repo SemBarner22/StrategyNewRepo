@@ -11,6 +11,7 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
+import com.mygdx.game.Entities.MainComponents.GovComponents.Laws;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 
 import java.util.ArrayList;
@@ -173,6 +174,8 @@ public class Gov {
             }
         }
         AddToMod(totSum);
+        //добовляем моды законов
+        AddToMod(laws.getModif());
         //Этот способ устарел, поэтому комменчу. но если что-то пойдет не так, то этот надежнее
         /*
         for (int i = 0; i < modificator.length; i++){
@@ -188,7 +191,7 @@ public class Gov {
             }
         }
         for (int i = 0; i < estate.length; i++){
-            if (estate[i].getIsInLobby() == 1) {
+            if (estate[i].getIsInLobby()) {
                 AddToMod(estate[i].getMod());
                 PlusMoney(estate[i].getPlusMoney() * profit / 10);
                 estate[i].setPlusMoney(0);
@@ -249,6 +252,7 @@ public class Gov {
     private Position capital;
     private int religion;
     private int culture;
+    private Laws laws;
     //Метод дает номер региона в массиве region, если ему дать регистрационный номер региона
     public int getNumRegion(int numberOfRegion){
         for (int i = 0; i <region.size();i++){
@@ -396,7 +400,11 @@ public class Gov {
         for (int i =0; i < estate.length; i++){
             loyalityIncrease[i] = BS.baseLoyalityIncrease;
             estate[i].setLoyalityIncrease(loyalityIncrease[i]);
-            powerIncrease[i] = estate[i].getIsInLobby();
+            if (estate[i].getIsInLobby()) {
+                powerIncrease[i] = 1;
+            } else {
+                powerIncrease[i] = 0;
+            }
             estate[i].setPowerIncrease(powerIncrease[i]);
             estate[i].UpdateLP();
             commonPower += estate[i].getPower();
@@ -545,7 +553,7 @@ public class Gov {
         estInLobby = 0;
         profitFromEstates = 1;
         for (int i = 0; i < estate.length; i++){
-            if (estate[i].getIsInLobby() == 1) {
+            if (estate[i].getIsInLobby()) {
                 estInLobby +=1;
                 profitFromEstates *= estate[i].getProfit();
             }
@@ -559,6 +567,8 @@ public class Gov {
         updateMods();
 
         UpdateArmy();
+
+        laws.turn();
 
         UpdateAPL();
         UpdateProfitFromEstates();

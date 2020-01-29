@@ -9,6 +9,7 @@ public class Manufactor extends Estate {
     private int modProfitFromProduction = 0;
     private int numAbility = 5;
 
+
     public Manufactor() {
         ability = new Ability[numAbility];
         for (int i = 0; i < numAbility; i++){
@@ -95,6 +96,7 @@ public class Manufactor extends Estate {
     public List<String> getAbilityName() {
         return abilityName;
     }
+
 }
 /*
 

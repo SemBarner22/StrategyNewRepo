@@ -18,6 +18,8 @@ public class Event {
     private String text;
     private String[] textsAns;
     private int weight = 1;
+    private int nextEvent;
+    private boolean isNextEvent;
 
     private int choiceBot(){
         return 0;
@@ -30,11 +32,22 @@ public class Event {
         return modificators[i];
     }
 
-    public Event(int choiseNum, int number, int[] modificators, String text, String[] textsAns) {
+    public Event(int choiseNum, int number, int[] modificators, String text, String[] textsAns, int nextEvent,
+                 boolean isNextEvent) {
         this.choiseNum = choiseNum;
         this.number = number;
         this.modificators = modificators;
         this.text = text;
         this.textsAns = textsAns;
+        this.nextEvent = nextEvent;
+        this.isNextEvent = isNextEvent;
+    }
+
+    public int getNextEvent() {
+        return nextEvent;
+    }
+
+    public boolean getIsNextEvent() {
+        return isNextEvent;
     }
 }
