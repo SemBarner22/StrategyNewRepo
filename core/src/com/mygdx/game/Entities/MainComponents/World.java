@@ -49,8 +49,8 @@ public class World {
                 bufferedReader.readLine();
                 while ((nextLine = bufferedReader.readLine()) != null) {
                     Scanner scanner = new Scanner(nextLine);
-                    int x = scanner.nextInt();
                     int y = scanner.nextInt();
+                    int x = scanner.nextInt();
                     int popul = scanner.nextInt();
                     int owner = scanner.nextInt();
                     int[] res = new int[3];
@@ -64,7 +64,7 @@ public class World {
                     mof.addCity(owner, new Position(x, y + 1));
                     mof.addCity(owner, new Position(x + 1, y));
                     mof.addCity(owner, new Position(x + 1, y + 1));
-                    if (x < 46 && y < 46) {
+                    if (x < 27 && y < 27) {
                         mof.addArmy(owner, new Position(x + 3, y + 3));
                         mof.addArmy(owner, new Position(x + 4, y + 4));
                         mof.addArmy(owner, new Position(x + 4, y + 3));

@@ -174,15 +174,15 @@ public class PlayScreen implements Screen {
         renderer.render(new int[]{0, 1, 2, 3, 4});
         strategy.batch.end();
 
-        armies = new TiledMapTileLayer(Strategy.F_WIDTH, Strategy.F_HEIGHT, 16, 16);
+        armies = new TiledMapTileLayer(32, 32, 16, 16);
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
 
         //test
         TiledMapTileSet dungeon = map.getTileSets().getTileSet(0);
-        cell.setTile(dungeon.getTile(1));
-        for (int i = 0; i < Strategy.F_HEIGHT; ++i) {
-            for (int j = 0; j < Strategy.F_WIDTH; j++) {
-                if (World.mof.CheckPosition(new Position(i, j)) >= 0) {
+        cell.setTile(dungeon.getTile(2));
+        for (int i = 0; i < 32; ++i) {
+            for (int j = 0; j < 32; j++) {
+                if (World.mof.CheckPosition(new Position(i, j)) > -1) {
                     armies.setCell(i, j, cell);
                 }
             }
@@ -198,11 +198,11 @@ public class PlayScreen implements Screen {
             //Vector3 v00 = gameCam.unproject(v0);
             //int newX = max(0, (int) (min(49, max(0, v0.x / 10))));
             //int newY = max(0, (int) (49 - min(49, max(0, v0.y / 10))));
-            int newX = (int) v0.x / 10;
-            int newY = (int) v0.y / 10;
+            int newX = (int) v0.x / 16;
+            int newY = (int) v0.y / 16;
             System.out.println("PLAYER COORDINATES: " + players.get(curPlayer).getX() + " " + players.get(curPlayer).getY());
             System.out.println("COORDINATES: " + newX + " " + newY);
-            if (newX >= 0 && newX <= 49 && newY >= 0 && newY <= 49 && World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
+            if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31 && World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
                 state = State.ARMIE;
                 armyX = newX;
                 armyY = newY;
@@ -283,30 +283,35 @@ public class PlayScreen implements Screen {
             renderer.render(new int[]{map.getLayers().getIndex(armies)});
         }
         if (state == State.ARMIE) {
-            greenArea = new TiledMapTileLayer(Strategy.F_WIDTH, Strategy.F_HEIGHT, 16, 16);
+            greenArea = new TiledMapTileLayer(32, 32, 16, 16);
 
             mechanicsButton.setText("Cancel");
             moveEndButton.setText("Advanced");
             TiledMapTileLayer.Cell cellGreen = new TiledMapTileLayer.Cell();
 
             //test
-            TiledMapTileSet greenSet = map.getTileSets().getTileSet(1);
-            cell.setTile(greenSet.getTile(1));
-            for (int i = 0; i < Strategy.F_HEIGHT; ++i) {
-                for (int j = 0; j < Strategy.F_WIDTH; j++) {
-                    // if (World.mof.CheckPosition(new Position(i, j)) == -1) {
-                    greenArea.setCell(i, j, cellGreen);
-                    // }
+            TiledMapTileSet greenSet = map.getTileSets().getTileSet(0);
+            cellGreen.setTile(greenSet.getTile(7));
+            int amount = 0;
+            int all = 0;
+            for (int i = 0; i < 32; ++i) {
+                for (int j = 0; j < 32; j++) {
+                    all++;
+                    if (World.mof.CheckPosition(new Position(i, j)) == -1) {
+                        greenArea.setCell(i, j, cellGreen);
+                        amount++;
+                    }
                 }
             }
+            System.out.println(all + " " +amount);
             Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
             //gameCam.unproject(v0);
 //            int newX = max(0, (int) (min(49, v0.x / 10)));
 //            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
-            int newX = (int) v0.x / 10;
-            int newY = (int) v0.y / 10;
+            int newX = (int) v0.x / 16;
+            int newY = (int) v0.y / 16;
             //System.out.println("COORDINATES: " + newX + " " + newY);
-            if (newX >= 0 && newX <= 49 && newY >= 0 && newY <= 49 && World.mof.CheckPosition(new Position(newX, newY)) == -1) {
+            if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31 && World.mof.CheckPosition(new Position(newX, newY)) == -1) {
                 state = State.DEFAULT;
                 //Only one tile changes
                 World.mof.moveArmy(new Position(armyX, armyY), new Position(newX, newY));
