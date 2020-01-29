@@ -206,8 +206,13 @@ public class PlayScreen implements Screen {
                 state = State.ARMIE;
                 armyX = newX;
                 armyY = newY;
-                players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
-                players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
+                //players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
+                //players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
+                Vector3 vector3 = gameCam.unproject(new Vector3(0, 0, 0));
+//                players.get(curPlayer).setX((int) vector3.x);
+//                players.get(curPlayer).setY((int) vector3.y);
+                players.get(curPlayer).setX(0);
+                players.get(curPlayer).setY(0);
             }
 
 
@@ -266,8 +271,11 @@ public class PlayScreen implements Screen {
                         strategy.setScreen(new RegionScreen(strategy, curPlayer,
                                 object.getProperties().get("RegIndex", Integer.class), PlayScreen.this));
                         //strategy.setScreen(new CityScreen(strategy, curPlayer, PlayScreen.this));
-                        players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
-                        players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
+//                        Vector3 vector3 = gameCam.unproject(new Vector3(0, 0, 0));
+//                        players.get(curPlayer).setX((int) vector3.x);
+//                        players.get(curPlayer).setY((int) vector3.y);
+                        players.get(curPlayer).setX(0);
+                        players.get(curPlayer).setY(0);
                     }
                 }
             }
@@ -292,7 +300,7 @@ public class PlayScreen implements Screen {
                 }
             }
             Vector3 v0 = new Vector3(players.get(curPlayer).getX(), players.get(curPlayer).getY(), 0);
-            gameCam.unproject(v0);
+            //gameCam.unproject(v0);
 //            int newX = max(0, (int) (min(49, v0.x / 10)));
 //            int newY = max(0, (int) (49 - min(49, v0.y / 10)));
             int newX = (int) v0.x / 10;
@@ -302,8 +310,9 @@ public class PlayScreen implements Screen {
                 state = State.DEFAULT;
                 //Only one tile changes
                 World.mof.moveArmy(new Position(armyX, armyY), new Position(newX, newY));
-                players.get(curPlayer).setX((int) (gameCam.unproject(new Vector3(0, 0, 0))).x);
-                players.get(curPlayer).setY((int) (gameCam.unproject(new Vector3(0, 0, 0))).y);
+                //Vector3 vector3 = gameCam.unproject(new Vector3(0, 0, 0));
+                players.get(curPlayer).setX(0);
+                players.get(curPlayer).setY(0);
             }
             map.getLayers().add(armies);
             renderer.render(new int[]{map.getLayers().getIndex(armies)});
