@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class RegionScreen extends AbstractMechanicsScreen {
     public int regionIndex;
-    private Button decAut;
+    private Button decAut, createArmy;
     private ArrayList<ButtonWithIndex> buttons;
 
     public RegionScreen(Strategy strategy, int curPlayer, int regionIndex, Screen playScreen) {
@@ -31,6 +31,7 @@ public class RegionScreen extends AbstractMechanicsScreen {
         buttons = new ArrayList<>();
         Table table = new Table();
         decAut = new TextButton("Decrease autonomy", skin);
+        createArmy = new TextButton("Create army", skin);
         final ScrollPane scroll = new ScrollPane(table, skin);
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
@@ -46,7 +47,15 @@ public class RegionScreen extends AbstractMechanicsScreen {
                     PlayScreen.world.getAllRegions().get(regionIndex).decreaseAutonomy();
                 }
             });
+            createArmy.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    //TODO get City index through touch
+                    PlayScreen.world.getPlayerGov(curPlayer).createArmy( PlayScreen.world.getAllRegions().get(regionIndex).getCity()[0]);
+                }
+            });
             table.add(decAut).bottom().right();
+            table.row();
+            table.add(createArmy).bottom().right();
             container.add(new TextButton("Im the owner of region index " + regionIndex, skin));
             container.add(new Label("First city Y coordinate (as example) " +
                     PlayScreen.world.getAllRegions().get(regionIndex).getCity()[0].getPosition().GetY(), skin));

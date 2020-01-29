@@ -25,7 +25,7 @@ public class Army {
     private int movement;
     private int maxMovement = BS.baseMaxMovement;
     private int prof; //2 если ополчение, 3 если наемная армия
-    private General general;
+    private General general = new General();
     private Position position;
     private int fire;
     private int shock;

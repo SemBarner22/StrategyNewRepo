@@ -653,13 +653,15 @@ public class Gov {
             money -= BS.baseCostCreationSquad[armyMen];
         }
     }
-    public void CreateArmy(City cit){
-        if (cit.CheckPosition() & CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation))){
-            Army newArmy = new Army(counryNum, modMorale, modOrganisation, cit.getPosArmy(), 3);
-            newArmy.Employ(0);
-            army.add(newArmy);
-            World.mof.addArmy(counryNum, cit.getPosArmy());
-            money -= BS.baseCostCreationSquad[0] * (100 + modArmyCreation);
+    public void createArmy(City city){
+        if (CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation))) {
+            if (city.CheckPosition()) {
+                Army newArmy = new Army(counryNum, modMorale, modOrganisation, city.getPosArmy(), 3);
+                newArmy.Employ(0);
+                army.add(newArmy);
+                World.mof.addArmy(counryNum, city.getPosArmy());
+                money -= BS.baseCostCreationSquad[0] * (100 + modArmyCreation);
+            }
         }
     }
     // cетаем генерала
