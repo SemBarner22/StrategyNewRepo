@@ -699,13 +699,8 @@ public class Gov {
     //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ
     // Эта штука принимает позицию, но в целом можно переделать и под саму армию, убрав первую часть. В целом потребуется
     // для удаления армий после поражения. Хотя не особо. В общем есть и есть
-    public void UpgradeArmy(Position position, int armyMen){
-        Army arm = null;
-        for (int i = 0; i < army    .size(); i++){
-            if (army.get(i).getPosition().equals(position)){
-                arm  = army.get(i);
-            }
-        }
+    public void upgradeArmy(Position position, int armyMen){
+        Army arm = getArmyPos(position);
         if (arm != null) {
             arm.Employ(armyMen);
             money -= BS.baseCostCreationSquad[armyMen];
