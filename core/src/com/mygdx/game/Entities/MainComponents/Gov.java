@@ -784,7 +784,7 @@ public class Gov {
         return res;
     }
     //для скрина экономика
-    public int[] getEconomy(){
+    public int[] getEconomy() {
         int[] res = new int[9];
         res[0] = money;
         res[1] = profit;

@@ -26,6 +26,13 @@ public class EconomicsScreen extends AbstractMechanicsScreen {
             marketButton = new TextButton("Market", skin);
             final Slider slider = new Slider(0, 100, 1, false, skin);
             Table table = new Table();
+            int res[] = PlayScreen.world.getPlayerGov(curPlayer).getEconomy();
+            for (int i = 0; i < res.length; ++i) {
+                container.add(new Label("" + res[i], skin));
+                if (i % 2 == 1) {
+                    container.row();
+                }
+            }
             table.addActor(backButton);
             stage.addActor(table);
             container.row();

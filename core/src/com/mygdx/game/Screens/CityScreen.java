@@ -18,6 +18,8 @@ public class CityScreen extends AbstractMechanicsScreen {
     ArrayList<Label> labels = new ArrayList<>();
     private int regionIndex;
     private int cityIndex;
+    String[] namesGet;
+    int res[];
     public CityScreen(Strategy strategy, int curPlayer, int regionIndex, int cityIndex, RegionScreen regionScreen) {
         super(strategy, curPlayer, regionScreen);
         this.regionIndex = regionIndex;
@@ -29,14 +31,15 @@ public class CityScreen extends AbstractMechanicsScreen {
         super.show();
         Table table = new Table();
         final ScrollPane scroll = new ScrollPane(table, skin);
-        int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
+        res = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
         //TODO
-        String[] namesGet = new String[res.length];
+        namesGet = new String[res.length];
         namesGet[0] = "GDP ";
         namesGet[1] = "Stock ";
         namesGet[2] = "Population ";
         for (int i = 0; i < res.length; ++i) {
-            table.add(new Label(namesGet[i] + res[i], skin));
+            labels.add(new Label(namesGet[i] + res[i], skin));
+            table.add(labels.get(i));
             if (i % 2 == 1) {
                 table.row();
             }
@@ -87,7 +90,10 @@ public class CityScreen extends AbstractMechanicsScreen {
 
     @Override
     public void render(float delta) {
-
         super.render(delta);
+        res = PlayScreen.world.getAllRegions().get(regionIndex).getCity()[cityIndex].getCityScreen();
+        for (int i = 0; i < labels.size(); ++i) {
+            labels.get(i).setText(namesGet[i] + res[i]);
+        }
     }
 }

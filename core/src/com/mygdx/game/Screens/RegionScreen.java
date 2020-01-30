@@ -36,13 +36,13 @@ public class RegionScreen extends AbstractMechanicsScreen {
         failedOp = new Label("", skin);
         final ScrollPane scroll = new ScrollPane(table, skin);
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
-        if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
-            for (int i = 0; i < res.length; ++i) {
-                table.add(new Label("" + res[i], skin));
-                if (i % 2 == 1) {
-                    table.row();
-                }
+        for (int i = 0; i < res.length; ++i) {
+            table.add(new Label("" + res[i], skin));
+            if (i % 2 == 1) {
+                table.row();
             }
+        }
+        if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
             City[] cities = PlayScreen.world.getAllRegions().get(regionIndex).getCity();
             decAut.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
