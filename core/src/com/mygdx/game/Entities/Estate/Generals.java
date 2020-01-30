@@ -31,7 +31,7 @@ public class Generals extends Estate{
         for (int i = 0; i < numAbility; i++){
             ability[i] = new Ability();
         }
-        isInLobby = 0;
+        isInLobby = false;
     }
     @Override
     public String getBonus(){

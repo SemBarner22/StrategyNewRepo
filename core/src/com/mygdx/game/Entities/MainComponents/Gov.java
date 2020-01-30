@@ -174,8 +174,9 @@ public class Gov {
             }
         }
         AddToMod(totSum);
-        //добовляем моды законов
-        AddToMod(laws.getModif());
+        //TODO добовляем моды законов. убрать коммент после инциализации
+        //AddToMod(laws.getModif());
+
         //Этот способ устарел, поэтому комменчу. но если что-то пойдет не так, то этот надежнее
         /*
         for (int i = 0; i < modificator.length; i++){
@@ -299,8 +300,9 @@ public class Gov {
     private ArrayList<Advisor> advList = new ArrayList<>();
     private ArrayList<General> general = new ArrayList<>();
     // призываем советника
-    public void CreateAdvisor(String adv, boolean isFree) {
-        if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (isFree)) {
+    public void CreateAdvisor(String adv, Boolean... isFree) {
+        Boolean b = isFree.length > 0 ? isFree[0] : false;
+        if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (b)) {
             PlusAdm(-BS.baseAdvisorCost * (100 + modAdvisorCost) / 100);
             PlusMoney(profit/4);
             if (adv.equals("Diplomat")) {
@@ -568,7 +570,7 @@ public class Gov {
 
         UpdateArmy();
 
-        laws.turn();
+        //laws.turn();
 
         UpdateAPL();
         UpdateProfitFromEstates();
