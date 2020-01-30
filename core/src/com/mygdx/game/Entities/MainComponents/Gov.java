@@ -42,11 +42,11 @@ public class Gov {
     }
     private void constructAdv() {
         for (int t = 0; t < 5; t++) {
-            CreateAdvisor("Cleric");
+            createAdvisor("Cleric");
             AssignAdvisor(t, t);
         }
         for (int t = 0; t < 10; t++) {
-            CreateAdvisor("Diplomat");
+            createAdvisor("Diplomat");
         }
     }
     private void constructEstate(){
@@ -180,11 +180,11 @@ public class Gov {
                     estate[i].setManufatory(false);
                 }
                 if (estate[i].isFinancier()){
-                    CreateAdvisor("Financier");
+                    createAdvisor("Financier");
                     estate[i].setFinancier(false);
                 }
                 if (estate[i].isGeneral()){
-                    CreateAdvisor("General");
+                    createAdvisor("General");
                     estate[i].setFinancier(false);
                 }
             }
@@ -258,34 +258,50 @@ public class Gov {
     private ArrayList<Advisor> advList = new ArrayList<>();
     private ArrayList<General> general = new ArrayList<>();
     // призываем советника
-    public void CreateAdvisor(String adv) {
-        //TODO
-        // if (adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100) {
-        PlusAdm( - BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100);
-        if (adv.equals("Diplomat")){
-            advList.add(new Diplomat());
+    public int[] getNumCity(int numberOfCity){
+        for (int i = 0; i <regionControl.size();i++){
+            for (int j = 0; j < regionControl.get(i).getCity().length; j++){
+                if (regionControl.get(i).getCity()[j].getUnicNumber() == numberOfCity){
+                    int[] result = new int[2];
+                    result[0] = i;
+                    result[1] = j;
+                    return result;
+                }
+            }
         }
-        if (adv.equals("Cleric")){
-            System.out.println("ok");
-            advList.add(new Cleric());
-        }
-        if (adv.equals("Financier")){
-            advList.add(new Financier());
-        }
-        if (adv.equals("General")){
-            General gen = new General();
-            general.add(gen);
-            advList.add(gen);
-        }
-        if (adv.equals("Judge")){
-            advList.add(new Judge());
-        }
-        if (adv.equals("Scientist")){
-            advList.add(new Scientist());
-        }
-        if (adv.equals("Spy")){
-            advList.add(new Spy());
-        }
+        System.out.println("ERROR IN getNumCity");
+        return null;
+    }
+    public void createAdvisor(String adv, Boolean... isFree) {
+        //Boolean b = isFree.length > 0 ? isFree[0] : false;
+        //if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (b)) {
+            PlusAdm(-BS.baseAdvisorCost * (100 + modAdvisorCost) / 100);
+            PlusMoney(profit/4);
+            if (adv.equals("Diplomat")) {
+                advList.add(new Diplomat());
+            }
+            if (adv.equals("Cleric")) {
+                System.out.println("ok");
+                advList.add(new Cleric());
+            }
+            if (adv.equals("Financier")) {
+                advList.add(new Financier());
+            }
+            if (adv.equals("General")) {
+                General gen = new General();
+                general.add(gen);
+                advList.add(gen);
+            }
+            if (adv.equals("Judge")) {
+                advList.add(new Judge());
+            }
+            if (adv.equals("Scientist")) {
+                advList.add(new Scientist());
+            }
+            if (adv.equals("Spy")) {
+                advList.add(new Spy());
+            }
+       // }
     }
     //  }
     // назначаем советника  в ячейку number
@@ -350,7 +366,12 @@ public class Gov {
         }
     }
 
-
+    public void removeRegion(Region reg){
+        regionControl.remove(reg);
+    }
+    public void addRegion(Region reg){
+        regionControl.add(reg);
+    }
     // Сословия
     private Estate[] estate = new Estate[2];
     public void UpdateEstate(){

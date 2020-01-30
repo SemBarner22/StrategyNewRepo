@@ -235,7 +235,35 @@ public class World {
      Мой тебе совет НЕ ЛЕЗЬ СУКА, ТАМ 150 СТРОК ИХ ДАЖЕ Я НЕ МОГУ ПОНЯТЬ
      Но если я не ошибаюсь, то она обрабатывает вообще все перемещения включая битвы, отступления и прочую ересь
     */
-    public void moveArmy(Army army, Position second){
+
+    public void moveArmy(Position first, Position second){
+        //if attack army
+        Army selArm = country.get(mof.CheckPosition(first)).getArmyPos(first);
+        boolean battle = false;
+        if (mof.checkArmy(second)){
+            battle = true;
+            Battle(selArm.getPosition(), second);
+        } else {
+            selArm.Move(second);
+        }
+
+        //if attack City
+        if (mof.checkCity(second) && mof.posOccupy(second)){
+            int number = mof.getCityCoordinates(second)[1];
+            int strana = mof.getCityCoordinates(second)[0];
+            int[] coord = country.get(strana).getNumCity(number);
+            //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
+            //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
+            boolean occup = country.get(strana).getRegionControl().get(coord[0]).
+                    occupy(coord[1], selArm.getCountry());
+            Region regi = country.get(strana).getRegionControl().get(coord[0]);
+            if (occup){
+                country.get(strana).removeRegion(regi);
+                country.get(selArm.getCountry()).addRegion(regi);
+            }
+        }
+    }
+    public void MoveArmyOld(Army army, Position second){
         if ((!cityAttack.CheckPosition(second)) && army.CheckMove(second)){
             if (mof.CheckPosition(second) == -1){
                 army.Move(second);

@@ -27,6 +27,9 @@ public class City {
         laborStructure[2] = 0.34;
     }
 
+    private boolean occupation = false;
+    private int occupator;
+    private int unicNumber;
     private Position position;
     private Building[] building = new Building[BS.numberOfBuildings];
     private ArrayList<Plant> plant = new ArrayList<>();
@@ -70,6 +73,9 @@ public class City {
     }
     public Position getPosArmy() {
         return posArmy;
+    }
+    public int getUnicNumber() {
+        return unicNumber;
     }
     public int GetEquipment(){
         int equipment = 0;
@@ -316,7 +322,10 @@ public class City {
             value.Turn();
         }
     }
-
+    public void occupy(int country){
+        occupator = country;
+        occupation = owner != country;
+    }
     // возвращает стоимость постройки завода
     public int CostOfPlant(int number){
         if (plant.size() > number || plant.get(number) == null){

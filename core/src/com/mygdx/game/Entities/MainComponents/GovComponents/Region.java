@@ -102,6 +102,11 @@ public class Region {
             return false;
         }
     }
+    public boolean occupy(int cityNum, int country){
+        city[cityNum].occupy(country);
+        occupation = (cityNum == 0) && (country !=owner);
+        return occupation;
+    }
     public void UpdateRebelLevel(int level){
         rebelLevel = 0;
         for (Modificator value : modificator) {
