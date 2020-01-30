@@ -259,8 +259,9 @@ public class World {
      Мой тебе совет НЕ ЛЕЗЬ СУКА, ТАМ 150 СТРОК ИХ ДАЖЕ Я НЕ МОГУ ПОНЯТЬ
      Но если я не ошибаюсь, то она обрабатывает вообще все перемещения включая битвы, отступления и прочую ересь
     */
-    public void moveArmy(Army selArm, Position second){
+    public void moveArmy(Position first, Position second){
         //if attack army
+        Army selArm = country.get(mof.CheckPosition(first)).getArmyPos(first);
         boolean battle = false;
         if (mof.checkArmy(second)){
             battle = true;
