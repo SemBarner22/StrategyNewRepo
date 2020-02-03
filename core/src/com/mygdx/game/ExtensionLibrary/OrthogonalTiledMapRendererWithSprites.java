@@ -1,4 +1,4 @@
-package com.mygdx.game.Screens;
+package com.mygdx.game.ExtensionLibrary;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapObject;

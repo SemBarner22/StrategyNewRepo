@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
@@ -22,18 +24,26 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.*;
+import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Resources;
 import com.mygdx.game.Entities.MainComponents.World;
 import com.mygdx.game.Entities.Player;
+import com.mygdx.game.ExtensionLibrary.OrthogonalTiledMapRendererWithSprites;
+import com.mygdx.game.ExtensionLibrary.OrthographicCameraWithZoom;
 import com.mygdx.game.Strategy;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class PlayScreen implements Screen {
 
     //public boolean isMoveEnded;
     private ArrayList<Player> players;
+    TextButton mechanicsButton;
+    TextButton moveEndButton;
     public static World world;
     public ArrayList<Label> labels;
     //private Player player;
@@ -42,27 +52,29 @@ public class PlayScreen implements Screen {
     private InputMultiplexer im;
     private int curPlayer;
     private TiledMap map;
-    private OrthogonalTiledMapRendererWithSprites renderer;
+    private com.mygdx.game.ExtensionLibrary.OrthogonalTiledMapRendererWithSprites renderer;
     private Batch batch;
     private ShapeRenderer sr;
     private Strategy strategy;
     private Stage stage;
     private Table table;
     public Texture texture;
-    private OrthographicCamera gameCam;
+    private OrthographicCameraWithZoom gameCam;
     private Viewport gamePort;
+    private TiledMapTileLayer armies;
+    private TiledMapTileLayer greenArea;
 
     public PlayScreen(final Strategy strategy) {
         this.strategy = strategy;
         labels = new ArrayList<>();
         players = new ArrayList<>();
         curPlayer = 0;
-        players.add(new Player(200, -10));
-        players.add(new Player(300, -10));
-        players.add(new Player(400, -10));
+        gameCam = new OrthographicCameraWithZoom();
+        players.add(new Player(200, -10, gameCam));
+        players.add(new Player(300, -10, gameCam));
+        players.add(new Player(400, -10, gameCam));
         texture = new Texture("badlogic.jpg");
-        gameCam = new OrthographicCamera();
-        gamePort = new FillViewport(Strategy.V_WIDTH, Strategy.V_HEIGHT, gameCam);
+        gamePort = new FillViewport(Strategy.V_WIDTH / 2f, Strategy.V_HEIGHT / 2f, gameCam);
         stage = new Stage();
         try {
             world = new World(players.size());
