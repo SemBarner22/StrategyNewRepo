@@ -301,7 +301,7 @@ public class Region {
         for (City value: city){
             totalPop+=value.getPopulation();
         }
-        res[8] = totalPop;
+        res[8] = totalPop + population;
         res[9]  =infrastructure;
         res[10] = prosperity;
         return res;

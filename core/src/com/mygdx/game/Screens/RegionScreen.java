@@ -33,10 +33,22 @@ public class RegionScreen extends AbstractMechanicsScreen {
         decAut = new TextButton("Decrease autonomy", skin);
         final ScrollPane scroll = new ScrollPane(table, skin);
         int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
+        String[] namesGet = new String[res.length];
+        namesGet[1] = "productionRR ";
+        namesGet[2] = "profitRR ";
+        namesGet[3] = "productionMin ";
+        namesGet[4] = "profitMineral ";
+        namesGet[5] = "culture ";
+        namesGet[6] = "religion ";
+        namesGet[7] = "population ";
+        namesGet[8] = "totalPop ";
+        namesGet[9] = "infrastructure ";
+        namesGet[10] = "prosperity ";
+
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
-            for (int i = 0; i < res.length; ++i) {
-                table.add(new Label("" + res[i], skin));
-                if (i % 2 == 1) {
+            for (int i = 1; i < res.length; ++i) {
+                table.add(new Label(namesGet[i] + res[i], skin));
+                if (i % 2 == 0) {
                     table.row();
                 }
             }

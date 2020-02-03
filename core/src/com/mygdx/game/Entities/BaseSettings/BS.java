@@ -39,6 +39,8 @@ public class BS {
     public static int baseCostPlant = 1;
     public static int baseCostInfrasructure = 1;
 
+    public static int baseMaxMorale = 10000;
+    public static int baseMaxOrganisation = 1000;
     public static int baseMaxMovement = 5;
     public static int[] equipmentOfSquade = {1000, 1200, 1200, 1500, 1700, 2000, 2000, 1000};
     public static int baseDamage = 5;

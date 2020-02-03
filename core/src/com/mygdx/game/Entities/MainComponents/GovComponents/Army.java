@@ -6,17 +6,10 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.MainComponents.World;
 
 public class Army {
-    // настройки
-    private static int baseMaxMorale = 10000;
-    private static int baseMaxOrganisation = 1000;
-
-    //army times
-    private boolean extraPay = false;
-
     private int country;
     private int[] armyMan;
     private int amount = 0;
-    private int morale = 0;
+    private int morale;
     private int maxMorale = 0;
     private int tactic;
     private int organization;
@@ -28,7 +21,7 @@ public class Army {
     private int movement;
     private int maxMovement = BS.baseMaxMovement;
     private int prof; //2 если ополчение, 3 если наемная армия
-    private General general;
+    private General general = new General();
     private Position position;
     private int fire;
     private int shock;
@@ -71,11 +64,7 @@ public class Army {
     }
 
     public boolean CheckMove(Position pos){
-        if (Math.sqrt(Math.pow(pos.GetX() - position.GetX(), 2) + Math.pow(pos.GetY() - position.GetY(), 2)) * 10 > movement){
-            return false;
-        } else {
-            return true;
-        }
+        return !(Math.sqrt(Math.pow(pos.GetX() - position.GetX(), 2) + Math.pow(pos.GetY() - position.GetY(), 2)) * 10 > movement);
     }
     public void Move(Position pos) {
         position = pos;
@@ -120,31 +109,14 @@ public class Army {
                 * (25 + tactic) * prof  /50000;
     }
 
-    //make extra pay to update morale
-    public boolean payMorale(){
-        if (!extraPay) {
-            morale += 10;
-            extraPay = true;
-            if (morale > maxMorale) {
-                morale = maxMorale;
-            }
-            return true;
-        } else{
-            return false;
-        }
-    }
-
     //каждый ход отсюда
-    public void everyTurn(){
-        extraPay = false;
-    }
     public void UpdateTactic(int govTac){
         tactic = (govTac + general.getTactic()) * 4;
     }
     public void UpdateMaxArmy(int modMorale, int modOrganisation){
         UpdateMaxEquipment();
-        maxMorale = baseMaxMorale * (100 + modMorale) * (50 + general.getMobility()) / 5000;
-        maxOrganisation = baseMaxOrganisation * (100 + modOrganisation) / 100 + general.getTactic()*30;
+        maxMorale = BS.baseMaxMorale * (100 + modMorale) * (50 + general.getMobility()) / 5000;
+        maxOrganisation = BS.baseMaxOrganisation * (100 + modOrganisation) / 100 + general.getTactic()*30;
         if (prof == 3){
             maxOrganisation+= 500;
         }

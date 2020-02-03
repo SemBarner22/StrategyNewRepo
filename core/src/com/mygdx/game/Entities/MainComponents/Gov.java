@@ -676,11 +676,11 @@ public class Gov {
     public int costInfr(int numberOfRegion, int numberOfCity){
         return regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfInfrastructure();
     }
-    public boolean posBuildInfr(int numberOfRegion, int numberOfCity){
+    public boolean posBuildCityInfr(int numberOfRegion, int numberOfCity){
         return CheckMoney(costInfr(numberOfRegion, numberOfCity));
     }
-    public void UpgradeInfr(int numberOfRegion, int numberOfCity){
-        if (posBuildInfr(numberOfRegion, numberOfCity)){
+    public void upgradeCityInfr(int numberOfRegion, int numberOfCity){
+        if (posBuildCityInfr(numberOfRegion, numberOfCity)){
             regionControl.get(numberOfRegion).getCity()[numberOfCity].UpgradeInfrastructure();
             PlusMoney(-costInfr(numberOfRegion, numberOfCity));
         }
@@ -689,11 +689,11 @@ public class Gov {
     public int costInf(int numberOfRegion){
         return regionControl.get(numberOfRegion).CostOfInfrastructure();
     }
-    public boolean posBuildInf(int numberOfRegion){
+    public boolean posBuildRegionInfr(int numberOfRegion){
         return CheckMoney(costInf(numberOfRegion));
     }
-    public void UpgradeInf(int numberOfRegion){
-        if (posBuildInf(numberOfRegion)){
+    public void upgradeRegionInfr(int numberOfRegion){
+        if (posBuildRegionInfr(numberOfRegion)){
             regionControl.get(numberOfRegion).UpgradeInfrastructure();
             PlusMoney(-costInf(numberOfRegion));
         }
@@ -786,7 +786,6 @@ public class Gov {
             value.UpdateMorale(modIncreaseMorale);
             value.UpdateOrganisation(modIncreaseOrganisation);
             value.UpdateTactic(modTactic);
-            value.everyTurn();
         }
         for (Army value : mobilisateArmy) {
             value.UpdateMaxArmy(modMorale, modOrganisation);
@@ -866,6 +865,11 @@ public class Gov {
             totDebt+=i.getSum();
         }
         res[8] = "Total debt " + totDebt;
+        int totPop = 0;
+        for (Region value : region){
+            totPop += value.getRegionScreen()[8];
+        }
+        res[9] = "Total population " + totPop;
         return res;
     }
     public int getModShock() {
