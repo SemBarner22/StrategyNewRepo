@@ -192,15 +192,13 @@ public class World {
 
     static {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                new FileInputStream("res/CommonText/GovModificator")))) {
+                new FileInputStream("desktop/build/resources/main/res/Inits/GovModificator")))) {
             String nextLine;
             lines = new ArrayList<>();
             while ((nextLine = bufferedReader.readLine()) != null) {
                 Logger.getLogger("Pog");
                 lines.add(nextLine);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
