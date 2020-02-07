@@ -1,6 +1,5 @@
 package com.mygdx.game.Entities.Functional.Maps;
 
-import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 

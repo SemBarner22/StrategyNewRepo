@@ -30,7 +30,7 @@ public class World {
     public static ArrayList<Modificator> modificators = new ArrayList<>();
     public void initModGov() throws IOException{
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                new FileInputStream("res/Inits/GovModificator")))) {
+                new FileInputStream("res/CommonText/GovModificator")))) {
             String nextLine;
             bufferedReader.readLine();
             String[] init = new String[4];
