@@ -304,6 +304,7 @@ public class Region {
         res[8] = totalPop + population;
         res[9]  =infrastructure;
         res[10] = prosperity;
+        res[11] = (int) autonomy;
         return res;
     }
     public double getPotentialAutonomy() {

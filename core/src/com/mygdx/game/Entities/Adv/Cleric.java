@@ -29,7 +29,6 @@ public class Cleric extends Advisor {
             mod[3] = -level / 2;
             abilityName += -(level / 2);
         }
-        System.out.println("keek");
     }
 }
 /* что должно быть в каждом советнике

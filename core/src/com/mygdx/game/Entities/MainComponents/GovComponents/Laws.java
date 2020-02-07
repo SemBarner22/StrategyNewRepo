@@ -4,7 +4,6 @@ import com.mygdx.game.Entities.BaseSettings.BS;
 import com.mygdx.game.Entities.Estate.Estate;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /*
 Вообще с законами должно быть довольно просто пока что, но муторно. Фактически у каждого закона есть 2 состояния -
@@ -47,7 +46,12 @@ public class Laws {
     }
 
     public void turn(){
-        conflict();
+        if (Math.random() < BS.probConflict) {
+            conflictPro();
+        }
+        if (Math.random() < BS.probConflict) {
+            conflictAgainst();
+        }
         decreaseCD();
     }
 
@@ -58,7 +62,7 @@ public class Laws {
         }
     }
 
-    private void conflict(){
+    private void conflictPro(){
         int numEst = (int) (Math.random() * 6);
         ArrayList<Law> curConfl = new ArrayList();
         for (Law value: laws){
@@ -69,6 +73,19 @@ public class Laws {
         if (curConfl.size() > 0) {
             int numLaw = (int) (Math.random() * (curConfl.size()-1));
             curConfl.get(numLaw).setActivation(true);
+        }
+    }
+    private void conflictAgainst(){
+        int numEst = (int) (Math.random() * 6);
+        ArrayList<Law> curConfl = new ArrayList();
+        for (Law value: laws){
+            if (!value.isActivation() && value.getWhoDontNeed().equals(estates[numEst].getName())){
+                curConfl.add(value);
+            }
+        }
+        if (curConfl.size() > 0) {
+            int numLaw = (int) (Math.random() * (curConfl.size()-1));
+            curConfl.get(numLaw).setActivation(false);
         }
     }
 

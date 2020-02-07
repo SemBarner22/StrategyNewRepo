@@ -20,7 +20,7 @@ public class BS {
     public static int populationRate = 5;
 
     public static int numberOfEvent = 1;
-    public static int numberOfModificators = 1;
+    public static int numberOfModificators = 2;
     public static int regionModsNum = 0;
 
     public static int baseNumberOfEstates = 7;
@@ -39,6 +39,7 @@ public class BS {
     public static int baseCostPlant = 1;
     public static int baseCostInfrasructure = 1;
 
+    public static int baseArmyAmount = 10;
     public static int baseMaxMorale = 10000;
     public static int baseMaxOrganisation = 1000;
     public static int baseMaxMovement = 5;
@@ -54,7 +55,7 @@ public class BS {
     public static int basePoverIncrease = -20;
 
     public static int numberOfLaws = 1;
-
+    public static double probConflict = 0.3;
 
     public static int baseChanceOfChangingReligion = 2;
     public static int baseChanceOfChangingCulture = 5;

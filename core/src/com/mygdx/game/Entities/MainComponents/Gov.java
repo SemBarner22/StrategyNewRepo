@@ -65,12 +65,13 @@ public class Gov {
     public Gov(ArrayList<Region> region){
         this.region = region;
         regionControl = region;
-        constructMod();
+        //constructMod();
         constructAdv();
         constructEstate();
         capital = region.get(0).getCity()[0].getPosition();
         adm = 100;
-        //modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
+        modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
+        System.out.println("Number Of mods " + modificator.length);
     }
     private boolean isPlayer = true;
 
@@ -108,7 +109,7 @@ public class Gov {
     private int modCostAdm = 1;
     private int modCostArmy = 1;
 
-    private Modificator[] modificator = new Modificator[BS.numberOfModificators];
+    private Modificator[] modificator;
     //инициализируем модификаторы
 
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
@@ -248,6 +249,8 @@ public class Gov {
 
     // государственное устройство
     private int counryNum;
+    private int totPop;
+    private int maxArmy;
     private ArrayList<Region> regionControl;
     private ArrayList<Region> region;
     private Position capital;
@@ -289,6 +292,7 @@ public class Gov {
     // армия
     public ArrayList<Army> army = new ArrayList<>();
     public ArrayList<Army> mobilisateArmy = new ArrayList<>();
+    private int totalArmy = 0;
     //чисто для призывной армии. Для всех остальных считается по другому в самой армии. Надо только будет сделать
     //кнопку для пополнения всех.
     private int maxEquipment;
@@ -309,7 +313,6 @@ public class Gov {
                 advList.add(new Diplomat());
             }
             if (adv.equals("Cleric")) {
-                System.out.println("ok");
                 advList.add(new Cleric());
             }
             if (adv.equals("Financier")) {
@@ -569,6 +572,7 @@ public class Gov {
         updateMods();
 
         UpdateArmy();
+        updateTotPop();
 
         //laws.turn();
 
@@ -655,6 +659,13 @@ public class Gov {
             legicimacy = 0;
         }
     }
+    private void updateTotPop(){
+        totPop = 0;
+        for (Region value : region){
+            totPop += value.getRegionScreen()[8];
+        }
+        maxArmy = BS.baseArmyAmount * totPop;
+    }
 
     // СТРОИТЕЛЬСТВО
     // проверяем воможно ли построть
@@ -703,13 +714,15 @@ public class Gov {
     // для удаления армий после поражения. Хотя не особо. В общем есть и есть
     public void upgradeArmy(Position position, int armyMen){
         Army arm = getArmyPos(position);
-        if (arm != null) {
+        if (arm != null && maxArmy-999 > totalArmy) {
             arm.Employ(armyMen);
             money -= BS.baseCostCreationSquad[armyMen];
         }
     }
     public void createArmy(City cit){
-        if (cit.checkPosition() && CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation))){
+        if (cit.checkPosition() &&
+                CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation)) &&
+                totalArmy < maxArmy - 999){
             Army newArmy = new Army(counryNum, modMorale, modOrganisation, cit.getPosArmy(), 3);
             newArmy.Employ(0);
             army.add(newArmy);
@@ -781,11 +794,13 @@ public class Gov {
     //обновляем мораль и организованность должно использоваться каждый ход
     private void UpdateArmy(){
         UpdateMobilisationArmy();
+        totalArmy = 0;
         for (Army value : army) {
             value.UpdateMaxArmy(modMorale, modOrganisation);
             value.UpdateMorale(modIncreaseMorale);
             value.UpdateOrganisation(modIncreaseOrganisation);
             value.UpdateTactic(modTactic);
+            totalArmy += value.getAmount();
         }
         for (Army value : mobilisateArmy) {
             value.UpdateMaxArmy(modMorale, modOrganisation);
@@ -865,11 +880,16 @@ public class Gov {
             totDebt+=i.getSum();
         }
         res[8] = "Total debt " + totDebt;
-        int totPop = 0;
-        for (Region value : region){
-            totPop += value.getRegionScreen()[8];
-        }
         res[9] = "Total population " + totPop;
+        return res;
+    }
+    //для скрина с армиями
+    public String[] getArmyInfo(){
+        String[] res = new String[16];
+        res[0] = "Max army " + maxArmy;
+        res[1] = "Current army " + totalArmy;
+        res[2] = "Mod morale" + modMorale + "%";
+        res[3] = "Tactic" + modTactic;
         return res;
     }
     public int getModShock() {

@@ -44,6 +44,7 @@ public class RegionScreen extends AbstractMechanicsScreen {
         namesGet[8] = "totalPop ";
         namesGet[9] = "infrastructure ";
         namesGet[10] = "prosperity ";
+        namesGet[11] = "autonomy ";
 
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
             for (int i = 1; i < res.length; ++i) {

@@ -25,7 +25,7 @@ public class Event {
         return 0;
     }
     public int getProbability(){
-        probability = 1;
+        probability = weight;
         return probability;
     }
     public int getModNum(int i){
@@ -33,7 +33,7 @@ public class Event {
     }
 
     public Event(int choiseNum, int number, int[] modificators, String text, String[] textsAns, int nextEvent,
-                 boolean isNextEvent) {
+                 boolean isNextEvent, int weight) {
         this.choiseNum = choiseNum;
         this.number = number;
         this.modificators = modificators;
@@ -41,6 +41,7 @@ public class Event {
         this.textsAns = textsAns;
         this.nextEvent = nextEvent;
         this.isNextEvent = isNextEvent;
+        this.weight = weight;
     }
 
     public int getNextEvent() {

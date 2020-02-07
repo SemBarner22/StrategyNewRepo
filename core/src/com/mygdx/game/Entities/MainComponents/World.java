@@ -26,25 +26,41 @@ public class World {
     /*TODO крч я чет запутался, напиши инициализатор модификаторов, смотри файл GovModificator и класс Modificator
     И еще, проверь, нормально ли я скопировал это в гове
      */
+    public static Modificator[] govMods;
     public static ArrayList<Modificator> modificators = new ArrayList<>();
     public void initModGov() throws IOException{
-        /*
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                 new FileInputStream("res/Inits/GovModificator")))) {
             String nextLine;
             bufferedReader.readLine();
+            String[] init = new String[4];
+            int numberOfMod = 0;
             while ((nextLine = bufferedReader.readLine()) != null) {
-
+                numberOfMod += 1;
+                Scanner scanner = new Scanner(nextLine);
+                for (int i = 0; i < 4; i++){
+                     init[i] = scanner.next();
+                }
+                int numMod = Integer.parseInt(init[3]);
+                int[][] mods = new int[2][numMod];
+                for (int i = 0; i < numMod; i++){
+                    mods[0][i] = scanner.nextInt();
+                    mods[1][i] = scanner.nextInt();
+                }
+                modificators.add(new Modificator(Integer.parseInt(init[0]), init[1], Integer.parseInt(init[2]),
+                        Integer.parseInt(init[3]), mods[0], mods[1]));
             }
+            govMods = modificators.toArray(new Modificator[0]);
+            BS.numberOfModificators = numberOfMod;
+            System.out.println("Ammount of govMods " + govMods.length);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-         */
 
     }
 
-    public void initCityRegGov(int currentPlayers) throws IOException {
+    private void initCityRegGov(int currentPlayers) throws IOException {
         /*TODO Тут надо создать конструктор городов и регионов. В инитах есть все необходимые данные. Я думаю
             что надо создать большой массив всех городов, а потом регионам просто давать передавать соответсвующий номер
             Имхо будет проще так. Но в общем файлы есть, ты говорил, что сможешь создать инициализатор регионов из файла
@@ -135,6 +151,7 @@ public class World {
         moFConstructor();
         //запихал все это в отдельный метод, ибо инициализация это пипец как многовсего
         initCityRegGov(currentPlayers);
+        initModGov();
     }
 
     private void moFConstructor(){
@@ -180,7 +197,6 @@ public class World {
             lines = new ArrayList<>();
             while ((nextLine = bufferedReader.readLine()) != null) {
                 Logger.getLogger("Pog");
-                System.out.println("Pog");
                 lines.add(nextLine);
             }
         } catch (FileNotFoundException e) {
