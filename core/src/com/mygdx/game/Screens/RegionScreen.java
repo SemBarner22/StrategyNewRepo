@@ -32,7 +32,7 @@ public class RegionScreen extends AbstractMechanicsScreen {
         Table table = new Table();
         decAut = new TextButton("Decrease autonomy", skin);
         final ScrollPane scroll = new ScrollPane(table, skin);
-        int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
+        String res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
         String[] namesGet = new String[res.length];
         namesGet[1] = "productionRR ";
         namesGet[2] = "profitRR ";

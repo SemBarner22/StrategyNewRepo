@@ -7,6 +7,7 @@ import com.mygdx.game.Entities.Functional.Maps.CityCoordinate;
 import com.mygdx.game.Entities.Functional.Maps.MapOfArmies;
 import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.Functional.Modificator;
+import com.mygdx.game.Entities.MainComponents.Diplonacy.Diplomacy;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
@@ -152,6 +153,8 @@ public class World {
         //запихал все это в отдельный метод, ибо инициализация это пипец как многовсего
         initCityRegGov(currentPlayers);
         initModGov();
+        //оздаем дипломатию
+        diplomacy =  new Diplomacy(currentPlayers);
     }
 
     private void moFConstructor(){
@@ -185,6 +188,7 @@ public class World {
     private ArrayList<Region> allRegions = new ArrayList<>();
     public static int heigthOfMap = 5;
     public static int wideOfMap = 5;
+    public static Diplomacy diplomacy;
 
     public static MapOfArmies mof = new MapOfArmies(wideOfMap, heigthOfMap);
 
@@ -275,11 +279,24 @@ public class World {
     */
     public void moveArmy(Position first, Position second){
         //if attack army
+        //Теперь тут обрабатываются вражеские армии, свои армии и армии нейтральных мужиков
         Army selArm = country.get(mof.CheckPosition(first)).getArmyPos(first);
         boolean battle = false;
         if (mof.checkArmy(second)){
-            battle = true;
-            Battle(selArm.getPosition(), second);
+            //смотрим, если мы воюем, то запускаем баттл
+            if (diplomacy.isInWar(selArm.getCountry(), mof.CheckPosition(second))) {
+                battle = true;
+                Battle(selArm.getPosition(), second);
+            } else{
+                //если своя, то объединяемся, если не своя, то принтим, что не можем походить
+                if (selArm.getCountry() == mof.CheckPosition(second)){
+                    selArm.integrate(country.get(mof.CheckPosition(second)).getArmyPos(second));
+                    country.get(mof.CheckPosition(second)).
+                            DeleteArmy(country.get(mof.CheckPosition(second)).getArmyPos(second));
+                } else {
+                    System.out.println("There is another friendly army");
+                }
+            }
         } else {
             selArm.Move(second);
         }
@@ -289,14 +306,16 @@ public class World {
             int number = mof.getCityCoordinates(second)[1];
             int strana = mof.getCityCoordinates(second)[0];
             int[] coord = country.get(strana).getNumCity(number);
-            //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
-            //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
-            boolean occup = country.get(strana).getRegionControl().get(coord[0]).
-                    occupy(coord[1], selArm.getCountry());
-            Region regi = country.get(strana).getRegionControl().get(coord[0]);
-            if (occup){
-                country.get(strana).removeRegion(regi);
-                country.get(selArm.getCountry()).addRegion(regi);
+            if (diplomacy.isInWar(selArm.getCountry(), strana)) {
+                //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
+                //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
+                boolean occup = country.get(strana).getRegionControl().get(coord[0]).
+                        occupy(coord[1], selArm.getCountry());
+                Region regi = country.get(strana).getRegionControl().get(coord[0]);
+                if (occup) {
+                    country.get(strana).removeRegion(regi);
+                    country.get(selArm.getCountry()).addRegion(regi);
+                }
             }
         }
     }
@@ -547,6 +566,7 @@ public class World {
     // все что делается до хода
     public void preTurn(int i){
         country.get(i).MakeMoney();
+        diplomacy.turn(i);
     }
     // неожиданно после хода
     public void afterTurn(int i){

@@ -4,6 +4,13 @@ import com.mygdx.game.Entities.Technology.Inv;
 import com.mygdx.game.Entities.Technology.SubTech;
 
 public class BS {
+    public static String[] namesRR = {"Wood", "Corn", "Meat", "Wool"};
+    public static String[] namesCR = {"Steel", "Textile", "Tools", "Weapon", "Cannons", "Trains"};
+    public static String[] namesMineral = {"Iron ore", "Coal", "Gold"};
+    public static String[] cultureNames = {"Arizot", "Hereman", "Cascal"};
+    public static String[] religionNames = {"Monotheism", "Paganism"};
+
+
     public static int numMod = 23;
     public static String[] nameMod;
     //TODO Считать из файла эти штуки
@@ -67,7 +74,5 @@ public class BS {
     public static SubTech[] ST = new SubTech[techNum*3];
 
 
-    public static String[] namesRR = {"Дерево"};
-    public static String[] namesCR = {"Сталь"};
-    public static String[] namesMineral = {"Железная руда"};
+
 }

@@ -154,6 +154,12 @@ public class Army {
         UpdateEquipment();
     }
 
+    public void integrate(Army army){
+        for (int i = 0; i < armyMan.length; i++){
+            armyMan[i] += army.getArmyMan()[i];
+        }
+    }
+
     public int getMorale() {
         return morale;
     }
@@ -224,5 +230,9 @@ public class Army {
 
     public void setGeneral(General general) {
         this.general = general;
+    }
+
+    public int[] getArmyMan() {
+        return armyMan;
     }
 }

@@ -662,7 +662,7 @@ public class Gov {
     private void updateTotPop(){
         totPop = 0;
         for (Region value : region){
-            totPop += value.getRegionScreen()[8];
+            totPop += value.getTotPop();
         }
         maxArmy = BS.baseArmyAmount * totPop;
     }
@@ -890,6 +890,13 @@ public class Gov {
         res[1] = "Current army " + totalArmy;
         res[2] = "Mod morale" + modMorale + "%";
         res[3] = "Tactic" + modTactic;
+        return res;
+    }
+    //для скрина с государством
+    public String[] getGovInfo(){
+        String[] res = new String[15];
+        res[0] = "Main culture " + BS.cultureNames[culture];
+        res[1] = "Main religion " + BS.religionNames[religion];
         return res;
     }
     public int getModShock() {

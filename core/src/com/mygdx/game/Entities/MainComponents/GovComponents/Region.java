@@ -287,25 +287,32 @@ public class Region {
         return owner;
     }
     //для вывода на экран регионов.
-    public int[] getRegionScreen(){
-        int[] res = new int[21];
-        res[0] = city.length;
-        res[1] = productionRR;
-        res[2] = profitRR;
-        res[3] = productionMin;
-        res[4] = profitMineral;
-        res[5] = culture;
-        res[6] = religion;
-        res[7] = population;
+    public String[] getRegionScreen(){
+        String[] res = new String[21];
+        res[0] = "" + city.length;
+        res[1] = "" + productionRR;
+        res[2] = "" + profitRR;
+        res[3] = "" + productionMin;
+        res[4] = "" + profitMineral;
+        res[5] = "" + BS.cultureNames[culture];
+        res[6] = "" + BS.religionNames[religion];
+        res[7] = "" + population;
         int totalPop=0;
         for (City value: city){
             totalPop+=value.getPopulation();
         }
-        res[8] = totalPop + population;
-        res[9]  =infrastructure;
-        res[10] = prosperity;
-        res[11] = (int) autonomy;
+        res[8] = "" +  (totalPop + population);
+        res[9]  ="" + infrastructure;
+        res[10] = "" + prosperity;
+        res[11] = "" + ((int) autonomy);
         return res;
+    }
+    public int getTotPop(){
+        int totalPop=0;
+        for (City value: city){
+            totalPop+=value.getPopulation();
+        }
+        return  totalPop + population;
     }
     public double getPotentialAutonomy() {
         return potentialAutonomy;
