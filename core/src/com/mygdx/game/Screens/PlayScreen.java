@@ -32,16 +32,20 @@ import com.mygdx.game.ExtensionLibrary.OrthographicCameraWithZoom;
 import com.mygdx.game.Strategy;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class PlayScreen implements Screen {
 
     //public boolean isMoveEnded;
     private int armyX;
     private int armyY;
+    int deep[][];
+    int dop[][];
+    int clickedArmy = 0;
     State state = State.ARMIE;
     private ArrayList<Player> players;
     TextButton mechanicsButton;
@@ -202,7 +206,8 @@ public class PlayScreen implements Screen {
             int newY = (int) v0.y / 16;
             System.out.println("PLAYER COORDINATES: " + players.get(curPlayer).getX() + " " + players.get(curPlayer).getY());
             System.out.println("COORDINATES: " + newX + " " + newY);
-            if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31 && World.mof.CheckPosition(new Position(newX, newY)) >= 0) {
+            if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31
+                    && World.mof.CheckPosition(new Position(newX, newY)) == curPlayer) {
                 state = State.ARMIE;
                 armyX = newX;
                 armyY = newY;
@@ -291,15 +296,32 @@ public class PlayScreen implements Screen {
 
             //test
             TiledMapTileSet greenSet = map.getTileSets().getTileSet(0);
+            TiledMapTileLayer.Cell cellRed = new TiledMapTileLayer.Cell();
+            cellRed.setTile(greenSet.getTile(6));
             cellGreen.setTile(greenSet.getTile(7));
             int amount = 0;
             int all = 0;
+            deep = new int[32][32];
+            dop = new int[32][32];
+            for (int i = 0; i < 32; i++) {
+                for (int j = 0; j < 32; j++) {
+                    deep[i][j] = -1;
+                    dop[i][j] = -1;
+                }
+            }
+            dfs(armyX, armyY, 0);
             for (int i = 0; i < 32; ++i) {
                 for (int j = 0; j < 32; j++) {
                     all++;
-                    if (World.mof.CheckPosition(new Position(i, j)) == -1) {
+                    if (World.mof.CheckPosition(new Position(i, j)) == -1
+                    && (abs(i - armyX) + abs(j - armyY) <= 3 && deep[i][j] >= 0 && dop[i][j] == -1
+                    && deep[i][j] <= 3)) {
                         greenArea.setCell(i, j, cellGreen);
                         amount++;
+                    } else if (World.mof.CheckPosition(new Position(i, j)) == -1
+                            && (abs(i - armyX) + abs(j - armyY) <= 3 && deep[i][j] >= 0 && dop[i][j] != -1
+                            && deep[i][j] <= 3)) {
+                        greenArea.setCell(i, j, cellRed);
                     }
                 }
             }
@@ -311,7 +333,10 @@ public class PlayScreen implements Screen {
             int newX = (int) v0.x / 16;
             int newY = (int) v0.y / 16;
             //System.out.println("COORDINATES: " + newX + " " + newY);
-            if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31 && World.mof.CheckPosition(new Position(newX, newY)) == -1) {
+            if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31
+                    && World.mof.CheckPosition(new Position(newX, newY)) == -1
+                    && (abs(newX - armyX) + abs(newY - armyY) <= 3
+                    && deep[newX][newY] >= 0 && dop[newX][newY] == -1 && deep[newX][newY] <= 3)) {
                 state = State.DEFAULT;
                 //Only one tile changes
                 World.mof.moveArmy(new Position(armyX, armyY), new Position(newX, newY));
@@ -353,6 +378,44 @@ public class PlayScreen implements Screen {
         texture.dispose();
         map.dispose();
         batch.dispose();
+    }
+
+    void dfs(int x, int y, int d) {
+        if (x >= 0 && x < 32 && y >= 0 && y < 32 && d <= 5) {
+            if (deep[x][y] != -1) {
+                deep[x][y] = min(d, deep[x][y]);
+            } else {
+                deep[x][y] = d;
+            }
+            for (int i = -1; i < 2; ++i) {
+                for (int j = -1; j < 2; ++j) {
+                    if (Math.abs(i) + Math.abs(j) < 2) {
+                        if (x + i >= 0 && x + i <= 31 && y + j >= 0 && y + j <= 31 &&
+                                World.mof.CheckPosition(new Position(x + i, y + j)) > 0 &&
+                                World.mof.CheckPosition(new Position(x + i, y + j)) != curPlayer) {
+                            dfs_dop(x + i, y + j, 0);
+                        } else if (x + i >= 0 && x + i <= 31 && y + j >= 0 && y + j <= 31 &&
+                                World.mof.CheckPosition(new Position(x + i, y + j)) == -1) {
+                            dfs(x + i, y + j, d + 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    void dfs_dop(int x, int y, int d) {
+        if (x >= 0 && x < 32 && y >= 0 && y < 32 && d <= 2) {
+            dop[x][y] = d;
+            for (int i = -1; i < 2; ++i) {
+                for (int j = -1; j < 2; ++j) {
+                    if (Math.abs(i) + Math.abs(j) <= 2) {
+                        if (x + i >= 0 && x + i <= 31 && y + j >= 0 && y + j <= 31) {
+                            dfs_dop(x + i, y + j, d + 1);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
