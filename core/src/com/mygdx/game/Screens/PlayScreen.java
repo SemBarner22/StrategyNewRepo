@@ -343,6 +343,11 @@ public class PlayScreen implements Screen {
                 //Vector3 vector3 = gameCam.unproject(new Vector3(0, 0, 0));
                 players.get(curPlayer).setX(0);
                 players.get(curPlayer).setY(0);
+            } else if (newX >= 0 && newX <= 31 && newY >= 0 && newY <= 31
+                    && World.mof.CheckPosition(new Position(newX, newY)) == -1
+                    && (abs(newX - armyX) + abs(newY - armyY) <= 3
+                    && deep[newX][newY] >= 0 && dop[newX][newY] != -1 && deep[newX][newY] <= 3)) {
+                state = State.WAR;
             }
             map.getLayers().add(armies);
             renderer.render(new int[]{map.getLayers().getIndex(armies)});
@@ -421,6 +426,7 @@ public class PlayScreen implements Screen {
 
 enum State {
     ARMIE,
-    DEFAULT
+    DEFAULT,
+    WAR
 }
 
