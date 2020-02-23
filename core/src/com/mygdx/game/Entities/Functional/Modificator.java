@@ -7,8 +7,14 @@ public class Modificator {
             modificator[numMod[i]] = levMod[i];
         }
         this.maxTime = maxTime;
+        if (maxTime == -1){
+            endless = true;
+        }
         this.name = name;
         this.number = number;
+        modifiers = new int[2][numMod.length];
+        modifiers[0] = numMod;
+        modifiers[1] = levMod;
     }
     public String name;
     public int number;
@@ -16,6 +22,8 @@ public class Modificator {
     private boolean is = false;
     private int time;
     private int maxTime;
+    private int[][] modifiers;
+    private boolean endless = false;
 
     public void Activate(){
         time = maxTime;
@@ -26,11 +34,13 @@ public class Modificator {
         is = false;
     }
 
-    public void Turn(){
-        if (time == 0) {
-            time--;
-        } else {
-            Deactivate();
+    public void turn(){
+        if (is && !endless) {
+            if (time > 0) {
+                time--;
+            } else {
+                Deactivate();
+            }
         }
     }
 
@@ -38,11 +48,26 @@ public class Modificator {
         return is;
     }
 
-    public int getTime() {
-        return time;
+    public String getTime() {
+        if (endless){
+            return "endless";
+        } else{
+            return "" + time;
+        }
     }
 
+    //остается для работы модификаторов в регионе и городе. В некоторых случаях это удобнее
     public int[] getModificator() {
         return modificator;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public int[] getNumMod(){
+        return modifiers[0];
+    }
+    public int[] getLevMod(){
+        return modifiers[1];
     }
 }

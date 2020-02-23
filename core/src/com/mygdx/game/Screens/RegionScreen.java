@@ -35,14 +35,27 @@ public class RegionScreen extends AbstractMechanicsScreen {
         createArmy = new TextButton("Create army", skin);
         failedOp = new Label("", skin);
         final ScrollPane scroll = new ScrollPane(table, skin);
-        int res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
-        for (int i = 0; i < res.length; ++i) {
-            table.add(new Label("" + res[i], skin));
-            if (i % 2 == 1) {
-                table.row();
-            }
-        }
+        String res[] = PlayScreen.world.getAllRegions().get(regionIndex).getRegionScreen();
+        String[] namesGet = new String[res.length];
+        namesGet[1] = "productionRR ";
+        namesGet[2] = "profitRR ";
+        namesGet[3] = "productionMin ";
+        namesGet[4] = "profitMineral ";
+        namesGet[5] = "culture ";
+        namesGet[6] = "religion ";
+        namesGet[7] = "population ";
+        namesGet[8] = "totalPop ";
+        namesGet[9] = "infrastructure ";
+        namesGet[10] = "prosperity ";
+        namesGet[11] = "autonomy ";
+
         if (PlayScreen.world.getAllRegions().get(regionIndex).getOwner() == curPlayer) {
+            for (int i = 1; i < res.length; ++i) {
+                table.add(new Label(namesGet[i] + res[i], skin));
+                if (i % 2 == 0) {
+                    table.row();
+                }
+            }
             City[] cities = PlayScreen.world.getAllRegions().get(regionIndex).getCity();
             decAut.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {

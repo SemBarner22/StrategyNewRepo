@@ -10,6 +10,9 @@ public class Army {
     private static int baseMaxMorale = 10000;
     private static int baseMaxOrganisation = 1000;
 
+    //army times
+    private boolean extraPay = false;
+
     private int country;
     private int[] armyMan;
     private int amount = 0;
@@ -117,14 +120,31 @@ public class Army {
                 * (25 + tactic) * prof  /50000;
     }
 
+    //make extra pay to update morale
+    public boolean payMorale(){
+        if (!extraPay) {
+            morale += 10;
+            extraPay = true;
+            if (morale > maxMorale) {
+                morale = maxMorale;
+            }
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     //каждый ход отсюда
+    public void everyTurn(){
+        extraPay = false;
+    }
     public void UpdateTactic(int govTac){
         tactic = (govTac + general.getTactic()) * 4;
     }
     public void UpdateMaxArmy(int modMorale, int modOrganisation){
         UpdateMaxEquipment();
-        maxMorale = baseMaxMorale * (100 + modMorale) * (50 + general.getMobility()) / 5000;
-        maxOrganisation = baseMaxOrganisation * (100 + modOrganisation) / 100 + general.getTactic()*30;
+        maxMorale = BS.baseMaxMorale * (100 + modMorale) * (50 + general.getMobility()) / 5000;
+        maxOrganisation = BS.baseMaxOrganisation * (100 + modOrganisation) / 100 + general.getTactic()*30;
         if (prof == 3){
             maxOrganisation+= 500;
         }
@@ -160,6 +180,12 @@ public class Army {
         maxEquipment += BS.equipmentOfSquade[num];
         totalEquipment += BS.equipmentOfSquade[num];
         UpdateEquipment();
+    }
+
+    public void integrate(Army army){
+        for (int i = 0; i < armyMan.length; i++){
+            armyMan[i] += army.getArmyMan()[i];
+        }
     }
 
     public int getMorale() {
@@ -232,5 +258,9 @@ public class Army {
 
     public void setGeneral(General general) {
         this.general = general;
+    }
+
+    public int[] getArmyMan() {
+        return armyMan;
     }
 }

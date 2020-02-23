@@ -26,10 +26,12 @@ public class Generals extends Estate{
     }
 
     public Generals() {
+        profit = 10;
         ability = new Ability[numAbility];
         for (int i = 0; i < numAbility; i++){
             ability[i] = new Ability();
         }
+        isInLobby = false;
     }
     @Override
     public String getBonus(){

@@ -38,6 +38,9 @@ import java.util.Queue;
 
 import static java.lang.Math.*;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class PlayScreen implements Screen {
 
     //public boolean isMoveEnded;
@@ -142,11 +145,21 @@ public class PlayScreen implements Screen {
                 if (curPlayer == 0) {
                     world.AfterGlobalTurn();
                 }
+                //TODO сделать тут вызов ивента
                 world.preTurn(curPlayer);
+                //TODO сдедал, чтобы сразу проходило 30 ходов
+                for (int i = 0; i < 11; i++){
+                    world.afterTurn(curPlayer);
+                    curPlayer = (curPlayer + 1) % players.size();
+                    if (curPlayer == 0) {
+                        world.AfterGlobalTurn();
+                    }
+                    world.preTurn(curPlayer);
+                }
+                System.out.println(Resources.getAvCR());
 
             }
         });
-
     }
 
     @Override
@@ -161,9 +174,11 @@ public class PlayScreen implements Screen {
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
         labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
+        labels.get(5).setText("Turn Number "+ world.getTurnNumber());
         labels.get(2).setText("Admin" + world.getPlayerGov(curPlayer).mainScreen10Getters()[2]);
         labels.get(3).setText("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
         labels.get(4).setText("Prestige" + world.getPlayerGov(curPlayer).mainScreen10Getters()[4]);
+
         //System.out.println("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
         im = new InputMultiplexer(stage, players.get(curPlayer));
         Gdx.input.setInputProcessor(im);
