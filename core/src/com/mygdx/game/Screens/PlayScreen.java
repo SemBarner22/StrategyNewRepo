@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.*;
 import com.mygdx.game.Entities.Functional.Maps.Position;
+import com.mygdx.game.Entities.MainComponents.GovComponents.Resources;
 import com.mygdx.game.Entities.MainComponents.World;
 import com.mygdx.game.Entities.Player;
 import com.mygdx.game.ExtensionLibrary.OrthogonalTiledMapRendererWithSprites;
@@ -156,7 +157,7 @@ public class PlayScreen implements Screen {
                     }
                     world.preTurn(curPlayer);
                 }
-                System.out.println(Resources.getAvCR());
+               // System.out.println(Resources.getAvCR());
 
             }
         });
@@ -174,7 +175,7 @@ public class PlayScreen implements Screen {
         labels.get(0).setText("Player: " + (curPlayer + 1));
         labels.get(1).setText("Money: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[0]);
         labels.get(6).setText("Profit: " + world.getPlayerGov(curPlayer).mainScreen10Getters()[1]);
-        labels.get(5).setText("Turn Number "+ world.getTurnNumber());
+       // labels.get(5).setText("Turn Number "+ world.getTurnNumber());
         labels.get(2).setText("Admin" + world.getPlayerGov(curPlayer).mainScreen10Getters()[2]);
         labels.get(3).setText("Legitimacy" + world.getPlayerGov(curPlayer).mainScreen10Getters()[3]);
         labels.get(4).setText("Prestige" + world.getPlayerGov(curPlayer).mainScreen10Getters()[4]);

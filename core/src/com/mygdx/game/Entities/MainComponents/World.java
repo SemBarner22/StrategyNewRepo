@@ -1,13 +1,10 @@
 package com.mygdx.game.Entities.MainComponents;
 
 import com.mygdx.game.Entities.BaseSettings.BS;
-import com.mygdx.game.Entities.Functional.Event;
 import com.mygdx.game.Entities.Functional.Maps.CityAttack;
 import com.mygdx.game.Entities.Functional.Maps.CityCoordinate;
 import com.mygdx.game.Entities.Functional.Maps.MapOfArmies;
 import com.mygdx.game.Entities.Functional.Maps.Position;
-import com.mygdx.game.Entities.Functional.Modificator;
-import com.mygdx.game.Entities.MainComponents.Diplonacy.Diplomacy;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
@@ -26,52 +23,15 @@ public class World {
     public static int heightOfMap;
     public static int wideOfMap;
 
-    /*TODO крч я чет запутался, напиши инициализатор модификаторов, смотри файл GovModificator и класс Modificator
-    И еще, проверь, нормально ли я скопировал это в гове
-     */
-    public static Modificator[] govMods;
-    public static ArrayList<Modificator> modificators = new ArrayList<>();
-    public void initModGov() throws IOException{
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                new FileInputStream("desktop/build/resources/main/res/Inits/GovModificator")))) {
-            String nextLine;
-            bufferedReader.readLine();
-            String[] init = new String[4];
-            int numberOfMod = 0;
-            while ((nextLine = bufferedReader.readLine()) != null) {
-                numberOfMod += 1;
-                Scanner scanner = new Scanner(nextLine);
-                for (int i = 0; i < 4; i++){
-                     init[i] = scanner.next();
-                }
-                int numMod = Integer.parseInt(init[3]);
-                int[][] mods = new int[2][numMod];
-                for (int i = 0; i < numMod; i++){
-                    mods[0][i] = scanner.nextInt();
-                    mods[1][i] = scanner.nextInt();
-                }
-                modificators.add(new Modificator(Integer.parseInt(init[0]), init[1], Integer.parseInt(init[2]),
-                        Integer.parseInt(init[3]), mods[0], mods[1]));
-            }
-            govMods = modificators.toArray(new Modificator[0]);
-            BS.numberOfModificators = numberOfMod;
-            System.out.println("Ammount of govMods " + govMods.length);
     public static MapOfArmies mof;
 
     public World(int currentPlayers, int width, int height) throws IOException {
         //создаем карту для аттак городов
-         mof = new MapOfArmies(width, height);
-         heightOfMap = height;
-         wideOfMap = width;
+        mof = new MapOfArmies(width, height);
+        heightOfMap = height;
+        wideOfMap = width;
 
         moFConstructor();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void initCityRegGov(int currentPlayers) throws IOException {
         /*TODO Тут надо создать конструктор городов и регионов. В инитах есть все необходимые данные. Я думаю
             что надо создать большой массив всех городов, а потом регионам просто давать передавать соответсвующий номер
             Имхо будет проще так. Но в общем файлы есть, ты говорил, что сможешь создать инициализатор регионов из файла
@@ -83,39 +43,39 @@ public class World {
         resurs[1] = 1;
         resurs[2] = 2;
         ArrayList<City> cities = new ArrayList<>();
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                    new FileInputStream("res/Inits/CityInit")))) {
-                String nextLine;
-                bufferedReader.readLine();
-                while ((nextLine = bufferedReader.readLine()) != null) {
-                    Scanner scanner = new Scanner(nextLine);
-                    int y = scanner.nextInt();
-                    int x = scanner.nextInt();
-                    int popul = scanner.nextInt();
-                    int owner = scanner.nextInt();
-                    int[] res = new int[3];
-                    res[0] = scanner.nextInt();
-                    res[1] = scanner.nextInt();
-                    res[2] = scanner.nextInt();
-                    cities.add(new City(new Position(x, y), popul, owner, res));
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream("res/Inits/CityInit")))) {
+            String nextLine;
+            bufferedReader.readLine();
+            while ((nextLine = bufferedReader.readLine()) != null) {
+                Scanner scanner = new Scanner(nextLine);
+                int y = scanner.nextInt();
+                int x = scanner.nextInt();
+                int popul = scanner.nextInt();
+                int owner = scanner.nextInt();
+                int[] res = new int[3];
+                res[0] = scanner.nextInt();
+                res[1] = scanner.nextInt();
+                res[2] = scanner.nextInt();
+                cities.add(new City(new Position(x, y), popul, owner, res));
 
-                    //TODO put this in mof Constructor
-                    mof.addCity(owner, new Position(x, y));
-                    mof.addCity(owner, new Position(x, y + 1));
-                    mof.addCity(owner, new Position(x + 1, y));
-                    mof.addCity(owner, new Position(x + 1, y + 1));
-                    if (x < 27 && y < 27) {
-                        mof.addArmy(owner, new Position(x + 3, y + 3));
-                        mof.addArmy(owner, new Position(x + 4, y + 4));
-                        mof.addArmy(owner, new Position(x + 4, y + 3));
-                        mof.addArmy(owner, new Position(x + 3, y + 4));
-                    }
+                //TODO put this in mof Constructor
+                mof.addCity(owner, new Position(x, y));
+                mof.addCity(owner, new Position(x, y + 1));
+                mof.addCity(owner, new Position(x + 1, y));
+                mof.addCity(owner, new Position(x + 1, y + 1));
+                if (x < 27 && y < 27) {
+                    mof.addArmy(owner, new Position(x + 3, y + 3));
+                    mof.addArmy(owner, new Position(x + 4, y + 4));
+                    mof.addArmy(owner, new Position(x + 4, y + 3));
+                    mof.addArmy(owner, new Position(x + 3, y + 4));
                 }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
-            //Сначала идет число городов, потом их номера(такие, что в файле инит), потом инты какие нужны в конструкторе
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        //Сначала идет число городов, потом их номера(такие, что в файле инит), потом инты какие нужны в конструкторе
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                 new FileInputStream("res/Inits/RegionInit")))) {
             String nextLine;
@@ -165,20 +125,8 @@ public class World {
             // одна вещь для конструктора нужна пока что. Фактически, если написать инициалтизатор для городов и
             // регионов, то все готово
             country.add(new Gov(regions));
-            country.get(i).setCounryNum(i);
         }
     }
-
-    public World(int currentPlayers) throws IOException {
-        //создаем карту для аттак городов
-        moFConstructor();
-        //запихал все это в отдельный метод, ибо инициализация это пипец как многовсего
-        initCityRegGov(currentPlayers);
-        initModGov();
-        //оздаем дипломатию
-        diplomacy =  new Diplomacy(currentPlayers);
-    }
-
     private void moFConstructor(){
         ArrayList<Position> pos = new ArrayList<>();
         ArrayList<CityCoordinate> coord = new ArrayList<>();
@@ -201,18 +149,12 @@ public class World {
 
     // компонены мира
     private boolean endGame = false;
-    public static Event[] events;
     private int turnNumber = 1;
     public static Resources resources = new Resources();
     private ArrayList<Gov> country = new ArrayList<>();
     public static int totalPopulation = 0;
     private CityAttack cityAttack;
     private ArrayList<Region> allRegions = new ArrayList<>();
-    public static int heigthOfMap = 5;
-    public static int wideOfMap = 5;
-    public static Diplomacy diplomacy;
-
-    public static MapOfArmies mof = new MapOfArmies(wideOfMap, heigthOfMap);
 
     public static List<String> lines;
 
@@ -290,47 +232,17 @@ public class World {
     /*не знаю где это оставить, поэтому пусть будут тут
      Находит 2 армии по координатам и сталкивает их. Можно сократить конечно количество опреций, тк мы знаем первую страну, но есть варик делать
     и все перемещения через карту армий.
-
-    Короче хз, как это все работает. Походу сейчас придется передлывать Этот метод, а если быть точнее, то
-    заменять его другим. Только теперь я буду писать. что он делает и зачем.
-    Фактически у нас есть 4 возможных взаимодействия
-    1) Просто походить
-    2) Сражаться
-    3) Захватить город
-    4) Посражаться и захватить город
-    Будет проще сделать метод, который говорит какого рода у нас взаимодействие. Сражение происходит, если 2
-    враждебные армии находятся в одной клетке
-    Захват города происходит, если мы находимся в соседней клетке и больше нет армий другого государства (враждебного
-    блока)
-    Тогда просто разбиваем весь метод на 2 различных подметода.
-    В случае если просто ход, то движемся и все
-    Если битва, то у нас вроде есть метод батл. Он вроде работающий.
-    И в конце мы чекаем захват города, можем ли мы это сделать.
-
      Мой тебе совет НЕ ЛЕЗЬ СУКА, ТАМ 150 СТРОК ИХ ДАЖЕ Я НЕ МОГУ ПОНЯТЬ
      Но если я не ошибаюсь, то она обрабатывает вообще все перемещения включая битвы, отступления и прочую ересь
     */
+
     public void moveArmy(Position first, Position second){
         //if attack army
         Army selArm = country.get(mof.CheckPosition(first)).getArmyPos(first);
-        //Теперь тут обрабатываются вражеские армии, свои армии и армии нейтральных мужиков
-        Army selArm = country.get(mof.CheckPosition(first)).getArmyPos(first);
         boolean battle = false;
         if (mof.checkArmy(second)){
-            //смотрим, если мы воюем, то запускаем баттл
-            if (diplomacy.isInWar(selArm.getCountry(), mof.CheckPosition(second))) {
-                battle = true;
-                Battle(selArm.getPosition(), second);
-            } else{
-                //если своя, то объединяемся, если не своя, то принтим, что не можем походить
-                if (selArm.getCountry() == mof.CheckPosition(second)){
-                    selArm.integrate(country.get(mof.CheckPosition(second)).getArmyPos(second));
-                    country.get(mof.CheckPosition(second)).
-                            DeleteArmy(country.get(mof.CheckPosition(second)).getArmyPos(second));
-                } else {
-                    System.out.println("There is another friendly army");
-                }
-            }
+            battle = true;
+            Battle(selArm.getPosition(), second);
         } else {
             selArm.Move(second);
         }
@@ -340,16 +252,14 @@ public class World {
             int number = mof.getCityCoordinates(second)[1];
             int strana = mof.getCityCoordinates(second)[0];
             int[] coord = country.get(strana).getNumCity(number);
-            if (diplomacy.isInWar(selArm.getCountry(), strana)) {
-                //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
-                //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
-                boolean occup = country.get(strana).getRegionControl().get(coord[0]).
-                        occupy(coord[1], selArm.getCountry());
-                Region regi = country.get(strana).getRegionControl().get(coord[0]);
-                if (occup) {
-                    country.get(strana).removeRegion(regi);
-                    country.get(selArm.getCountry()).addRegion(regi);
-                }
+            //как это будет происходить нам надо найти город, сделать его окупированным, перевести из одного
+            //ситиконтрол в другой. Также надо проверить, можно ли его окупировать
+            boolean occup = country.get(strana).getRegionControl().get(coord[0]).
+                    occupy(coord[1], selArm.getCountry());
+            Region regi = country.get(strana).getRegionControl().get(coord[0]);
+            if (occup){
+                country.get(strana).removeRegion(regi);
+                country.get(selArm.getCountry()).addRegion(regi);
             }
         }
     }
@@ -399,7 +309,7 @@ public class World {
             }
         }
     }
-    // позволяет Сражаться армиям, которые находятся на двух позициях. Типо рабочий вариант, но отступление хромает. Также гетпосарми надо исправить
+    // позволяет Сражаться армиям, которые находятся на двух позициях
     private void Battle(Position position, Position battle){
         for (int j = 0; j < country.get(mof.CheckPosition(position)).army.size() ; j++){
             if (country.get(mof.CheckPosition(position)).army.get(j).getPosition() == position){
@@ -417,7 +327,7 @@ public class World {
 
                         } else {
                             int regi = (int) (Math.random() * country.get(mof.CheckPosition(position)).getRegionControl().size());
-                            if (country.get(mof.CheckPosition(position)).getRegionControl().get(regi).getCity()[0].checkPosition()){
+                            if (country.get(mof.CheckPosition(position)).getRegionControl().get(regi).getCity()[0].CheckPosition()){
                                 country.get(mof.CheckPosition(position)).army.get(j).
                                         Move(country.get(mof.CheckPosition(position)).getRegionControl().get(regi).getCity()[0].getPosArmy());
                             } else {
@@ -539,56 +449,15 @@ public class World {
         NullArray(totalPlantMineralDemand);
     }
     //пацанский маркет
-    private double increaseMin = 1;
-    private double increaseRR = 1;
-    public double increaseCR = 1;
     private void trueMarket(){
-        double change = 0.05*Resources.getAvCR()/Resources.getAvRR();
-        if (Resources.getAvRR() == Math.max(Math.max(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
-            increaseRR -=change;
-        }
-        if (Resources.getAvMin() == Math.max(Math.max(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
-            increaseMin -=change;
-        }
-        if (Resources.getAvCR() == Math.max(Math.max(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
-            increaseCR -= change;
-        }
-
-        if (Resources.getAvRR() == Math.min(Math.min(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
-            increaseRR +=change;
-        }
-        if (Resources.getAvMin() == Math.min(Math.min(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
-            increaseMin +=change;
-        }
-        if (Resources.getAvCR() == Math.min(Math.min(Resources.getAvCR() , Resources.getAvRR()), Resources.getAvMin())){
-            increaseCR += change;
-        }
-        //System.out.println(increaseCR +" " + increaseRR + " " + increaseMin);
-        /*
-        increaseMin = 1;
-        increaseRR = 1;
-        increaseCR = 1;
-         */
-        double incOverTime = 1;
-        if (turnNumber > 70){
-            incOverTime += Math.min((int) ((turnNumber - 60) / 10) *0.05, 1);
-        }
-        if (turnNumber > 110){
-            incOverTime += Math.min((int) ((turnNumber - 110) / 10) *0.05, 1);
-        }
-        if (turnNumber > 150){
-            incOverTime += Math.min((int) ((turnNumber - 150) / 10) *0.02, 1);
-        }
-        if (turnNumber > 180){
-            incOverTime += Math.min((int) ((turnNumber - 180) / 10) *0.03, 1);
-        }
-        resources.setCR(totalCRDemand, totalCityProduction, increaseCR/4*incOverTime);
-        resources.setMineral(totalMineralDemand, totalMineralProduction, increaseMin*2*incOverTime);
-        resources.setRR(totalRRDemand,totalRegionProduction, increaseRR*2*incOverTime);
+        double increaseOverTime = (1.0*turnNumber+20)/20;
+        resources.setCR(totalCRDemand, totalCityProduction, increaseOverTime);
+        resources.setMineral(totalMineralDemand, totalMineralProduction);
+        resources.setRR(totalRRDemand,totalRegionProduction);
         resources.updateTotalValue();
 
         // checkTotalPD();
-       // resources.showPrices();
+        // resources.showPrices();
         NullArray(totalCityProduction);
         NullArray(totalMineralProduction);
         NullArray(totalRegionProduction);
@@ -599,7 +468,6 @@ public class World {
     // все что делается до хода
     public void preTurn(int i){
         country.get(i).MakeMoney();
-        diplomacy.turn(i);
     }
     // неожиданно после хода
     public void afterTurn(int i){
@@ -610,41 +478,6 @@ public class World {
         trueMarket();
         turnNumber++;
     }
-    //вызов ивентов дает либо номер ивента, либо -1, если его не надо выбирать
-    private int nextEvent;
-    private boolean isNextEvent = false;
-    public int eventNum(int numPlayer){
-        int totalProb = 0;
-        if (isNextEvent){
-            isNextEvent = false;
-            return nextEvent;
-        } else {
-            for (int i = 0; i < events.length; i++) {
-                totalProb += country.get(numPlayer).getEventWeight(i);
-            }
-            if (Math.random() > BS.basePosEvent) {
-                int weight = (int) (Math.random() * totalProb);
-                int i = 0;
-                int curWeight = 0;
-                while (curWeight < weight) {
-                    curWeight += country.get(numPlayer).getEventWeight(i);
-                    i += 1;
-                }
-                if (events[i].getIsNextEvent()){
-                    isNextEvent = true;
-                    nextEvent = events[i].getNextEvent();
-                }
-                return i;
-            } else {
-                return -1;
-            }
-        }
-    }
-    //дает выбор игрока в гов
-    public void eventChoice(int numPlayer, int numEvent, int numChoice){
-        country.get(numPlayer).activateModificator(events[numEvent].getModNum(numChoice));
-    }
-
     //Нужен для проверки текущего балланса. Чисто служебный метод
     private void checkTotalPD(){
         int res = 0;
@@ -688,11 +521,8 @@ public class World {
         this.allRegions = allRegions;
     }
 
-    public int getTurnNumber() {
-        return turnNumber;
-    }
 
-    //    public void Main() {
+//    public void Main() {
 //        int i = -1;
 //        while (!endGame){
 //            i++;

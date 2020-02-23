@@ -11,26 +11,17 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
 import com.mygdx.game.Entities.MainComponents.GovComponents.City;
-import com.mygdx.game.Entities.MainComponents.GovComponents.Laws;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Gov {
     private void constructMod(){
-        int i = 1;
+        int i =1;
         int k;
         int j = 0;
         List<String> string = World.lines;
-        /*
-        Перое число это номер этого модификатора
-        Второе это имя
-        Третье это максимальное время
-        Четвертое это
-         */
         while (!string.get(i).equals("end")) {
             k = i;
             i += 4;
@@ -43,37 +34,33 @@ public class Gov {
                 i++;
                 m++;
             }
-            modificator[j] = new Modificator(Integer.parseInt(string.get(k)), string.get(k+1),
-                    Integer.parseInt(string.get(k+2)), BS.numMod, mods[0], mods[1]);
+            modificator[j] = new Modificator(Integer.parseInt(string.get(k)), string.get(k+1), Integer.parseInt(string.get(k+2)),
+                    BS.numMod, mods[0], mods[1]);
             j++;
             i++;
         }
     }
     private void constructAdv() {
         for (int t = 0; t < 5; t++) {
-            CreateAdvisor("Cleric", true);
+            createAdvisor("Cleric");
             AssignAdvisor(t, t);
         }
         for (int t = 0; t < 10; t++) {
-            CreateAdvisor("Diplomat", true);
+            createAdvisor("Diplomat");
         }
     }
     private void constructEstate(){
         //Создаем сословия
-        estate = new Estate[2];
         estate[0] = new Generals();
         estate[1] = new Manufactor();
     }
     public Gov(ArrayList<Region> region){
         this.region = region;
         regionControl = region;
-        //constructMod();
+        constructMod();
         constructAdv();
-        constructEstate();
         capital = region.get(0).getCity()[0].getPosition();
-        adm = 100;
-        modificator = World.modificators.toArray(new Modificator[World.modificators.size()]).clone();//TODO хз что сделал чекай
-        System.out.println("Number Of mods " + modificator.length);
+
     }
     private boolean isPlayer = true;
 
@@ -112,8 +99,6 @@ public class Gov {
     private int modCostArmy = 1;
 
     private Modificator[] modificator = new Modificator[1];
-    //инициализируем модификаторы
-
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
     private void AddToMod(int[] array) {
         modAdvisorCost += array[0];
@@ -166,29 +151,14 @@ public class Gov {
         modProfitFromCity =0;
     }
 
-    public void updateMod(){
+    public void UpdateMod(){
         NullMod();
-        int[] totSum = new int[BS.numMod];
-        for (int i = 0; i < modificator.length; i++){
-            if (modificator[i].getIs()){
-                for (int j = 0; i < modificator[i].getNumMod().length; i++){
-                    totSum[modificator[i].getNumMod()[j]] += modificator[i].getLevMod()[j];
-                }
-            }
-        }
-        AddToMod(totSum);
-        //TODO добовляем моды законов. убрать коммент после инциализации
-        //AddToMod(laws.getModif());
-
-        //Этот способ устарел, поэтому комменчу. но если что-то пойдет не так, то этот надежнее
-        /*
         for (int i = 0; i < modificator.length; i++){
             if (modificator[i].getIs()) {
                 AddToMod(modificator[i].getModificator());
             }
-            modificator[i].Turn();
+
         }
-         */
         for (int i = 0; i < advList.size(); i++){
             if (advList.get(i).getHaveJob() >= 0) {
                 AddToMod(advList.get(i).getMod());
@@ -210,11 +180,11 @@ public class Gov {
                     estate[i].setManufatory(false);
                 }
                 if (estate[i].isFinancier()){
-                    CreateAdvisor("Financier", true);
+                    createAdvisor("Financier");
                     estate[i].setFinancier(false);
                 }
                 if (estate[i].isGeneral()){
-                    CreateAdvisor("General", true);
+                    createAdvisor("General");
                     estate[i].setFinancier(false);
                 }
             }
@@ -251,14 +221,11 @@ public class Gov {
 
     // государственное устройство
     private int counryNum;
-    private int totPop;
-    private int maxArmy;
     private ArrayList<Region> regionControl;
     private ArrayList<Region> region;
     private Position capital;
     private int religion;
     private int culture;
-    private Laws laws;
     //Метод дает номер региона в массиве region, если ему дать регистрационный номер региона
     public int getNumRegion(int numberOfRegion){
         for (int i = 0; i <region.size();i++){
@@ -276,25 +243,10 @@ public class Gov {
         }
         return -1;
     }
-    public int[] getNumCity(int numberOfCity){
-        for (int i = 0; i <regionControl.size();i++){
-            for (int j = 0; j < regionControl.get(i).getCity().length; j++){
-                if (regionControl.get(i).getCity()[j].getUnicNumber() == numberOfCity){
-                    int[] result = new int[2];
-                    result[0] = i;
-                    result[1] = j;
-                    return result;
-                }
-            }
-        }
-        System.out.println("ERROR IN getNumCity");
-        return null;
-    }
 
     // армия
     public ArrayList<Army> army = new ArrayList<>();
     public ArrayList<Army> mobilisateArmy = new ArrayList<>();
-    private int totalArmy = 0;
     //чисто для призывной армии. Для всех остальных считается по другому в самой армии. Надо только будет сделать
     //кнопку для пополнения всех.
     private int maxEquipment;
@@ -323,36 +275,33 @@ public class Gov {
     public void createAdvisor(String adv, Boolean... isFree) {
         //Boolean b = isFree.length > 0 ? isFree[0] : false;
         //if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (b)) {
-    public void CreateAdvisor(String adv, Boolean... isFree) {
-        Boolean b = isFree.length > 0 ? isFree[0] : false;
-        if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (b)) {
-            PlusAdm(-BS.baseAdvisorCost * (100 + modAdvisorCost) / 100);
-            PlusMoney(profit/4);
-            if (adv.equals("Diplomat")) {
-                advList.add(new Diplomat());
-            }
-            if (adv.equals("Cleric")) {
-                System.out.println("ok");
-                advList.add(new Cleric());
-            }
-            if (adv.equals("Financier")) {
-                advList.add(new Financier());
-            }
-            if (adv.equals("General")) {
-                General gen = new General();
-                general.add(gen);
-                advList.add(gen);
-            }
-            if (adv.equals("Judge")) {
-                advList.add(new Judge());
-            }
-            if (adv.equals("Scientist")) {
-                advList.add(new Scientist());
-            }
-            if (adv.equals("Spy")) {
-                advList.add(new Spy());
-            }
+        PlusAdm(-BS.baseAdvisorCost * (100 + modAdvisorCost) / 100);
+        PlusMoney(profit/4);
+        if (adv.equals("Diplomat")) {
+            advList.add(new Diplomat());
         }
+        if (adv.equals("Cleric")) {
+            System.out.println("ok");
+            advList.add(new Cleric());
+        }
+        if (adv.equals("Financier")) {
+            advList.add(new Financier());
+        }
+        if (adv.equals("General")) {
+            General gen = new General();
+            general.add(gen);
+            advList.add(gen);
+        }
+        if (adv.equals("Judge")) {
+            advList.add(new Judge());
+        }
+        if (adv.equals("Scientist")) {
+            advList.add(new Scientist());
+        }
+        if (adv.equals("Spy")) {
+            advList.add(new Spy());
+        }
+        // }
     }
     //  }
     // назначаем советника  в ячейку number
@@ -430,11 +379,7 @@ public class Gov {
         for (int i =0; i < estate.length; i++){
             loyalityIncrease[i] = BS.baseLoyalityIncrease;
             estate[i].setLoyalityIncrease(loyalityIncrease[i]);
-            if (estate[i].getIsInLobby()) {
-                powerIncrease[i] = 1;
-            } else {
-                powerIncrease[i] = 0;
-            }
+            powerIncrease[i] = estate[i].getIsInLobby() ? 1 : 0;
             estate[i].setPowerIncrease(powerIncrease[i]);
             estate[i].UpdateLP();
             commonPower += estate[i].getPower();
@@ -504,7 +449,7 @@ public class Gov {
         int aut;
         aut = (int) (Math.tan((Math.pow(capital.GetX() - value.getPosition().GetX(), 2) +
                 Math.pow(value.getPosition().GetY() - capital.GetY(), 2)))
-                / Math.sqrt(Math.pow(World.heigthOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
+                / Math.sqrt(Math.pow(World.heightOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
         if (aut > 100) {
             aut = 100;
         }
@@ -529,8 +474,6 @@ public class Gov {
             }
         }
         profit = profitFromCity+profitFromRegion;
-        profit *= profitFromEstates;
-        profit /= Math.pow(10, estInLobby);
         maxDebt = profit*10;
     }
 
@@ -576,15 +519,12 @@ public class Gov {
     private void ReCountCost(){
         cost = costArmy + costAdm + costDebt;
     }
-    // обновляем профит от
-    private int estInLobby;
+    // обновляем профит от сословий
     private void UpdateProfitFromEstates(){
         UpdateEstate();
-        estInLobby = 0;
         profitFromEstates = 1;
         for (int i = 0; i < estate.length; i++){
             if (estate[i].getIsInLobby()) {
-                estInLobby +=1;
                 profitFromEstates *= estate[i].getProfit();
             }
         }
@@ -594,12 +534,6 @@ public class Gov {
         //UpAge();
         //UpdateMod();
 
-        updateMods();
-
-        UpdateArmy();
-        updateTotPop();
-
-        //laws.turn();
         //UpdateArmy();
 
         UpdateAPL();
@@ -620,10 +554,6 @@ public class Gov {
         } else{
             return false;
         }
-    }
-    // check ammount of adm points
-    public boolean checkAdm(int number){
-        return number > adm;
     }
     // получаем деньги
     public void PlusMoney(int m){
@@ -648,8 +578,7 @@ public class Gov {
             region.get(getNumRegion(reg)).getCity()[city]
                     .investStock(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
             PlusMoney(-region.get(getNumRegion(reg)).costOfCapitalDonate(city));
-            System.out.println("investment succeeded " + money + " " + region.get(getNumRegion(reg)).getCity()[city].
-                    getStock());
+            System.out.println("investment succeeded");
         } else {
             System.out.println("investment failed");
         }
@@ -687,13 +616,6 @@ public class Gov {
             legicimacy = 0;
         }
     }
-    private void updateTotPop(){
-        totPop = 0;
-        for (Region value : region){
-            totPop += value.getTotPop();
-        }
-        maxArmy = BS.baseArmyAmount * totPop;
-    }
 
     // СТРОИТЕЛЬСТВО
     // проверяем воможно ли построть
@@ -715,11 +637,11 @@ public class Gov {
     public int costInfr(int numberOfRegion, int numberOfCity){
         return regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfInfrastructure();
     }
-    public boolean posBuildCityInfr(int numberOfRegion, int numberOfCity){
+    public boolean posBuildInfr(int numberOfRegion, int numberOfCity){
         return CheckMoney(costInfr(numberOfRegion, numberOfCity));
     }
-    public void upgradeCityInfr(int numberOfRegion, int numberOfCity){
-        if (posBuildCityInfr(numberOfRegion, numberOfCity)){
+    public void UpgradeInfr(int numberOfRegion, int numberOfCity){
+        if (posBuildInfr(numberOfRegion, numberOfCity)){
             regionControl.get(numberOfRegion).getCity()[numberOfCity].UpgradeInfrastructure();
             PlusMoney(-costInfr(numberOfRegion, numberOfCity));
         }
@@ -728,11 +650,11 @@ public class Gov {
     public int costInf(int numberOfRegion){
         return regionControl.get(numberOfRegion).CostOfInfrastructure();
     }
-    public boolean posBuildRegionInfr(int numberOfRegion){
+    public boolean posBuildInf(int numberOfRegion){
         return CheckMoney(costInf(numberOfRegion));
     }
-    public void upgradeRegionInfr(int numberOfRegion){
-        if (posBuildRegionInfr(numberOfRegion)){
+    public void UpgradeInf(int numberOfRegion){
+        if (posBuildInf(numberOfRegion)){
             regionControl.get(numberOfRegion).UpgradeInfrastructure();
             PlusMoney(-costInf(numberOfRegion));
         }
@@ -740,9 +662,14 @@ public class Gov {
     //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ
     // Эта штука принимает позицию, но в целом можно переделать и под саму армию, убрав первую часть. В целом потребуется
     // для удаления армий после поражения. Хотя не особо. В общем есть и есть
-    public void upgradeArmy(Position position, int armyMen){
-        Army arm = getArmyPos(position);
-        if (arm != null && maxArmy-999 > totalArmy) {
+    public void UpgradeArmy(Position position, int armyMen){
+        Army arm = null;
+        for (int i = 0; i < army    .size(); i++){
+            if (army.get(i).getPosition().equals(position)){
+                arm  = army.get(i);
+            }
+        }
+        if (arm != null) {
             arm.Employ(armyMen);
             money -= BS.baseCostCreationSquad[armyMen];
         }
@@ -796,13 +723,13 @@ public class Gov {
             partEqp = 1;
         }
         Army arm = new Army(cit.Mobilisation(), counryNum, modMorale, modOrganisation,  cit.getPosArmy(), 2, partEqp);
-        if (cit.checkPosition() && !cit.isMobilisation() && CheckMoney(arm.getMaxEquipment() * BS.baseCostMobilisation)) {
+        if (cit.CheckPosition() & !cit.isMobilisation() && CheckMoney(arm.getMaxEquipment() * BS.baseCostMobilisation)) {
             mobilisateArmy.add(arm);
             cit.setMobilisation(true);
             PlusMoney(arm.getMaxEquipment() * BS.baseCostMobilisation);
             maxEquipment -= arm.getMaxEquipment();
             equipment -= arm.getTotalEquipment();
-            World.mof.AddArmy(counryNum, cit.getPosArmy());
+            World.mof.addArmy(counryNum, cit.getPosArmy());
         }
     }
     public void Mobilisation(){
@@ -827,13 +754,11 @@ public class Gov {
     //обновляем мораль и организованность должно использоваться каждый ход
     private void UpdateArmy(){
         UpdateMobilisationArmy();
-        totalArmy = 0;
         for (Army value : army) {
             value.UpdateMaxArmy(modMorale, modOrganisation);
             value.UpdateMorale(modIncreaseMorale);
             value.UpdateOrganisation(modIncreaseOrganisation);
             value.UpdateTactic(modTactic);
-            totalArmy += value.getAmount();
         }
         for (Army value : mobilisateArmy) {
             value.UpdateMaxArmy(modMorale, modOrganisation);
@@ -857,22 +782,8 @@ public class Gov {
         return null;
     }
 
-    private void updateMods(){
-        for (Modificator modif: modificator){
-            modif.turn();
-        }
-    }
-    public void activateModificator(int i){
+    public void ActivateModificator(int i){
         modificator[i].Activate();
-    }
-    public String[] getModifiers(){
-        ArrayList<String> res = new ArrayList<>();
-        for (Modificator mod: modificator){
-            if (mod.getIs()){
-                res.add(mod.getName() + ". Time " + mod.getTime());
-            }
-        }
-        return res.toArray(new String[0]);
     }
 
     public String[] armyMod(){
@@ -882,14 +793,10 @@ public class Gov {
         st[2] = "Organisation " + modOrganisation + "%";
         return st;
     }
-
-    public int getEventWeight(int num){
-        return World.events[num].getProbability();
-    }
     // дальше идут только геттеры
     //в этом методе мы передаем номер игрока (сам его возьмешь), количество денег, доход
     public int[] mainScreen10Getters(){
-        int[] res = new int[6];
+        int[] res = new int[5];
         res[0] = money;
         res[1] = profit;
         res[2] = adm;
@@ -898,38 +805,21 @@ public class Gov {
         return res;
     }
     //для скрина экономика
-    public String[] getEconomy(){
-        String[] res = new String[15];
-        res[0] = "Cash " + money;
-        res[1] = "Profit " + profit;
-        res[2] = "Costs " + cost;
-        res[3] = "Cost adm " + costAdm;
-        res[4] = "Cost army " + costArmy;
-        res[5] = "Region profit " + profitFromRegion;
-        res[6] = "City profit " + profitFromCity;
-        res[7] = "Max debt " + maxDebt;
+    public int[] getEconomy() {
+        int[] res = new int[9];
+        res[0] = money;
+        res[1] = profit;
+        res[2] = cost;
+        res[3] = costAdm;
+        res[4] = costArmy;
+        res[5] = profitFromRegion;
+        res[6] = profitFromCity;
+        res[7] = maxDebt;
         int totDebt = 0;
         for (Debt i: debt){
             totDebt+=i.getSum();
         }
-        res[8] = "Total debt " + totDebt;
-        res[9] = "Total population " + totPop;
-        return res;
-    }
-    //для скрина с армиями
-    public String[] getArmyInfo(){
-        String[] res = new String[16];
-        res[0] = "Max army " + maxArmy;
-        res[1] = "Current army " + totalArmy;
-        res[2] = "Mod morale" + modMorale + "%";
-        res[3] = "Tactic" + modTactic;
-        return res;
-    }
-    //для скрина с государством
-    public String[] getGovInfo(){
-        String[] res = new String[15];
-        res[0] = "Main culture " + BS.cultureNames[culture];
-        res[1] = "Main religion " + BS.religionNames[religion];
+        res[8] = totDebt;
         return res;
     }
     public int getModShock() {
@@ -964,14 +854,5 @@ public class Gov {
     }
     public void setTaxRate(int taxRate) {
         this.taxRate = taxRate;
-    }
-    public void removeRegion(Region reg){
-        regionControl.remove(reg);
-    }
-    public void addRegion(Region reg){
-        regionControl.add(reg);
-    }
-    public void setCounryNum(int counryNum) {
-        this.counryNum = counryNum;
     }
 }

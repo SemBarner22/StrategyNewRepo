@@ -74,7 +74,7 @@ public class BS {
     public static SubTech[] ST = new SubTech[techNum*3];
 
 
-    public static String[] namesRR = {"Дерево"};
-    public static String[] namesCR = {"Сталь"};
-    public static String[] namesMineral = {"Железная руда"};
+//    public static String[] namesRR = {"Дерево"};
+//    public static String[] namesCR = {"Сталь"};
+//    public static String[] namesMineral = {"Железная руда"};
 }
