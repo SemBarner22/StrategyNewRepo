@@ -1,6 +1,6 @@
-package com.mygdx.game.Entities.MainComponents.GovComponents;
+package com.mygdx.game.Entities.MainComponents.Economy;
 
-public class Economy {
+public class CityEconomy {
     private int labor;
     private int stock;
     private double tfp;
@@ -13,7 +13,7 @@ public class Economy {
     private int taxes = 0;
     private int basePop;
 
-    public Economy(int labor, int tfp) {
+    public CityEconomy(int labor, int tfp) {
         this.labor = labor;
         basePop=labor;
         this.stock = (int) (Math.pow(saveRate*Math.pow(labor, 0.66)*tfp/amort, 1.5)/1000);

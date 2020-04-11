@@ -1,7 +1,8 @@
-package com.mygdx.game.Entities.MainComponents.GovComponents;
+package com.mygdx.game.Entities.MainComponents.Economy;
 
 
 import com.mygdx.game.Entities.BaseSettings.BS;
+import com.mygdx.game.Entities.MainComponents.Economy.Resource;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

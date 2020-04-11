@@ -1,6 +1,5 @@
 package com.mygdx.game.Entities.MainComponents;
 
-import com.mygdx.game.Entities.Adv.*;
 import com.mygdx.game.Entities.Adv.Advisor;
 import com.mygdx.game.Entities.BaseSettings.BS;
 import com.mygdx.game.Entities.Estate.Estate;
@@ -9,10 +8,13 @@ import com.mygdx.game.Entities.Estate.Manufactor;
 import com.mygdx.game.Entities.Functional.Debt;
 import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.Functional.Modificator;
+import com.mygdx.game.Entities.MainComponents.Economy.Construction;
+import com.mygdx.game.Entities.MainComponents.Economy.GovEconomy;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
-import com.mygdx.game.Entities.MainComponents.GovComponents.City;
+import com.mygdx.game.Entities.MainComponents.GovComponents.GovArmy;
+import com.mygdx.game.Entities.MainComponents.GovParts.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Laws;
-import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
+import com.mygdx.game.Entities.MainComponents.GovParts.Region;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +51,11 @@ public class Gov {
     }
     private void constructAdv() {
         for (int t = 0; t < 5; t++) {
-            CreateAdvisor("Cleric", true);
-            AssignAdvisor(t, t);
+            govAdvisors.createAdvisor("Cleric", true);
+            govAdvisors.assignAdvisor(t, t);
         }
         for (int t = 0; t < 10; t++) {
-            CreateAdvisor("Diplomat", true);
+            govAdvisors.createAdvisor("Diplomat", true);
         }
     }
     private void constructEstate(){
@@ -77,16 +79,11 @@ public class Gov {
 
 
     // мдификаторы
-    private int modAdvisorCost = 0;
-    private int modBuildingCost = 0;
-    private int modArmyCreation = 0;
-    private int modRebel = 0;
+    private int[] mods;
     private int modInterest = 0;
     private int modPrestige = 0; // из 10000
     private int modLegecimacy = 10000; // из 10000
     private int modAdm = 0;
-    private int modAutonomy = 0;
-    private int profitFromEstates = 10;
     private int[] powerIncrease = new int[BS.baseNumberOfEstates];
     private int[] loyalityIncrease = new int[BS.baseNumberOfEstates];
     private int modShock; //в процентах
@@ -94,74 +91,34 @@ public class Gov {
     private int modTactic;
     private int modMorale;
     private int modOrganisation;
-    private int modIncreaseMorale;
-    private int modIncreaseOrganisation;
-
-    private int modExchangeReligion;
-    private int modExchangeCulture;
-    private int modProfitFromProduction;
-    private int modProfitFromRegion;
-    private int modProfitFromMineral;
-    private int modProfitFromCity;
-    private int modCityInfrastructure = 0;
     private int modPopGrRate = 0;
-
-    private int modCostAdm = 1;
-    private int modCostArmy = 1;
 
     private Modificator[] modificator;
     //инициализируем модификаторы
 
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
     private void AddToMod(int[] array) {
-        modAdvisorCost += array[0];
-        modBuildingCost += array[1];
-        modArmyCreation += array[2];
-        modRebel += array[3];
+        mods = array;
         modInterest += array[4];
         modPrestige += array[5];
         modLegecimacy += array[6];
         modAdm += array[7];
-        modAutonomy += array[8];
-        modIncreaseMorale += array[9];
-        modIncreaseOrganisation += array[10];
-        modCityInfrastructure += array[11];
         modShock += array[12];
         modFire += array[13];
         modTactic += array[14];
         modMorale += array[15];
         modOrganisation += array[16];
-        modExchangeReligion += array[17];
-        modExchangeCulture += array[18];
-        modProfitFromProduction += array[19];
-        modProfitFromRegion += array[20];
-        modProfitFromMineral += array[21];
-        modProfitFromCity += array[22];
     }
     private void NullMod(){
-        modAdvisorCost =0;
-        modBuildingCost =0;
-        modArmyCreation =0;
-        modRebel =0;
         modInterest =0;
         modPrestige =0;
         modLegecimacy =0;
         modAdm =0;
-        modAutonomy =0;
-        modIncreaseMorale = 0;
-        modIncreaseOrganisation = 0;
-        modCityInfrastructure = 0;
         modShock =0;
         modFire =0;
         modTactic =0;
         modMorale =0;
         modOrganisation =0;
-        modExchangeReligion =0;
-        modExchangeCulture =0;
-        modProfitFromProduction =0;
-        modProfitFromRegion =0;
-        modProfitFromMineral =0;
-        modProfitFromCity =0;
     }
 
     public void updateMod(){
@@ -177,25 +134,15 @@ public class Gov {
         AddToMod(totSum);
         //TODO добовляем моды законов. убрать коммент после инциализации
         //AddToMod(laws.getModif());
-
-        //Этот способ устарел, поэтому комменчу. но если что-то пойдет не так, то этот надежнее
-        /*
-        for (int i = 0; i < modificator.length; i++){
-            if (modificator[i].getIs()) {
-                AddToMod(modificator[i].getModificator());
-            }
-            modificator[i].Turn();
-        }
-         */
-        for (int i = 0; i < advList.size(); i++){
-            if (advList.get(i).getHaveJob() >= 0) {
-                AddToMod(advList.get(i).getMod());
+        for (Advisor advisor: govAdvisors.getAdvList()){
+            if (advisor.getHaveJob() >= 0) {
+                AddToMod(advisor.getMod());
             }
         }
         for (int i = 0; i < estate.length; i++){
             if (estate[i].getIsInLobby()) {
                 AddToMod(estate[i].getMod());
-                PlusMoney(estate[i].getPlusMoney() * profit / 10);
+                PlusMoney(estate[i].getPlusMoney() * govEconomy.getProfit() / 10);
                 estate[i].setPlusMoney(0);
                 if (estate[i].isManufatory()){
                     int reg = (int) (Math.random() * regionControl.size());
@@ -208,11 +155,11 @@ public class Gov {
                     estate[i].setManufatory(false);
                 }
                 if (estate[i].isFinancier()){
-                    CreateAdvisor("Financier", true);
+                    govAdvisors.createAdvisor("Financier", true);
                     estate[i].setFinancier(false);
                 }
                 if (estate[i].isGeneral()){
-                    CreateAdvisor("General", true);
+                    govAdvisors.createAdvisor("General", true);
                     estate[i].setFinancier(false);
                 }
             }
@@ -223,30 +170,12 @@ public class Gov {
     //доходы
     private int money;
     private int taxRate = 1;
-    private int profitFromProduction;
-    private int profitFromRegion;
-    private int profitFromMineral;
-    private int profitFromCity;
-    private int profit;
-
     // расходы
     private int sciSub = 0;
-    private int cost;
-    private int costArmy;
-    private int costAdm;
-
-
-    // займы
-    private int interest = BS.baseInterest;
-    private ArrayList<Debt> debt = new ArrayList<>();
-    private int maxDebt;
-    private int costDebt;
-
     // другие ресурсы
     private int adm;
     private int prestige; //от -10000 до 10000. Показываются только первые 3 цифры
     private int legicimacy; //по-разному. Пока что делаю для королевства также, как престиж
-
     // государственное устройство
     private int counryNum;
     private int totPop;
@@ -254,8 +183,14 @@ public class Gov {
     private ArrayList<Region> regionControl;
     private ArrayList<Region> region;
     private Position capital;
-    private int religion;
-    private int culture;
+    private int religion = 0;
+    private int culture = 0;
+    public int getReligion() {
+        return religion;
+    }
+    public int getCulture() {
+        return culture;
+    }
     private Laws laws;
     //Метод дает номер региона в массиве region, если ему дать регистрационный номер региона
     public int getNumRegion(int numberOfRegion){
@@ -295,106 +230,25 @@ public class Gov {
     private int totalArmy = 0;
     //чисто для призывной армии. Для всех остальных считается по другому в самой армии. Надо только будет сделать
     //кнопку для пополнения всех.
-    private int maxEquipment;
-    private int equipment;
-    private int maxMobilisationArmy;
+    //events
+    private boolean nextEvent = false;
+    private int numNextEvent = -1;
 
+    public boolean isNextEvent() {
+        return nextEvent;
+    }
+    public int getNumNextEvent() {
+        return numNextEvent;
+    }
+    public void setNextEvent(boolean nextEvent, int numNextEvent) {
+        this.nextEvent = nextEvent;
+        this.numNextEvent = numNextEvent;
+    }
 
     // советники
-    private ArrayList<Advisor> advList = new ArrayList<>();
-    private ArrayList<General> general = new ArrayList<>();
-    // призываем советника
-    public void CreateAdvisor(String adv, Boolean... isFree) {
-        Boolean b = isFree.length > 0 ? isFree[0] : false;
-        if ((adm > BS.baseAdvisorCost * ( 100 + modAdvisorCost) /100 && CheckMoney(profit/4)) || (b)) {
-            PlusAdm(-BS.baseAdvisorCost * (100 + modAdvisorCost) / 100);
-            PlusMoney(profit/4);
-            if (adv.equals("Diplomat")) {
-                advList.add(new Diplomat());
-            }
-            if (adv.equals("Cleric")) {
-                advList.add(new Cleric());
-            }
-            if (adv.equals("Financier")) {
-                advList.add(new Financier());
-            }
-            if (adv.equals("General")) {
-                General gen = new General();
-                general.add(gen);
-                advList.add(gen);
-            }
-            if (adv.equals("Judge")) {
-                advList.add(new Judge());
-            }
-            if (adv.equals("Scientist")) {
-                advList.add(new Scientist());
-            }
-            if (adv.equals("Spy")) {
-                advList.add(new Spy());
-            }
-        }
-    }
-    //  }
-    // назначаем советника  в ячейку number
-    public void AssignAdvisor(int adv, int number) {
-        if (AdvisorNumber(number) == -1){
-            advList.get(adv).setHaveJob(number);
-        } else {
-            DismissAdvisor(AdvisorNumber(number));
-            advList.get(adv).setHaveJob(number);
-        }
-    }
-    // убираем советника
-
-    public void DismissAdvisor(int adv){
-        advList.get(adv).setHaveJob(-1);
-    }
-    // убиваем советника
-    public void KillAdvisor(int adv){
-        advList.remove(adv);
-    }
-    // выдаем список незанятых советников
-
-    public Integer[] getUnasignAdvisors() {
-        ArrayList<Integer> ar = new ArrayList<>();
-        for (int i = 0; i < advList.size(); i++){
-            if (advList.get(i).getHaveJob() == -1){
-                ar.add(i);
-            }
-        }
-
-        //TODO
-        Integer[] arr = new Integer[ar.size()];
-        arr = ar.toArray(arr);
-        return arr;
-        //return ar.toArray(new Integer[0]);
-    }
-    // выдаем советника стоящего на месте number
-    public int AdvisorNumber(int number) {
-        for (int i = 0; i < advList.size(); i++){
-            if (advList.get(i).getHaveJob() == number){
-                return i;
-            }
-        }
-        return -1;
-    }
-    public Advisor getAdv(int i) {
-        if (AdvisorNumber(i) != -1)
-            return advList.get(AdvisorNumber(i));
-        else
-            return null;
-    }
-    // Увеличение возраста всех советников
-    public void UpAge(){
-        int i = 0;
-        while (i < advList.size()){
-            advList.get(i).AgeUp();
-            if (advList.get(i).Death()){
-                KillAdvisor(i);
-            } else {
-                i++;
-            }
-        }
+    private GovAdvisors govAdvisors = new GovAdvisors();
+    public GovAdvisors getGovAdvisors() {
+        return govAdvisors;
     }
 
 
@@ -423,179 +277,29 @@ public class Gov {
         estate[newOne].setPower(estate[oldOne].getPower() / 2 + estate[newOne].getPower());
         estate[oldOne].setPower(estate[oldOne].getPower() / 2);
     }
-    // просто обнуление массива
-    private void NullArray(int[] array){
-        for (int j = 0; j < array.length; j++){
-            array[j] = 0;
-        }
+
+    private GovEconomy govEconomy = new GovEconomy(this);
+    public GovEconomy getGovEconomy() {
+        return govEconomy;
     }
 
-    //обновляем производство и спрос на все ресурсы. Заодно обновляем религию, культуру и восстания
-    private int updateCultureReg(Region region){
-        int mod=0;
-        if (culture != region.getCulture()) {
-            mod += 2;
-        }
-        if (region.getReligion() != religion) {
-            mod += 4;
-        }
-        region.UpdateRebelLevel(modRebel + mod);
-        if (region.ExchangeReligion(BS.baseChanceOfChangingReligion + modExchangeReligion) && region.getReligion() != religion) {
-            region.setReligion(religion);
-        }
-        if (region.ExchangeCulture(BS.baseChanceOfChangingCulture + modExchangeCulture) && region.getCulture() != culture) {
-            region.setCulture(culture);
-        }
-        return mod;
-    }
-    public void UpdatePD() {
-        //System.out.println("Cash"+money+" "+profit);
-        for (Region value : regionControl) {
-            value.updatePD();
-            int mod = updateCultureReg(value);
-            //переходим к городам
-            for (int j = 0; j < value.getCity().length; j++) {
-                //обновляем ребелов
-                value.getCity()[j].UpdateRebelLevel(modRebel + mod);
-                //обновляем строительство зданий. Чтобы работало надо сначала создать здания
-                //value.getCity()[j].BuildingTurn();
-                //добавляем к полному производству
-                value.getCity()[j].updatePD();
-            }
-        }
-    }
-    // обновляем базовый доход всего государства и максимальный заем. Обновляем автономию. Обновляем суммарную экипированность
-    private int profitMod(Region region){
-        int mod = 0; // модификатор автономии из-за культуры и религии
-        if (culture != region.getCulture()){
-            mod +=10;
-        }
-        if (region.getReligion() != religion){
-            mod +=20;
-        }
-        return mod;
-    }
-    private int newAut(Region value, int mod){
-        int aut;
-        aut = (int) (Math.tan((Math.pow(capital.GetX() - value.getPosition().GetX(), 2) +
-                Math.pow(value.getPosition().GetY() - capital.GetY(), 2)))
-                / Math.sqrt(Math.pow(World.heigthOfMap, 2) + Math.pow(World.wideOfMap, 2)) * BS.baseAutonomy) + mod + modAutonomy;
-        if (aut > 100) {
-            aut = 100;
-        }
-        if (aut < 0) {
-            aut = 0;
-        }
-        return aut;
-    }
-    private void UpdateProfit () {
-        profitFromRegion = 0;
-        profitFromCity = 0;
-        maxEquipment = 0;
-        for (Region value : regionControl) {
-            // обновляем доход от регионов
-            int mod = profitMod(value);
-            value.setAutonomy(newAut(value, mod));
-            profitFromRegion += value.regionProfit(taxRate, modPopGrRate);
-            for (int j = 0; j < value.getCity().length; j++) {
-                //Это надо для создания призывной армии
-                maxEquipment += value.getCity()[j].GetEquipment();
-                profitFromCity += value.getCity()[j].updateEconomy(taxRate, sciSub, modPopGrRate);
-            }
-        }
-        profit = profitFromCity+profitFromRegion;
-        profit *= profitFromEstates;
-        profit /= Math.pow(10, estInLobby);
-        maxDebt = profit*10;
-    }
-
-    //расходы - армия, бюрократия, долги
-    //обновляем расходы на армию
-    private void UpdateCostArmy () {
-        costArmy = 0;
-        for (Army value : army) {
-            costArmy += value.GetCost();
-        }
-        costArmy *= BS.baseCostArmy * modCostArmy;
-    }
-    // обновляем расход на бюрократию
-    private void UpdateCostAdm () {
-        int n = regionControl.size();
-        for (Region value : regionControl) {
-            n += value.getCity().length;
-        }
-        costAdm = n * BS.baseCostAdm * modCostAdm;
-    }
-    // обновляем расход на долги. Можно использовать только раз в ход, потому что выплачивается долг дополнительно
-    private void UpdateCostDebt () {
-        costDebt = 0;
-        for (int i = 0; i <debt.size(); i++){
-            while (debt.get(i).getTime() == 0) {
-                money -= debt.get(i).getSum();
-                debt.remove(i);
-            }
-            if (i < debt.size()) {
-                costDebt += debt.get(i).getSum() * debt.get(i).getInterest();
-                debt.get(i).PayDay();
-            }
-        }
-    }
-    //обновляем все расходы
-    private void UpdateCost() {
-        UpdateCostArmy();
-        UpdateCostAdm();
-        UpdateCostDebt();
-
-    }
-    // этот класс сделан специально, чтобы пересчитывать при найме армии и других изменниях костов
-    private void ReCountCost(){
-        cost = costArmy + costAdm + costDebt;
-    }
-    // обновляем профит от
-    private int estInLobby;
-    private void UpdateProfitFromEstates(){
-        UpdateEstate();
-        estInLobby = 0;
-        profitFromEstates = 1;
-        for (int i = 0; i < estate.length; i++){
-            if (estate[i].getIsInLobby()) {
-                estInLobby +=1;
-                profitFromEstates *= estate[i].getProfit();
-            }
-        }
-    }
-    //изменение казны
     public void MakeMoney() {
-        UpAge();
+        govAdvisors.upAge();
         updateMod();
 
         updateMods();
 
-        UpdateArmy();
+        govArmy.UpdateArmy();
         updateTotPop();
-
+        govEconomy.MakeMoney();
         //laws.turn();
-
-        UpdateAPL();
-        UpdateProfitFromEstates();
-        UpdateProfit();
-        UpdateCost();
-        ReCountCost();
-        money += profit - cost;
-        while (!CheckMoney(0)){
-            TakeDebt();
-        }
-        //надо сделать проверку на количество долгов и сделать банкротство вообще надо придуать, что надоделать
+        //надо сделать проверку на количество долгов и сделать банкротство вообще надо придуать, что надо делать
     }
     // проверка на наличие суммы денег
     public boolean CheckMoney( int number){
-        if (number < money) {
-            return true;
-        } else{
-            return false;
-        }
+        return number < money;
     }
-    // check ammount of adm points
+    // check amount of adm points
     public boolean checkAdm(int number){
         return number > adm;
     }
@@ -603,25 +307,22 @@ public class Gov {
     public void PlusMoney(int m){
         money += m;
     }
-    //берем в долг
-    public void TakeDebt(){
-        debt.add(new Debt(maxDebt, interest + modInterest, 10));
-        money += maxDebt;
-    }
     //invest in stock тут как раз обращаться уже надо по номеру региона
     public boolean posibInvest(int reg, int city){
+        City city1 = region.get(getNumRegion(reg)).getCity()[city];
         if (getNumRegion(reg) != -1){
-            return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+            return CheckMoney(region.get(getNumRegion(reg)).costOfCapitalDonate(city1));
         } else {
             System.out.println("Region is not by our control");
             return false;
         }
     }
     public void invest(int reg, int city){
+        City city1 = region.get(getNumRegion(reg)).getCity()[city];
         if (posibInvest(reg, city)){
             region.get(getNumRegion(reg)).getCity()[city]
-                    .investStock(region.get(getNumRegion(reg)).costOfCapitalDonate(city));
-            PlusMoney(-region.get(getNumRegion(reg)).costOfCapitalDonate(city));
+                    .investStock(region.get(getNumRegion(reg)).costOfCapitalDonate(city1));
+            PlusMoney(-region.get(getNumRegion(reg)).costOfCapitalDonate(city1));
             System.out.println("investment succeeded " + money + " " + region.get(getNumRegion(reg)).getCity()[city].
                     getStock());
         } else {
@@ -667,162 +368,11 @@ public class Gov {
         maxArmy = BS.baseArmyAmount * totPop;
     }
 
-    // СТРОИТЕЛЬСТВО
-    // проверяем воможно ли построть
-    public boolean posBuild(int numberOfRegion, int numberOfCity, int numberOfBuilding){
-        if (CheckMoney(regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfBuilding(numberOfBuilding) * modBuildingCost / 100)){
-            return true;
-        } else{
-            return false;
-        }
-    }
-    // строим здание
-    public void Build(int numberOfRegion, int numberOfCity, int numberOfBuilding){
-        if (posBuild(numberOfRegion, numberOfCity, numberOfBuilding)){
-            regionControl.get(numberOfRegion).getCity()[numberOfCity].Build(numberOfBuilding);
-            PlusMoney(- regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfBuilding(numberOfBuilding) * modBuildingCost / 100);
-        }
-    }
-    // улучшаем инфраструктуру города
-    public int costInfr(int numberOfRegion, int numberOfCity){
-        return regionControl.get(numberOfRegion).getCity()[numberOfCity].CostOfInfrastructure();
-    }
-    public boolean posBuildCityInfr(int numberOfRegion, int numberOfCity){
-        return CheckMoney(costInfr(numberOfRegion, numberOfCity));
-    }
-    public void upgradeCityInfr(int numberOfRegion, int numberOfCity){
-        if (posBuildCityInfr(numberOfRegion, numberOfCity)){
-            regionControl.get(numberOfRegion).getCity()[numberOfCity].UpgradeInfrastructure();
-            PlusMoney(-costInfr(numberOfRegion, numberOfCity));
-        }
-    }
-    // региона
-    public int costInf(int numberOfRegion){
-        return regionControl.get(numberOfRegion).CostOfInfrastructure();
-    }
-    public boolean posBuildRegionInfr(int numberOfRegion){
-        return CheckMoney(costInf(numberOfRegion));
-    }
-    public void upgradeRegionInfr(int numberOfRegion){
-        if (posBuildRegionInfr(numberOfRegion)){
-            regionControl.get(numberOfRegion).UpgradeInfrastructure();
-            PlusMoney(-costInf(numberOfRegion));
-        }
-    }
-    //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ
-    // Эта штука принимает позицию, но в целом можно переделать и под саму армию, убрав первую часть. В целом потребуется
-    // для удаления армий после поражения. Хотя не особо. В общем есть и есть
-    public void upgradeArmy(Position position, int armyMen){
-        Army arm = getArmyPos(position);
-        if (arm != null && maxArmy-999 > totalArmy) {
-            arm.Employ(armyMen);
-            money -= BS.baseCostCreationSquad[armyMen];
-        }
-    }
-    public void createArmy(City cit){
-        if (cit.checkPosition() &&
-                CheckMoney(BS.baseCostCreationSquad[0] * (100 + modArmyCreation)) &&
-                totalArmy < maxArmy - 999){
-            Army newArmy = new Army(counryNum, modMorale, modOrganisation, cit.getPosArmy(), 3);
-            newArmy.Employ(0);
-            army.add(newArmy);
-            World.mof.AddArmy(counryNum, cit.getPosArmy());
-            money -= BS.baseCostCreationSquad[0] * (100 + modArmyCreation);
-        }
-    }
-    // cетаем генерала
-    public void SetGeneral(int arm, int genera){
-        if (army.get(arm).getGeneral() != null){
-            RemoveGeneral(arm);
-        }
-        army.get(arm).setGeneral(general.get(genera));
-        general.get(genera).setInArmy(arm);
-    }
-    public void RemoveGeneral(int arm){
-        army.get(arm).getGeneral().setInArmy(-1);
-        army.get(arm).setGeneral(null);
-    }
-    public void DeleteArmy(Army arm){
-        army.remove(arm);
-    }
+    // СТРОИТЕЛЬСТВО. Внутри реализованны все методы
+    public Construction construction = new Construction(this);
 
-    private void UpdateMobilisationArmy(){
-        maxMobilisationArmy = 0;
-        for (Region value : regionControl){
-            for (City cit: value.getCity()){
-                for (int ammount : cit.Mobilisation()){
-                    maxMobilisationArmy += ammount;
-                }
-            }
-        }
-    }
-
-    private void MobilisationCity(City cit){
-        double partEqp = 1.0 * equipment/ maxEquipment;
-        if (partEqp > 1){
-            partEqp = 1;
-        }
-        Army arm = new Army(cit.Mobilisation(), counryNum, modMorale, modOrganisation,  cit.getPosArmy(), 2, partEqp);
-        if (cit.checkPosition() && !cit.isMobilisation() && CheckMoney(arm.getMaxEquipment() * BS.baseCostMobilisation)) {
-            mobilisateArmy.add(arm);
-            cit.setMobilisation(true);
-            PlusMoney(arm.getMaxEquipment() * BS.baseCostMobilisation);
-            maxEquipment -= arm.getMaxEquipment();
-            equipment -= arm.getTotalEquipment();
-            World.mof.AddArmy(counryNum, cit.getPosArmy());
-        }
-    }
-    public void Mobilisation(){
-        for (Region value : regionControl) {
-            for (int j = 0; j < value.getCity().length; j++) {
-                MobilisationCity(value.getCity()[j]);
-            }
-        }
-    }
-    public void Demobilisation(){
-        while (mobilisateArmy.size()>0){
-            maxEquipment += mobilisateArmy.get(0).getMaxEquipment();
-            equipment += mobilisateArmy.get(0).getTotalEquipment();
-            mobilisateArmy.remove(0);
-        }
-        for (Region value : regionControl) {
-            for (int j = 0; j < value.getCity().length; j++) {
-                value.getCity()[j].setMobilisation(false);
-            }
-        }
-    }
-    //обновляем мораль и организованность должно использоваться каждый ход
-    private void UpdateArmy(){
-        UpdateMobilisationArmy();
-        totalArmy = 0;
-        for (Army value : army) {
-            value.UpdateMaxArmy(modMorale, modOrganisation);
-            value.UpdateMorale(modIncreaseMorale);
-            value.UpdateOrganisation(modIncreaseOrganisation);
-            value.UpdateTactic(modTactic);
-            totalArmy += value.getAmount();
-        }
-        for (Army value : mobilisateArmy) {
-            value.UpdateMaxArmy(modMorale, modOrganisation);
-            value.UpdateMorale(modIncreaseMorale);
-            value.UpdateOrganisation(modIncreaseOrganisation);
-            value.UpdateTactic(modTactic);
-        }
-    }
-    // возвращает армию, которая стоит на какой то позиции
-    public Army getArmyPos(Position pos){
-        for (Army value : army){
-            if (value.getPosition().equals(pos)){
-                return value;
-            }
-        }
-        for (Army value : mobilisateArmy){
-            if (value.getPosition().equals(pos)){
-                return value;
-            }
-        }
-        return null;
-    }
+    //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ. В этом классе собраны все методы для армии
+    public GovArmy govArmy = new GovArmy(this);
 
     private void updateMods(){
         for (Modificator modif: modificator){
@@ -841,7 +391,6 @@ public class Gov {
         }
         return res.toArray(new String[0]);
     }
-
     public String[] armyMod(){
         String[] st = new String[3];
         st[0] = "Morale " + modMorale + "%";
@@ -849,7 +398,6 @@ public class Gov {
         st[2] = "Organisation " + modOrganisation + "%";
         return st;
     }
-
     public int getEventWeight(int num){
         return World.events[num].getProbability();
     }
@@ -858,7 +406,7 @@ public class Gov {
     public int[] mainScreen10Getters(){
         int[] res = new int[6];
         res[0] = money;
-        res[1] = profit;
+        res[1] = govEconomy.getProfit();
         res[2] = adm;
         res[3] = legicimacy;
         res[4] = prestige/10;
@@ -868,15 +416,15 @@ public class Gov {
     public String[] getEconomy(){
         String[] res = new String[15];
         res[0] = "Cash " + money;
-        res[1] = "Profit " + profit;
-        res[2] = "Costs " + cost;
-        res[3] = "Cost adm " + costAdm;
-        res[4] = "Cost army " + costArmy;
-        res[5] = "Region profit " + profitFromRegion;
-        res[6] = "City profit " + profitFromCity;
-        res[7] = "Max debt " + maxDebt;
+        res[1] = "Profit " + govEconomy.getProfit();
+        res[2] = "Costs " + govEconomy.getCost();
+        res[3] = "Cost adm " + govEconomy.getCostAdm();
+        res[4] = "Cost army " + govEconomy.getCostArmy();
+        res[5] = "Region profit " + govEconomy.getProfitFromRegion();
+        res[6] = "City profit " + govEconomy.getProfitFromCity();
+        res[7] = "Max debt " + govEconomy.getMaxDebt();
         int totDebt = 0;
-        for (Debt i: debt){
+        for (Debt i: govEconomy.getDebt()){
             totDebt+=i.getSum();
         }
         res[8] = "Total debt " + totDebt;
@@ -911,27 +459,13 @@ public class Gov {
     public ArrayList<Region> getRegion() {
         return region;
     }
-    public int getModMorale() {
-        return modMorale;
-    }
-    public int getModOrganisation() {
-        return modOrganisation;
-    }
-    public int getMaxEquipment() {
-        return maxEquipment;
-    }
-    public int getEquipment() {
-        return equipment;
-    }
-    public int getMaxMobilisationArmy() {
-        return maxMobilisationArmy;
-    }
     public int getTaxRate() {
         return taxRate;
     }
     public void setTaxRate(int taxRate) {
         this.taxRate = taxRate;
     }
+
     public void removeRegion(Region reg){
         regionControl.remove(reg);
     }
@@ -940,5 +474,41 @@ public class Gov {
     }
     public void setCounryNum(int counryNum) {
         this.counryNum = counryNum;
+    }
+    public int[] getMods() {
+        return mods;
+    }
+    public Position getCapital() {
+        return capital;
+    }
+    public int getModPopGrRate() {
+        return modPopGrRate;
+    }
+    public int getSciSub() {
+        return sciSub;
+    }
+    public ArrayList<Army> getArmy(){
+        return army;
+    }
+    public Estate[] getEstate() {
+        return estate;
+    }
+    public int getModInterest() {
+        return modInterest;
+    }
+    public int getAdm() {
+        return adm;
+    }
+    public int getPrestige() {
+        return prestige;
+    }
+    public int getLegicimacy() {
+        return legicimacy;
+    }
+    public int getCounryNum() {
+        return counryNum;
+    }
+    public int getMaxArmy() {
+        return maxArmy;
     }
 }

@@ -1,14 +1,10 @@
 package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.mygdx.game.Entities.MainComponents.GovComponents.City;
-import com.mygdx.game.Entities.MainComponents.World;
+import com.mygdx.game.Entities.MainComponents.GovParts.City;
 import com.mygdx.game.ExtensionLibrary.ButtonWithIndex;
 import com.mygdx.game.ExtensionLibrary.ClickListenerWithIndex;
 import com.mygdx.game.Strategy;

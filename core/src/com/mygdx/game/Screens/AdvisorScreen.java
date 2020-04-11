@@ -30,7 +30,7 @@ public class AdvisorScreen extends AbstractMechanicsScreen {
         for (int i = 0; i < AdvisorMaxAmount; i++) {
             final int place = i;
             table.row();
-            Advisor advisor = PlayScreen.world.getPlayerGov(curPlayer).getAdv(i);
+            Advisor advisor = PlayScreen.world.getPlayerGov(curPlayer).getGovAdvisors().getAdv(i);
             String advisorAbilities = (advisor != null ? advisor.getAbilityName() : "No advisor");
             Label label = new Label(advisorAbilities, skin);
             labels.add(label);
@@ -52,8 +52,8 @@ public class AdvisorScreen extends AbstractMechanicsScreen {
     public void render(float delta) {
         super.render(delta);
         for (int i = 0; i < labels.size(); i++) {
-            labels.get(i).setText(PlayScreen.world.getPlayerGov(curPlayer).getAdv(i) != null ?
-                    PlayScreen.world.getPlayerGov(curPlayer).getAdv(i).getAbilityName() : "No advisor");
+            labels.get(i).setText(PlayScreen.world.getPlayerGov(curPlayer).getGovAdvisors().getAdv(i) != null ?
+                    PlayScreen.world.getPlayerGov(curPlayer).getGovAdvisors().getAdv(i).getAbilityName() : "No advisor");
         }
     }
 

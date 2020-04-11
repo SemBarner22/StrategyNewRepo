@@ -1,4 +1,4 @@
-package com.mygdx.game.Entities.MainComponents.GovComponents;
+package com.mygdx.game.Entities.MainComponents.Economy;
 
 import java.text.DecimalFormat;
 

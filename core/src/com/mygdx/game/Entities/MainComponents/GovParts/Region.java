@@ -1,9 +1,10 @@
-package com.mygdx.game.Entities.MainComponents.GovComponents;
+package com.mygdx.game.Entities.MainComponents.GovParts;
 
 import com.mygdx.game.Entities.BaseSettings.BS;
 import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.Functional.Maps.Position;
-import com.mygdx.game.Entities.MainComponents.GovComponents.City;
+import com.mygdx.game.Entities.MainComponents.GovParts.City;
+import com.mygdx.game.Entities.MainComponents.Economy.Resources;
 import com.mygdx.game.Entities.MainComponents.World;
 
 public class Region {
@@ -235,11 +236,11 @@ public class Region {
             System.out.println("posDecAut Failed");
         }
     }
-    public int costOfCapitalDonate(int citynum){
-        return Math.max((city[citynum].getPotentialStock() - city[citynum].getStock())/10, 1000);
+    public int costOfCapitalDonate(City city){
+        return Math.max((city.getPotentialStock() - city.getStock())/10, 1000);
     }
-    public void capitalDonate(int cityNum){
-        city[cityNum].investStock((int) (costOfCapitalDonate(cityNum)*(100-autonomy)/100));
+    public void capitalDonate(City city){
+        city.investStock((int) (costOfCapitalDonate(city)*(100-autonomy)/100));
     }
 
 

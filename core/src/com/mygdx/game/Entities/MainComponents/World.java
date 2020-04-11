@@ -9,9 +9,9 @@ import com.mygdx.game.Entities.Functional.Maps.Position;
 import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.Diplonacy.Diplomacy;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
-import com.mygdx.game.Entities.MainComponents.GovComponents.City;
-import com.mygdx.game.Entities.MainComponents.GovComponents.Region;
-import com.mygdx.game.Entities.MainComponents.GovComponents.Resources;
+import com.mygdx.game.Entities.MainComponents.GovParts.City;
+import com.mygdx.game.Entities.MainComponents.GovParts.Region;
+import com.mygdx.game.Entities.MainComponents.Economy.Resources;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -280,7 +280,7 @@ public class World {
     public void moveArmy(Position first, Position second){
         //if attack army
         //Теперь тут обрабатываются вражеские армии, свои армии и армии нейтральных мужиков
-        Army selArm = country.get(mof.CheckPosition(first)).getArmyPos(first);
+        Army selArm = country.get(mof.CheckPosition(first)).govArmy.getArmyPos(first);
         boolean battle = false;
         if (mof.checkArmy(second)){
             //смотрим, если мы воюем, то запускаем баттл
@@ -290,9 +290,9 @@ public class World {
             } else{
                 //если своя, то объединяемся, если не своя, то принтим, что не можем походить
                 if (selArm.getCountry() == mof.CheckPosition(second)){
-                    selArm.integrate(country.get(mof.CheckPosition(second)).getArmyPos(second));
-                    country.get(mof.CheckPosition(second)).
-                            DeleteArmy(country.get(mof.CheckPosition(second)).getArmyPos(second));
+                    selArm.integrate(country.get(mof.CheckPosition(second)).govArmy.getArmyPos(second));
+                    country.get(mof.CheckPosition(second)).govArmy.
+                            DeleteArmy(country.get(mof.CheckPosition(second)).govArmy.getArmyPos(second));
                 } else {
                     System.out.println("There is another friendly army");
                 }
@@ -570,7 +570,7 @@ public class World {
     }
     // неожиданно после хода
     public void afterTurn(int i){
-        country.get(i).UpdatePD();
+        country.get(i).getGovEconomy().UpdatePD();
     }
     //после хода всех игроков. Сюдаже пихается дата и прочее
     public void AfterGlobalTurn(){
@@ -578,7 +578,7 @@ public class World {
         turnNumber++;
     }
     //вызов ивентов дает либо номер ивента, либо -1, если его не надо выбирать
-    private int nextEvent;
+    private int nextEvent = -1;
     private boolean isNextEvent = false;
     public int eventNum(int numPlayer){
         int totalProb = 0;

@@ -1,8 +1,12 @@
-package com.mygdx.game.Entities.MainComponents.GovComponents;
+package com.mygdx.game.Entities.MainComponents.GovParts;
 
 import com.mygdx.game.Entities.BaseSettings.BS;
 import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.Functional.Maps.Position;
+import com.mygdx.game.Entities.MainComponents.Economy.Building;
+import com.mygdx.game.Entities.MainComponents.Economy.CityEconomy;
+import com.mygdx.game.Entities.MainComponents.Economy.Plant;
+import com.mygdx.game.Entities.MainComponents.Economy.Resources;
 import com.mygdx.game.Entities.MainComponents.World;
 
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ public class City {
         this.population = population;
         this.owner = owner;
         this.res = res;
-        economy = new Economy(population, 100);
+        cityEconomy = new CityEconomy(population, 100);
         World.totalPopulation += population;
         updateEconomy(0, 0, 0);
         partArmy = new int[8];
@@ -44,7 +48,7 @@ public class City {
     private boolean mobilisation = false;
     private boolean occupation = false;
     private int occupator;
-    private Economy economy;
+    private CityEconomy cityEconomy;
     private int profit;
 
     //новое производство
@@ -101,10 +105,10 @@ public class City {
     Итак, ЭКОНОМИКА
     */
     public int updateEconomy(int taxes, int education, int popGrRate){
-        production = economy.ReCount(taxes, prosperity, infrastructure, rebelLevel, education, population);
+        production = cityEconomy.ReCount(taxes, prosperity, infrastructure, rebelLevel, education, population);
         Prosperity();
         updatePopulation(popGrRate);
-        profit = (int) (economy.getGdp() * (Resources.getValueCR(res[0])*laborStructure[0]
+        profit = (int) (cityEconomy.getGdp() * (Resources.getValueCR(res[0])*laborStructure[0]
                 + Resources.getValueCR(res[1])*laborStructure[1] + laborStructure[2]*Resources.getValueCR(res[2])));
         return (int) (taxes * profit*autonomy/10000);
     }
@@ -135,7 +139,7 @@ public class City {
         }
     }
     public void investStock(int invest){
-        economy.increaseStock(invest);
+        cityEconomy.increaseStock(invest);
     }
     //сейчас добавляем к общему производству мира
     //напишем чему равен спрос в городе на товары. Для начала C=Y-G-s. Но как будет распределено? По соотношению долей
@@ -163,7 +167,7 @@ public class City {
         return reversedPrices;
     }
     private void cityDemand(){
-        int C = (int) (production *(10-economy.getSaveRate()*10)/10);
+        int C = (int) (production *(10- cityEconomy.getSaveRate()*10)/10);
         double[] reversedPrices = maximisationUtility();
         //System.out.println("Consumption "+C);
         CA2+=C;
@@ -181,7 +185,7 @@ public class City {
         }
     }
     private void investments(){
-        int inv = (int) (production *economy.getSaveRate());
+        int inv = (int) (production * cityEconomy.getSaveRate());
         //System.out.println("Investments "+inv);
         CA2+=inv;
         double totalValue=0;
@@ -274,7 +278,7 @@ public class City {
         World.totalPopulation -= population;
         population = (int) (population*(1000+BS.populationRate+1.0*prosperity/3+rate)/1000);
         World.totalPopulation += population;
-        economy.setLabor(population);
+        cityEconomy.setLabor(population);
     }
 
 
@@ -387,13 +391,13 @@ public class City {
     }
     public int[] getCityScreen(){
         int[] res = new int[20];
-        res[0] = economy.getGdp();
-        res[1] = economy.getStock();
+        res[0] = cityEconomy.getGdp();
+        res[1] = cityEconomy.getStock();
         res[2] = population;
-        res[3] = (int) (economy.getScientists()*100);
-        res[4] = (int) economy.getTfp()*100;
-        res[5] = (int) (economy.getGrowth()*100-100);
-        res[6] = economy.getTaxes();
+        res[3] = (int) (cityEconomy.getScientists()*100);
+        res[4] = (int) cityEconomy.getTfp()*100;
+        res[5] = (int) (cityEconomy.getGrowth()*100-100);
+        res[6] = cityEconomy.getTaxes();
         res[7] = this.res[0];
         res[8] = this.res[1];
         res[9] = this.res[2];
@@ -401,10 +405,10 @@ public class City {
         return res;
     }
     public int getStock(){
-        return economy.getStock();
+        return cityEconomy.getStock();
     }
     public int getPotentialStock(){
-        return economy.getPotentialStock();
+        return cityEconomy.getPotentialStock();
     }
 
     public int getUnicNumber() {
