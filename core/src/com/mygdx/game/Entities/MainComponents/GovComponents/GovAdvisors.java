@@ -1,12 +1,15 @@
-package com.mygdx.game.Entities.MainComponents;
+package com.mygdx.game.Entities.MainComponents.GovComponents;
 
 import com.mygdx.game.Entities.Adv.*;
+import com.mygdx.game.Entities.MainComponents.GovComponents.Ruler;
 
 import java.util.ArrayList;
 
 public class GovAdvisors {
     public GovAdvisors() {
     }
+    //правитель
+    private Ruler ruler;
 
     // советники
     private ArrayList<Advisor> advList = new ArrayList<>();
@@ -97,6 +100,10 @@ public class GovAdvisors {
             } else {
                 i++;
             }
+        }
+        boolean death = ruler.upAge();
+        if (death){
+            ruler = new Ruler("Ildar", (int) (Math.random() *40));
         }
     }
 

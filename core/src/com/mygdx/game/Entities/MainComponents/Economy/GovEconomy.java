@@ -81,7 +81,6 @@ public class GovEconomy {
     private int profitFromEstates = 1;
     private int maxDebt = 0;
     private int costArmy = 0;
-    private int costOfCapitalDonate = 0;
     private int costAdm = 0;
     private int costDebt = 0;
     private ArrayList<Debt> debt = new ArrayList<>();
@@ -179,7 +178,7 @@ public class GovEconomy {
     }
     //берем в долг
     public void TakeDebt(){
-        debt.add(new Debt(maxDebt, BS.baseInterest + country.getModInterest(), 10));
+        debt.add(new Debt(maxDebt, BS.baseInterest + country.getMods()[6], 10));
         country.PlusMoney(maxDebt);
     }
 
@@ -211,10 +210,6 @@ public class GovEconomy {
         return costArmy;
     }
 
-    public int getCostOfCapitalDonate() {
-        return costOfCapitalDonate;
-    }
-
     public int getCostAdm() {
         return costAdm;
     }
@@ -229,5 +224,30 @@ public class GovEconomy {
 
     public int getCost() {
         return cost;
+    }
+
+    public String[] getGovInfo(){
+        String[] res = new String[15];
+        res[0] = "Main culture " + BS.cultureNames[country.getCulture()];
+        res[1] = "Main religion " + BS.religionNames[country.getReligion()];
+        return res;
+    }
+    public String[] getEconomy(){
+        String[] res = new String[15];
+        res[0] = "Cash " + country.getMoney();
+        res[1] = "Profit " + profit;
+        res[2] = "Costs " + cost;
+        res[3] = "Cost adm " + costAdm;
+        res[4] = "Cost army " + costArmy;
+        res[5] = "Region profit " + profitFromRegion;
+        res[6] = "City profit " + profitFromCity;
+        res[7] = "Max debt " + maxDebt;
+        int totDebt = 0;
+        for (Debt i: debt){
+            totDebt+=i.getSum();
+        }
+        res[8] = "Total debt " + totDebt;
+        res[9] = "Total population " + country.getTotPop();
+        return res;
     }
 }

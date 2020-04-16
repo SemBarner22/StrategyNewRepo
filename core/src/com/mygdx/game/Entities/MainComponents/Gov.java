@@ -11,6 +11,7 @@ import com.mygdx.game.Entities.Functional.Modificator;
 import com.mygdx.game.Entities.MainComponents.Economy.Construction;
 import com.mygdx.game.Entities.MainComponents.Economy.GovEconomy;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Army;
+import com.mygdx.game.Entities.MainComponents.GovComponents.GovAdvisors;
 import com.mygdx.game.Entities.MainComponents.GovComponents.GovArmy;
 import com.mygdx.game.Entities.MainComponents.GovParts.City;
 import com.mygdx.game.Entities.MainComponents.GovComponents.Laws;
@@ -80,17 +81,8 @@ public class Gov {
 
     // мдификаторы
     private int[] mods;
-    private int modInterest = 0;
-    private int modPrestige = 0; // из 10000
-    private int modLegecimacy = 10000; // из 10000
-    private int modAdm = 0;
     private int[] powerIncrease = new int[BS.baseNumberOfEstates];
     private int[] loyalityIncrease = new int[BS.baseNumberOfEstates];
-    private int modShock; //в процентах
-    private int modFire;
-    private int modTactic;
-    private int modMorale;
-    private int modOrganisation;
     private int modPopGrRate = 0;
 
     private Modificator[] modificator;
@@ -99,30 +91,17 @@ public class Gov {
     // обновляем все моды; сначала обнуляем затем добавляем во всех структурах, которые влияют на них
     private void AddToMod(int[] array) {
         mods = array;
-        modInterest += array[4];
-        modPrestige += array[5];
-        modLegecimacy += array[6];
-        modAdm += array[7];
-        modShock += array[12];
-        modFire += array[13];
-        modTactic += array[14];
-        modMorale += array[15];
-        modOrganisation += array[16];
+        for (int i = 0; i < array.length; i++){
+            mods[i] += array[i];
+        }
     }
-    private void NullMod(){
-        modInterest =0;
-        modPrestige =0;
-        modLegecimacy =0;
-        modAdm =0;
-        modShock =0;
-        modFire =0;
-        modTactic =0;
-        modMorale =0;
-        modOrganisation =0;
+    private void nullMods(){
+        for (int i = 0; i < mods.length; i++){
+            mods[i] = 0;
+        }
     }
-
     public void updateMod(){
-        NullMod();
+        nullMods();
         int[] totSum = new int[BS.numMod];
         for (int i = 0; i < modificator.length; i++){
             if (modificator[i].getIs()){
@@ -224,10 +203,10 @@ public class Gov {
         return null;
     }
 
-    // армия
+    //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ. В этом классе собраны все методы для армии
+    public GovArmy govArmy = new GovArmy(this);
     public ArrayList<Army> army = new ArrayList<>();
     public ArrayList<Army> mobilisateArmy = new ArrayList<>();
-    private int totalArmy = 0;
     //чисто для призывной армии. Для всех остальных считается по другому в самой армии. Надо только будет сделать
     //кнопку для пополнения всех.
     //events
@@ -292,6 +271,7 @@ public class Gov {
         govArmy.UpdateArmy();
         updateTotPop();
         govEconomy.MakeMoney();
+        updateAPL();
         //laws.turn();
         //надо сделать проверку на количество долгов и сделать банкротство вообще надо придуать, что надо делать
     }
@@ -331,10 +311,10 @@ public class Gov {
     }
 
     //обновляем другие ресурсы
-    public void UpdateAPL() {
-        PlusAdm(BS.baseAdm + modAdm);
-        PlusPrestige(-(prestige * (100 - BS.basePrestige) / 100 - modPrestige)+1000);
-        PlusLegicimacy(BS.baseLegicimacy + modLegecimacy);
+    public void updateAPL() {
+        PlusAdm(BS.baseAdm + mods[7]);
+        PlusPrestige(-(prestige * (100 - BS.basePrestige) / 100 - mods[5])+1000);
+        PlusLegicimacy(BS.baseLegicimacy + mods[6]);
     }
     public void PlusPrestige(int p){
         prestige += p;
@@ -371,9 +351,6 @@ public class Gov {
     // СТРОИТЕЛЬСТВО. Внутри реализованны все методы
     public Construction construction = new Construction(this);
 
-    //  ДА ЗДРАСТВУЕТ ВЕЛИКАЯ ФРАНЦУЗКАЯ АРМИЯ. В этом классе собраны все методы для армии
-    public GovArmy govArmy = new GovArmy(this);
-
     private void updateMods(){
         for (Modificator modif: modificator){
             modif.turn();
@@ -391,13 +368,6 @@ public class Gov {
         }
         return res.toArray(new String[0]);
     }
-    public String[] armyMod(){
-        String[] st = new String[3];
-        st[0] = "Morale " + modMorale + "%";
-        st[1] = "Tactic " + modTactic;
-        st[2] = "Organisation " + modOrganisation + "%";
-        return st;
-    }
     public int getEventWeight(int num){
         return World.events[num].getProbability();
     }
@@ -411,47 +381,6 @@ public class Gov {
         res[3] = legicimacy;
         res[4] = prestige/10;
         return res;
-    }
-    //для скрина экономика
-    public String[] getEconomy(){
-        String[] res = new String[15];
-        res[0] = "Cash " + money;
-        res[1] = "Profit " + govEconomy.getProfit();
-        res[2] = "Costs " + govEconomy.getCost();
-        res[3] = "Cost adm " + govEconomy.getCostAdm();
-        res[4] = "Cost army " + govEconomy.getCostArmy();
-        res[5] = "Region profit " + govEconomy.getProfitFromRegion();
-        res[6] = "City profit " + govEconomy.getProfitFromCity();
-        res[7] = "Max debt " + govEconomy.getMaxDebt();
-        int totDebt = 0;
-        for (Debt i: govEconomy.getDebt()){
-            totDebt+=i.getSum();
-        }
-        res[8] = "Total debt " + totDebt;
-        res[9] = "Total population " + totPop;
-        return res;
-    }
-    //для скрина с армиями
-    public String[] getArmyInfo(){
-        String[] res = new String[16];
-        res[0] = "Max army " + maxArmy;
-        res[1] = "Current army " + totalArmy;
-        res[2] = "Mod morale" + modMorale + "%";
-        res[3] = "Tactic" + modTactic;
-        return res;
-    }
-    //для скрина с государством
-    public String[] getGovInfo(){
-        String[] res = new String[15];
-        res[0] = "Main culture " + BS.cultureNames[culture];
-        res[1] = "Main religion " + BS.religionNames[religion];
-        return res;
-    }
-    public int getModShock() {
-        return modShock;
-    }
-    public int getModFire() {
-        return modFire;
     }
     public ArrayList<Region> getRegionControl() {
         return regionControl;
@@ -493,9 +422,6 @@ public class Gov {
     public Estate[] getEstate() {
         return estate;
     }
-    public int getModInterest() {
-        return modInterest;
-    }
     public int getAdm() {
         return adm;
     }
@@ -510,5 +436,11 @@ public class Gov {
     }
     public int getMaxArmy() {
         return maxArmy;
+    }
+    public int getMoney() {
+        return money;
+    }
+    public int getTotPop() {
+        return totPop;
     }
 }

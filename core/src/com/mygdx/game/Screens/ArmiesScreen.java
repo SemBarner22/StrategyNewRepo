@@ -36,11 +36,11 @@ public class ArmiesScreen extends AbstractMechanicsScreen {
                 }
             }
         });
-        Label getModTactic = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).armyMod()[1], skin);
+        Label getModTactic = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).govArmy.armyMod()[1], skin);
         Label getModShock = new Label("" + 1, skin);
         Label getModFire = new Label("" + 1, skin);
-        Label getModMorale = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).armyMod()[0], skin);
-        Label getModOrganisation = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).armyMod()[2], skin);
+        Label getModMorale = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).govArmy.armyMod()[0], skin);
+        Label getModOrganisation = new Label("" + PlayScreen.world.getPlayerGov(curPlayer).govArmy.armyMod()[2], skin);
         Label getEquipment = new Label("" + 1, skin);
         Table table = new Table();
         stage.addActor(table);

@@ -408,13 +408,13 @@ public class World {
         army1.UpdateSF();
         army2.UpdateSF();
         while ((army1.getMorale() > 100) && (army2.getMorale() > 100)){
-            army1.Lose(100 - (army2.getFire() *(100 + country.get(country2).getModFire()) * army2.getEquipment()/ army1.getEquipment()/ army1.getAmount()) / 2 - BS.baseDamage);
-            army2.Lose(100 - (army1.getFire() *(100 + country.get(country1).getModFire()) * army1.getEquipment()/ army2.getEquipment()/ army2.getAmount()) / 2 - BS.baseDamage);
+            army1.Lose(100 - (army2.getFire() *(100 + country.get(country2).govArmy.mods("fire")) * army2.getEquipment()/ army1.getEquipment()/ army1.getAmount()) / 2 - BS.baseDamage);
+            army2.Lose(100 - (army1.getFire() *(100 + country.get(country1).govArmy.mods("fire")) * army1.getEquipment()/ army2.getEquipment()/ army2.getAmount()) / 2 - BS.baseDamage);
             army1.UpdateSF();
             army2.UpdateSF();
             if ((army1.getMorale() > 100) && (army2.getMorale() > 100)) {
-                army1.Lose(100 - (army2.getShock() * (100 + country.get(country2).getModShock()) / army1.getAmount()) / 2 - BS.baseDamage);
-                army2.Lose(100 - (army1.getShock() * (100 + country.get(country1).getModShock()) / army2.getAmount()) / 2 - BS.baseDamage);
+                army1.Lose(100 - (army2.getShock() * (100 + country.get(country2).govArmy.mods("shock")) / army1.getAmount()) / 2 - BS.baseDamage);
+                army2.Lose(100 - (army1.getShock() * (100 + country.get(country1).govArmy.mods("shock")) / army2.getAmount()) / 2 - BS.baseDamage);
                 army1.UpdateSF();
                 army2.UpdateSF();
             }

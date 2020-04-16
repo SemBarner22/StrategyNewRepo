@@ -133,6 +133,31 @@ public class GovArmy {
         }
         return null;
     }
-
+    public String[] armyMod(){
+        String[] st = new String[3];
+        st[0] = "Morale " + country.getMods()[15] + "%";
+        st[1] = "Tactic " + country.getMods()[14];
+        st[2] = "Organisation " + country.getMods()[16] + "%";
+        return st;
+    }
+    public int mods(String string){
+        int res = 0;
+        if (string.equals("tactic")){
+            res = country.getMods()[14];
+        }
+        if (string.equals("morale")){
+            res = country.getMods()[15];
+        }
+        if (string.equals("organisation")){
+            res = country.getMods()[16];
+        }
+        if (string.equals("shock")){
+            res = country.getMods()[12];
+        }
+        if (string.equals("fire")){
+            res = country.getMods()[13];
+        }
+        return res;
+    }
 
 }
